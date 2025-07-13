@@ -1,9 +1,39 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36202.13 d17.14
+VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertTicketSystem.Api", "..\src\Presentation\ConcertTicketSystem.Api\ConcertTicketSystem.Api\ConcertTicketSystem.Api.csproj", "{4D7F5782-C89C-CF40-C84C-B5F537629F09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertTicketSystem.Persistence", "..\src\Infrastructure\ConcertTicketSystem.Persistence\ConcertTicketSystem.Persistence\ConcertTicketSystem.Persistence.csproj", "{D7BB927A-A4B7-FD6B-0784-301D3AA66982}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertTicketSystem.Application", "..\src\Core\ConcertTicketSystem.Application\ConcertTicketSystem.Application\ConcertTicketSystem.Application.csproj", "{D2A2FA72-62CC-376E-F1D4-9D5118341573}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcertTicketSystem.Domain", "..\src\Core\ConcertTicketSystem.Domain\ConcertTicketSystem.Domain\ConcertTicketSystem.Domain.csproj", "{60597C00-A83D-032F-DF06-ECD67E2B767D}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D7F5782-C89C-CF40-C84C-B5F537629F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D7F5782-C89C-CF40-C84C-B5F537629F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D7F5782-C89C-CF40-C84C-B5F537629F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D7F5782-C89C-CF40-C84C-B5F537629F09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7BB927A-A4B7-FD6B-0784-301D3AA66982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7BB927A-A4B7-FD6B-0784-301D3AA66982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7BB927A-A4B7-FD6B-0784-301D3AA66982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7BB927A-A4B7-FD6B-0784-301D3AA66982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2A2FA72-62CC-376E-F1D4-9D5118341573}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2A2FA72-62CC-376E-F1D4-9D5118341573}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2A2FA72-62CC-376E-F1D4-9D5118341573}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2A2FA72-62CC-376E-F1D4-9D5118341573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60597C00-A83D-032F-DF06-ECD67E2B767D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60597C00-A83D-032F-DF06-ECD67E2B767D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60597C00-A83D-032F-DF06-ECD67E2B767D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60597C00-A83D-032F-DF06-ECD67E2B767D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
