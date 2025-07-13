@@ -1,0 +1,23 @@
+# .NET Core
+[Bb]in/
+[Oo]bj/
+wwwroot/dist/
+Properties/launchSettings.json
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ionic / Node
+node_modules/
+www/
+platforms/
+plugins/
+.sourcemaps/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
