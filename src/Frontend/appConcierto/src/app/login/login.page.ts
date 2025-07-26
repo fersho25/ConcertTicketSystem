@@ -58,6 +58,7 @@ export class LoginPage implements OnInit {
           buttons: ['Ok']
         });
         await alert.present();
+        //console.log('Respuesta del backend:', response); 
 
         
        localStorage.setItem('usuario', JSON.stringify(response));
@@ -67,7 +68,7 @@ export class LoginPage implements OnInit {
       async (error) => {
         const alert = await this.alertController.create({
           header: 'Error',
-          message: 'Credenciales incorrectas o problema en el servidor.',
+          message: 'Credenciales incorrectas.',
           buttons: ['Ok']
         });
         await alert.present();

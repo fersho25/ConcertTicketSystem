@@ -34,5 +34,17 @@ namespace GestionPlataformaConcierto.BW.Mapeo
             };
         }
 
+        public static UsuarioRespuestaDTO ToDTO(Usuario usuario)
+        {
+            return new UsuarioRespuestaDTO
+            {
+                Id = usuario.Id,
+                NombreCompleto = usuario.NombreCompleto,
+                CorreoElectronico = usuario.CorreoElectronico,
+                Rol = usuario.Rol
+            };
+        }
+
+
     }
 }

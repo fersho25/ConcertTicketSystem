@@ -124,13 +124,8 @@ namespace GestionPlataformaConcierto.Api.Controllers
                     return Unauthorized("Credenciales incorrectas.");
                 }
 
-                var respuesta = new UsuarioRespuestaDTO
-                {
-                    Id = usuario.Id,
-                    NombreCompleto = usuario.NombreCompleto,
-                    CorreoElectronico = usuario.CorreoElectronico,
-                    Rol = usuario.Rol
-                };
+                // Usando el mapper para convertir Usuario a UsuarioRespuestaDTO
+                var respuesta = UsuarioMapper.ToDTO(usuario);
 
                 return Ok(respuesta);
             }
@@ -139,6 +134,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al iniciar sesión: {ex.Message}");
             }
         }
-
     }
+
 }
+
