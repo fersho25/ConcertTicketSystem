@@ -31,6 +31,13 @@ namespace GestionPlataformaConcierto.BW.CU
                 : Task.FromResult(false);
         }
 
+        public Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena)
+        {
+            return ReglasDeUsuario.lasCredencialesSonValidas(correoElectronico, contrasena) 
+                ? gestionarUsuarioDA.ObtenerUsuarioPorCredenciales(correoElectronico, contrasena) 
+                : Task.FromResult<Usuario>(null);
+        }
+
         public Task<Usuario> obtenerUsuarioPorId(int id)
         {
             return ReglasDeUsuario.ElIdEsValido(id) 

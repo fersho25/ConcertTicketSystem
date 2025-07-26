@@ -53,5 +53,13 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
             return id > 0;
         }
 
+        public static bool lasCredencialesSonValidas(string correoElectronico, string contrasena)
+        {
+            return !string.IsNullOrEmpty(correoElectronico) && 
+                   !string.IsNullOrEmpty(contrasena) && 
+                   correoElectronico.Contains("@") && 
+                   contrasena.Length >= 8;
+        }
+
     }
 }

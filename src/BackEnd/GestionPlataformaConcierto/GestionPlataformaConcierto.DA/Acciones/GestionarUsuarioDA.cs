@@ -59,6 +59,13 @@ namespace GestionPlataformaConcierto.DA.Acciones
             await gestionDePlataformaContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena)
+        {
+            return await gestionDePlataformaContext.Usuario.FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico && u.Contrasena == contrasena);
+        }
+        
+
         public async Task<Usuario> obtenerUsuarioPorId(int id)
         {
             return await gestionDePlataformaContext.Usuario

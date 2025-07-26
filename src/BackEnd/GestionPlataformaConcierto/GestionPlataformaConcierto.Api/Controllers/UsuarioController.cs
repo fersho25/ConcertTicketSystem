@@ -79,7 +79,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 if (id != usuarioDto.Id)
                     return BadRequest("El ID no coincide con el parámetro.");
 
-                
+
                 var usuario = UsuarioMapper.MapToEntity(usuarioDto);
 
                 var resultado = await gestionarUsuarioBW.actualizarUsuario(id, usuario);
@@ -111,5 +111,34 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al eliminar el usuario: {ex.Message}");
             }
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<UsuarioRespuestaDTO>> Login([FromBody] UsuarioLoginDTO loginDto)
+        {
+            try
+            {
+                var usuario = await gestionarUsuarioBW.ObtenerUsuarioPorCredenciales(loginDto.CorreoElectronico, loginDto.Contrasena);
+
+                if (usuario == null)
+                {
+                    return Unauthorized("Credenciales incorrectas.");
+                }
+
+                var respuesta = new UsuarioRespuestaDTO
+                {
+                    Id = usuario.Id,
+                    NombreCompleto = usuario.NombreCompleto,
+                    CorreoElectronico = usuario.CorreoElectronico,
+                    Rol = usuario.Rol
+                };
+
+                return Ok(respuesta);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al iniciar sesión: {ex.Message}");
+            }
+        }
+
     }
 }

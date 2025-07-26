@@ -10,5 +10,7 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
         Task<bool> eliminarUsuario(int id);
         Task<List<Usuario>> obtenerUsuarios();
         Task<Usuario> obtenerUsuarioPorId(int id);
+
+        Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena);
     }
 }
