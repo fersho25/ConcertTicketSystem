@@ -1,42 +1,49 @@
 <ion-header>
   <ion-toolbar>
     <ion-title class="titulo-centrado">Conciertos</ion-title>
+
+    <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
+      Modo Oscuro
+    </ion-toggle>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="container">
 
-    <ion-card color="light">
-      <ion-card-header>Iniciar Sesión</ion-card-header>
+    <ion-card>
+      <ion-card-header class="titulo-personalizado-iniciarSesion">Iniciar Sesión</ion-card-header>
       <ion-card-content>
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
           <ion-item>
             <ion-icon name="person" slot="start"></ion-icon>
             <ion-label position="floating">Correo</ion-label>
             <ion-input type="text" formControlName="correoElectronico" required></ion-input>
-            <ion-item
-              *ngIf="loginForm.controls['correoElectronico'].invalid && loginForm.controls['correoElectronico'].touched">
-              <ion-text color="danger">
-                <p>El formato del correo es invalido.</p>
-              </ion-text>
-            </ion-item>
           </ion-item>
+          <div class="error-message"
+            *ngIf="loginForm.controls['correoElectronico'].invalid && loginForm.controls['correoElectronico'].touched">
+            <ion-text color="danger">
+              <p>El formato del correo es invalido.</p>
+            </ion-text>
+          </div>
 
           <ion-item class="ion-margin-top">
             <ion-icon name="lock-closed" slot="start"></ion-icon>
             <ion-label position="floating">Contraseña</ion-label>
             <ion-input type="password" formControlName="contrasena" required>
-            <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
-            <ion-item *ngIf="loginForm.controls['contrasena'].invalid && loginForm.controls['contrasena'].touched">
-              <ion-text color="danger">
-                <p>Rellene el campo.</p>
-              </ion-text>
-            </ion-item>
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
           </ion-item>
 
+          <div class="error-message"
+            *ngIf="loginForm.controls['contrasena'].invalid && loginForm.controls['contrasena'].touched">
+            <ion-text color="danger">
+              <p>Rellene el campo.</p>
+            </ion-text>
+          </div>
+
           <ion-button shape="round" expand="full" type="submit" [disabled]="!loginForm.valid"
-            class="ion-margin-top custom-button">
+            class="ion-margin-top button-34">
             Iniciar Sesión
           </ion-button>
         </form>

@@ -22,6 +22,8 @@ import { AuthenticatorService } from '../services/authenticator.service';
 export class LoginPage implements OnInit {
 
   loginForm!: FormGroup;
+  modoOscuroActivado = false;
+
   constructor(
     private fb: FormBuilder,
     private authenticatorService: AuthenticatorService,
@@ -34,6 +36,7 @@ export class LoginPage implements OnInit {
       correoElectronico: ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(1)]]
     });
+
   }
 
   async onLogin() {
@@ -60,8 +63,8 @@ export class LoginPage implements OnInit {
         await alert.present();
         //console.log('Respuesta del backend:', response); 
 
-        
-       localStorage.setItem('usuario', JSON.stringify(response));
+
+        localStorage.setItem('usuario', JSON.stringify(response));
 
         this.router.navigate(['/home']);
       },
@@ -76,4 +79,22 @@ export class LoginPage implements OnInit {
     );
   }
 
+   ionViewWillEnter() {
+    // Leer estado guardado
+    const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
+    this.modoOscuroActivado = modoOscuro;
+
+    // Aplicar o quitar clase dark al <html>
+    document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
+  }
+
+  darkPaletteToggleChange(event: CustomEvent) {
+    this.toggleDarkPalette(event.detail.checked);
+  }
+
+  toggleDarkPalette(shouldAdd: boolean) {
+    document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
+    localStorage.setItem('modoOscuro', JSON.stringify(shouldAdd));
+    this.modoOscuroActivado = shouldAdd;
+  }
 }

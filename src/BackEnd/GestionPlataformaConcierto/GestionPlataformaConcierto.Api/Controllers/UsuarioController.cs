@@ -63,7 +63,11 @@ namespace GestionPlataformaConcierto.Api.Controllers
             {
                 var usuario = UsuarioMapper.MapToEntity(usuarioDto);
                 var resultado = await gestionarUsuarioBW.registrarUsuario(usuario);
-                return Ok(resultado);
+
+                if (!resultado)
+                    return BadRequest("No se pudo registrar el usuario.");  // Devuelve error HTTP 400 si es false
+
+                return Ok(true); // Devuelve HTTP 200 si se registró bien
             }
             catch (Exception ex)
             {

@@ -90,6 +90,9 @@ namespace GestionPlataformaConcierto.DA.Acciones
         {
             try
             {
+                var correoExiste = await gestionDePlataformaContext.Usuario.AnyAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
+                if (correoExiste) return false;
+
                 gestionDePlataformaContext.Usuario.Add(usuario);
 
                 await gestionDePlataformaContext.SaveChangesAsync();

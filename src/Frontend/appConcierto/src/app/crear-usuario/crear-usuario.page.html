@@ -1,14 +1,19 @@
 <ion-header>
     <ion-toolbar>
         <ion-title class="titulo-centrado">Conciertos</ion-title>
+
+        <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
+            Modo Oscurso
+        </ion-toggle>
+
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
     <div class="container">
 
-        <ion-card color="light">
-            <ion-card-header>Registrar Usuario</ion-card-header>
+        <ion-card>
+            <ion-card-header class="titulo-personalizado-registrar">Registrar Usuario</ion-card-header>
             <ion-card-content>
                 <form [formGroup]="registerForm" (ngSubmit)="registrar()">
 
@@ -17,45 +22,55 @@
                         <ion-label position="floating">Nombre Completo:</ion-label>
                         <ion-input type="text" formControlName="nombreCompleto" required></ion-input>
                     </ion-item>
-                    <ion-item
+                    <div class="error-message"
                         *ngIf="registerForm.controls['nombreCompleto'].invalid && registerForm.controls['nombreCompleto'].touched">
                         <ion-text color="danger">
                             <p>El nombre no es valido.</p>
                         </ion-text>
-                    </ion-item>
+                    </div>
 
                     <ion-item class="ion-margin-top">
                         <ion-icon name="mail-outline" slot="start"></ion-icon>
                         <ion-label position="floating">Correo:</ion-label>
                         <ion-input type="text" formControlName="correoElectronico" required></ion-input>
                     </ion-item>
-                    <ion-item
+                    <div class="error-message"
                         *ngIf="registerForm.controls['correoElectronico'].invalid && registerForm.controls['correoElectronico'].touched">
                         <ion-text color="danger">
                             <p>El formato del correo es invalido.</p>
                         </ion-text>
-                    </ion-item>
+                    </div>
 
                     <ion-item class="ion-margin-top">
                         <ion-icon name="lock-closed" slot="start"></ion-icon>
                         <ion-label position="floating">Contraseña:</ion-label>
                         <ion-input type="password" formControlName="contrasena" required>
-                            <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
+                            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                        </ion-input>
                     </ion-item>
-                    <ion-item
-                        *ngIf="registerForm.controls['contrasena'].invalid && registerForm.controls['contrasena'].touched">
-                        <ion-text color="danger">
-                            <p>Rellene el campo.</p>
+
+                    <div class="error-message" *ngIf="registerForm.get('contrasena')?.touched && registerForm.get('contrasena')?.invalid"
+                        lines="none">
+                        <ion-text color="danger" style="display: block;">
+                            <p *ngIf="registerForm.get('contrasena')?.errors?.['required']">La contraseña es
+                                obligatoria.</p>
+                            <p *ngIf="registerForm.get('contrasena')?.errors?.['minLength']">Debe tener al menos 8
+                                caracteres.</p>
+                            <p *ngIf="registerForm.get('contrasena')?.errors?.['uppercase']">Debe contener al menos una
+                                letra mayúscula.</p>
+                            <p *ngIf="registerForm.get('contrasena')?.errors?.['number']">Debe contener al menos un
+                                número.</p>
+                            <p *ngIf="registerForm.get('contrasena')?.errors?.['symbol']">Debe contener al menos un
+                                símbolo especial.</p>
                         </ion-text>
-                    </ion-item>
+                    </div>
 
                     <ion-item class="ion-margin-top">
                         <ion-icon name="people-circle-outline" slot="start"></ion-icon>
                         <ion-label position="floating">Rol:</ion-label>
                         <ion-list>
                             <ion-item>
-                                <ion-select aria-label="Fruit" formControlName="rol" placeholder="Seleccione el rol"
-                                    required>
+                                <ion-select formControlName="rol" placeholder="Seleccione el rol" required>
                                     <ion-select-option value="usuario">Usuario</ion-select-option>
                                     <ion-select-option value="promotor">Promotor</ion-select-option>
                                     <ion-select-option value="administrador">Administrador</ion-select-option>
@@ -63,20 +78,19 @@
                             </ion-item>
                         </ion-list>
                     </ion-item>
-                    <ion-item *ngIf="registerForm.controls['rol'].invalid && registerForm.controls['rol'].touched">
+                    <div class="error-message" *ngIf="registerForm.controls['rol'].invalid && registerForm.controls['rol'].touched">
                         <ion-text color="danger">
                             <p>Seleccione el rol.</p>
                         </ion-text>
-                    </ion-item>
+                    </div>
 
                     <ion-button shape="round" expand="full" type="submit" [disabled]="!registerForm.valid"
-                        class="ion-margin-top custom-button">
+                        class="ion-margin-top button-34">
                         Registrar usuario
                     </ion-button>
                 </form>
 
-                <ion-button fill="clear" size="small" routerLink="/login"
-                    class="ion-text-center ion-margin-top">
+                <ion-button fill="clear" size="small" routerLink="/login" class="ion-text-center ion-margin-top">
                     Tengo una cuenta
                 </ion-button>
             </ion-card-content>
