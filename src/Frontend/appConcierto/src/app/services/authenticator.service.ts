@@ -15,17 +15,30 @@ export interface UsuarioRespuestaDTO {
   rol: string;
 }
 
+export interface UsuarioDTO {
+  id: number;
+  nombreCompleto: string;
+  correoElectronico: string;
+  contrasena: string;
+  rol: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticatorService {
 
-  private apiUrl = 'http://localhost:5065/api/Usuario/login';
+  private loginUrl = 'http://localhost:5065/api/Usuario/login';
+  private registerUrl = 'http://localhost:5065/api/Usuario';
 
   constructor(private http: HttpClient) { }
 
   login(usuario: UsuarioLoginDTO): Observable<UsuarioRespuestaDTO> {
-    return this.http.post<UsuarioRespuestaDTO>(this.apiUrl, usuario);
+    return this.http.post<UsuarioRespuestaDTO>(this.loginUrl, usuario);
+  }
+
+  registrarUsuario(usuario: UsuarioDTO): Observable<boolean> {
+    return this.http.post<boolean>(this.registerUrl, usuario);
   }
 }
