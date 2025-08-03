@@ -19,6 +19,10 @@ const routes: Routes = [
     path: 'crear-usuario',
     loadChildren: () => import('./crear-usuario/crear-usuario.module').then( m => m.CrearUsuarioPageModule)
   },
+  {
+    path: 'crear-concierto',
+    loadChildren: () => import('./crear-concierto/crear-concierto.module').then( m => m.CrearConciertoPageModule)
+  },
 ];
 
 @NgModule({

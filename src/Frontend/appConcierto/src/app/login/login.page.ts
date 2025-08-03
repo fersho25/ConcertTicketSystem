@@ -63,7 +63,6 @@ export class LoginPage implements OnInit {
         await alert.present();
         //console.log('Respuesta del backend:', response); 
 
-
         localStorage.setItem('usuario', JSON.stringify(response));
 
         this.router.navigate(['/home']);

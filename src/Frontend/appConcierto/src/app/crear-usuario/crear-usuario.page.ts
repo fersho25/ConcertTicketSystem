@@ -93,9 +93,9 @@ export class CrearUsuarioPage implements OnInit {
     const usuario = this.registerForm.value;
     const rolUsuario = this.registerForm.get('rol')?.value;
 
-    // Verifica si requiere clave especial
+
     if (rolUsuario === 'administrador' || rolUsuario === 'promotor') {
-      const claveCorrecta = 'clave123'; // Aquí puedes poner la clave que tú definas
+      const claveCorrecta = 'clave123'; // la clave
 
       const alert = await this.alertController.create({
         header: 'Clave requerida',
@@ -127,7 +127,6 @@ export class CrearUsuarioPage implements OnInit {
 
       await alert.present();
     } else {
-      // Si es rol normal (por ejemplo: "usuario"), no pide clave
       this.procesarRegistro(usuario);
     }
   }

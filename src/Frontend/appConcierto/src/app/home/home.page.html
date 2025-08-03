@@ -1,20 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <h2>Bienvenido, {{ usuario.nombreCompleto }}</h2>
+
+    <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
+      routerLink="/crear-concierto" class="ion-text-center ion-margin-top">
+      Crear Concierto
+    </ion-button>
+
+    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink=""
+      class="ion-text-center ion-margin-top">
+      Panel de Control
+    </ion-button>
+    <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
+      Modo Oscuro
+    </ion-toggle>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+<ion-content>
+  
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+  </ion-toolbar>
+</ion-footer>
