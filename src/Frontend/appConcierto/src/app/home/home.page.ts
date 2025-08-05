@@ -14,7 +14,7 @@ export class HomePage implements OnInit {
 
   conciertos: ConciertoDTO[] = [];
 
-  constructor(private conciertoService: ConciertoService, private router : Router) { }
+  constructor(private conciertoService: ConciertoService, private router: Router) { }
 
   ngOnInit() {
     const data = localStorage.getItem('usuario');
@@ -26,47 +26,53 @@ export class HomePage implements OnInit {
   }
 
   cerrarSesion() {
-  const modoOscuro = localStorage.getItem('modoOscuro');
-  localStorage.clear();
-  if (modoOscuro !== null) {
-    localStorage.setItem('modoOscuro', modoOscuro);
+    const modoOscuro = localStorage.getItem('modoOscuro');
+    localStorage.clear();
+    if (modoOscuro !== null) {
+      localStorage.setItem('modoOscuro', modoOscuro);
+    }
+
+    this.router.navigate(['/login']);
   }
 
-  this.router.navigate(['/login']);
-}
+  
 
   cargarConciertos() {
-  this.conciertoService.obtenerConciertos().subscribe(
-    (datos) => {
-      this.conciertos = datos.map(c => ({
-        ...c,
-        // categoriasAsiento: c.categoriasAsiento ?? [],
-        archivosMultimedia: c.archivosMultimedia ?? []
-      }));
-    },
-    (error) => {
-      console.error('Error al cargar conciertos', error);
-    }
-  );
-}
+    this.conciertoService.obtenerConciertos().subscribe(
+      (datos) => {
+        this.conciertos = datos.map(c => ({
+          ...c,
+          // categoriasAsiento: c.categoriasAsiento ?? [],
+          archivosMultimedia: c.archivosMultimedia ?? []
+        }));
+      },
+      (error) => {
+        console.error('Error al cargar conciertos', error);
+      }
+    );
+  }
 
   getSrcArchivo(archivo: any): string {
     return `data:${archivo.tipo};base64,${archivo.contenido}`;
   }
 
   primerImagen(archivos: any[]): any | null {
-  if (!archivos) return null;
-  return archivos.find(a => a.tipo.startsWith('image/')) || null;
-}
+    if (!archivos) return null;
+    return archivos.find(a => a.tipo.startsWith('image/')) || null;
+  }
+
+
 
 
   ionViewWillEnter() {
-    // Leer estado guardado
+    
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
     this.modoOscuroActivado = modoOscuro;
 
-    // Aplicar o quitar clase dark al <html>
+     
     document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
+
+    this.cargarConciertos();
   }
 
   darkPaletteToggleChange(event: CustomEvent) {

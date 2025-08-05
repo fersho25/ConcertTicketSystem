@@ -13,9 +13,7 @@
     </ion-title>
 
     <ion-buttons slot="end">
-      <ion-toggle
-        [checked]="modoOscuroActivado"
-        (ionChange)="darkPaletteToggleChange($event)">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
         Modo Oscuro
       </ion-toggle>
     </ion-buttons>
@@ -33,7 +31,7 @@
         <form [formGroup]="conciertoForm" (ngSubmit)="crearConcierto()">
 
           <ion-item>
-            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-icon name="bulb-outline" slot="start"></ion-icon>
             <ion-label position="floating">Nombre:</ion-label>
             <ion-input type="text" formControlName="nombre" required></ion-input>
           </ion-item>
@@ -45,7 +43,7 @@
           </div>
 
           <ion-item class="ion-margin-top">
-            <ion-icon name="lock-closed" slot="start"></ion-icon>
+            <ion-icon name="book-outline" slot="start"></ion-icon>
             <ion-label position="floating">Descripción:</ion-label>
             <ion-input type="text" formControlName="descripcion" required></ion-input>
           </ion-item>
@@ -58,7 +56,7 @@
           </div>
 
           <ion-item class="ion-margin-top">
-            <ion-icon name="lock-closed" slot="start"></ion-icon>
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
             <ion-label position="floating">Fecha y Hora:</ion-label>
             <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
           </ion-item>
@@ -71,7 +69,7 @@
           </div>
 
           <ion-item>
-            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-icon name="location-outline" slot="start"></ion-icon>
             <ion-label position="floating">Lugar:</ion-label>
             <ion-input type="text" formControlName="lugar" required></ion-input>
           </ion-item>
@@ -83,7 +81,7 @@
           </div>
 
           <ion-item>
-            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-icon name="people-circle-outline" slot="start"></ion-icon>
             <ion-label position="floating">Capacidad:</ion-label>
             <ion-input type="number" formControlName="capacidad" required></ion-input>
           </ion-item>
@@ -95,11 +93,22 @@
           </div>
 
           <ion-list>
-            <ion-item>Categorías de Asiento:</ion-item>
+            <ion-item lines="none">
+              <ion-icon name="podium-outline" slot="start"></ion-icon>
+              <ion-label>Categorías de Asiento:</ion-label>
+              <ion-label>
+                Asientos asignados: {{ capacidad - cantidadRestante }} / {{ capacidad }}
+              </ion-label>
+              <ion-text color="danger" *ngIf="cantidadRestante < 0">
+                <p>Numero de asientos no disponibles.</p>
+              </ion-text>
+            </ion-item>
+
             <div formArrayName="categoriasAsiento">
               <div *ngFor="let categoria of categoriasAsiento.controls; let i = index" [formGroupName]="i">
 
                 <ion-item>
+                  <ion-icon name="bulb-outline" slot="start"></ion-icon>
                   <ion-label position="floating">Nombre</ion-label>
                   <ion-input type="text" formControlName="nombre" required></ion-input>
                 </ion-item>
@@ -111,6 +120,7 @@
 
                 <ion-item>
                   <ion-label position="floating">Precio</ion-label>
+                  <ion-icon name="cash-outline" slot="start"></ion-icon>
                   <ion-input type="number" formControlName="precio" required></ion-input>
                 </ion-item>
                 <div class="error-message" *ngIf="categoria.get('precio')?.invalid && categoria.get('precio')?.touched">
@@ -120,6 +130,7 @@
                 </div>
 
                 <ion-item>
+                  <ion-icon name="people-circle-outline" slot="start"></ion-icon>
                   <ion-label position="floating">Cantidad</ion-label>
                   <ion-input type="number" formControlName="cantidad" required></ion-input>
                 </ion-item>
@@ -134,18 +145,22 @@
                 <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar</ion-button>
               </div>
             </div>
-            <ion-button shape="round" expand="full" [disabled]="!categoriasAsiento || !categoriasAsiento.valid"
+            <ion-button shape="round" expand="full" [disabled]="cantidadRestante <= 0 || !categoriasAsiento.valid"
               (click)="agregarCategoriaAsiento()">
               Agregar Categoría
             </ion-button>
           </ion-list>
 
           <ion-list>
-            <ion-item>Archivos Multimedia:</ion-item>
+            <ion-item lines="none">
+              <ion-icon name="images-outline" slot="start"></ion-icon>
+              <ion-label>Archivos Multimedia:</ion-label>
+            </ion-item>
             <div formArrayName="archivosMultimedia">
               <div *ngFor="let archivo of archivosMultimedia.controls; let i = index" [formGroupName]="i">
 
                 <ion-item>
+                  <ion-icon name="bulb-outline" slot="start"></ion-icon>
                   <ion-label position="floating">Nombre del Archivo</ion-label>
                   <ion-input type="text" formControlName="nombreArchivo" required></ion-input>
                 </ion-item>
@@ -157,7 +172,7 @@
                 </div>
 
                 <ion-item>
-                  <ion-label>Archivo</ion-label>
+                  <ion-icon name="share-outline" slot="start"></ion-icon>
                   <input type="file" accept="image/*,video/*" (change)="onArchivoSeleccionado($event, i)" />
                 </ion-item>
 
@@ -180,10 +195,11 @@
           </ion-list>
 
 
-          <ion-button shape="round" expand="full" type="submit" [disabled]="!conciertoForm.valid"
-            class="ion-margin-top button-34">
+          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="
+          !conciertoForm.valid ||cantidadRestante < 0 || cantidadRestante > 0 ||categoriasAsiento.length === 0">
             Crear Concierto
           </ion-button>
+
 
 
         </form>

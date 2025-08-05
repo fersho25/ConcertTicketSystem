@@ -83,30 +83,34 @@ export class CrearConciertoPage implements OnInit {
       contenido: ['', Validators.required],
       nombreArchivo: ['', [Validators.required, Validators.minLength(3)]],
       tipo: [''],
-      urlTemporal: ['']  // para la vista previa
+      urlTemporal: ['']  
     });
   }
 
 
 
   async crearConcierto() {
-    if (this.conciertoForm.invalid) {
+    if (
+      this.conciertoForm.invalid ||
+      this.cantidadRestante !== 0 ||
+      this.categoriasAsiento.length === 0
+    ) {
       const alert = await this.alertController.create({
         header: 'Concierto inválido',
-        message: 'Por favor, ingrese la información correctamente.',
+        message: 'Verifique que todos los campos estén completos y que se hayan asignado todos los asientos.',
         buttons: ['Ok']
       });
       await alert.present();
       return;
     }
 
- 
+
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     const usuarioID = usuario.id;
 
     const concierto: ConciertoDTO = {
       ...this.conciertoForm.value,
-      usuarioID: usuarioID 
+      usuarioID: usuarioID
     };
 
     this.conciertoService.registrarConcierto(concierto).subscribe(
@@ -166,7 +170,14 @@ export class CrearConciertoPage implements OnInit {
   }
 
 
-
+  get cantidadRestante(): number {
+    const capacidad = this.conciertoForm.get('capacidad')?.value || 0;
+    const totalAsignado = this.categoriasAsiento.controls.reduce((suma, categoria) => {
+      const cantidad = categoria.get('cantidad')?.value || 0;
+      return suma + cantidad;
+    }, 0);
+    return capacidad - totalAsignado;
+  }
 
 
   agregarCategoriaAsiento() {
@@ -185,21 +196,9 @@ export class CrearConciertoPage implements OnInit {
     this.archivosMultimedia.removeAt(index);
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  get capacidad(): number {
+    return this.conciertoForm?.get('capacidad')?.value || 0;
+  }
 
   ionViewWillEnter() {
     // Leer estado guardado
