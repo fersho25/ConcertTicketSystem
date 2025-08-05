@@ -29,7 +29,11 @@ public static class ConciertoMapper
             ArchivosMultimedia = dto.ArchivosMultimedia?.Select(am => new ArchivoMultimedia
             {
                 Id = am.Id,
-                Contenido = Convert.FromBase64String(am.Contenido),
+                Contenido = Convert.FromBase64String(
+                    am.Contenido.Contains(",")
+                        ? am.Contenido.Substring(am.Contenido.IndexOf(",") + 1).Trim()
+                        : am.Contenido
+                ),
                 NombreArchivo = am.NombreArchivo,
                 Tipo = am.Tipo,
                 ConciertoId = am.ConciertoId,
@@ -37,6 +41,7 @@ public static class ConciertoMapper
             }).ToList() ?? new List<ArchivoMultimedia>()
         };
     }
+
 
     public static ConciertoDTO MapToDTO(Concierto concierto)
     {

@@ -22,6 +22,8 @@ function fechaHoraFuturaValidator(control: AbstractControl): ValidationErrors | 
   return null;
 }
 
+
+
 @Component({
   selector: 'app-crear-concierto',
   standalone: true,
@@ -80,7 +82,7 @@ export class CrearConciertoPage implements OnInit {
     return this.fb.group({
       contenido: ['', Validators.required],
       nombreArchivo: ['', [Validators.required, Validators.minLength(3)]],
-      tipo: ['', Validators.required],
+      tipo: [''],
       urlTemporal: ['']  // para la vista previa
     });
   }
@@ -98,12 +100,19 @@ export class CrearConciertoPage implements OnInit {
       return;
     }
 
-    const concierto: ConciertoDTO = this.conciertoForm.value;
+ 
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuarioID = usuario.id;
+
+    const concierto: ConciertoDTO = {
+      ...this.conciertoForm.value,
+      usuarioID: usuarioID 
+    };
 
     this.conciertoService.registrarConcierto(concierto).subscribe(
       async (response) => {
         const alert = await this.alertController.create({
-          header: 'Exito',
+          header: 'Éxito',
           message: 'Concierto registrado correctamente.',
           buttons: ['Ok']
         });
@@ -122,11 +131,26 @@ export class CrearConciertoPage implements OnInit {
     );
   }
 
+
   onArchivoSeleccionado(event: any, index: number) {
     const archivo = event.target.files[0];
 
     if (archivo) {
-      // Guardamos el archivo como base64 para enviar
+
+      const tiposPermitidos = ['image/jpeg', 'image/png', 'video/mp4'];
+      if (!tiposPermitidos.includes(archivo.type)) {
+        alert("Tipo de archivo no permitido. Solo se permiten imágenes JPEG/PNG o videos MP4.");
+        return;
+      }
+
+
+      const tamanioMaximoMB = 10;
+      if (archivo.size > tamanioMaximoMB * 1024 * 1024) {
+        alert(`El archivo excede el tamaño máximo permitido de ${tamanioMaximoMB}MB.`);
+        return;
+      }
+
+
       const reader = new FileReader();
       reader.onload = () => {
         const base64 = reader.result as string;
@@ -140,6 +164,8 @@ export class CrearConciertoPage implements OnInit {
       reader.readAsDataURL(archivo);
     }
   }
+
+
 
 
 

@@ -152,22 +152,6 @@
                 <video *ngIf="archivo.get('urlTemporal')?.value && archivo.get('tipo')?.value.startsWith('video/')"
                   [src]="archivo.get('urlTemporal')?.value" controls style="max-width: 50%; margin-top: 10px;"></video>
 
-                <ion-item>
-                  <ion-list>
-                    <ion-item>
-                      <ion-select formControlName="tipo" placeholder="Seleccione el tipo" required>
-                        <ion-select-option value="imagen">Imagen</ion-select-option>
-                        <ion-select-option value="video">Video</ion-select-option>
-                      </ion-select>
-                    </ion-item>
-                  </ion-list>
-                </ion-item>
-                <div class="error-message" *ngIf="archivo.get('tipo')?.invalid && archivo.get('tipo')?.touched">
-                  <ion-text color="danger">
-                    <p>Tipo requerido</p>
-                  </ion-text>
-                </div>
-
                 <ion-button shape="round" color="danger" (click)="removerArchivoMultimedia(i)">
                   Eliminar Archivo
                 </ion-button>
