@@ -1,8 +1,8 @@
 ﻿
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
-using GestionPlataformaConcierto.BW.DTO;
 
-namespace GestionPlataformaConcierto.BW.Mapeo
+namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
 {
     public class UsuarioGetMapper
     {

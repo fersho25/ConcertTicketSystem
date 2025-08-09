@@ -1,4 +1,4 @@
-﻿namespace GestionPlataformaConcierto.BW.DTO
+﻿namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 {
     public class CategoriaAsientoDTO
     {

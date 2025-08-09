@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
 using GestionPlataformaConcierto.BC.Modelos;
-using GestionPlataformaConcierto.BW.DTO;
+
 using GestionPlataformaConcierto.BW.Interfaces.BW;
-using GestionPlataformaConcierto.BW.Mapeo;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionPlataformaConcierto.Api.Controllers

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GestionPlataformaConcierto.BW.DTO
+namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 {
     public class UsuarioDTO
     {
