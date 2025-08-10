@@ -1,0 +1,152 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Crear Reserva</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Mapa de Asientos</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="mapa-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+    <div class="asiento" *ngFor="let asiento of asientosMapa" [style.backgroundColor]="getColor(asiento.estado)"
+      style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; color: white; border-radius: 4px; cursor: pointer; user-select: none;"
+      (click)="agregarAsiento(asiento)">
+      {{ asiento.numeroAsiento }}
+    </div>
+  </div>
+
+  <form [formGroup]="reservaForm" (ngSubmit)="registrarReserva()">
+
+    <!-- Usuario -->
+    <ion-item>
+      <ion-label position="stacked">Usuario ID</ion-label>
+      <ion-input type="number" formControlName="usuarioId"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="reservaForm.get('usuarioId')?.invalid && reservaForm.get('usuarioId')?.touched">
+      Usuario requerido y debe ser mayor a 0.
+    </ion-text>
+
+    <!-- Concierto -->
+
+    <ion-item>
+      <ion-label position="stacked">Concierto ID</ion-label>
+      <ion-input type="number" formControlName="conciertoId"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="reservaForm.get('conciertoId')?.invalid && reservaForm.get('conciertoId')?.touched">
+      Concierto requerido y debe ser mayor a 0.
+    </ion-text>
+
+    <!-- Fechas -->
+
+    <ion-item>
+      <ion-label position="stacked">Fecha y hora de reserva</ion-label>
+      <ion-datetime formControlName="fechaHoraReserva"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Fecha y hora de expiración</ion-label>
+      <ion-datetime formControlName="fechaHoraExpiracion"></ion-datetime>
+    </ion-item>
+
+    <!-- Estado -->
+    <ion-item>
+      <ion-label position="stacked">Estado</ion-label>
+      <ion-select formControlName="estado">
+        <ion-select-option value="ACTIVA">Activa</ion-select-option>
+        <ion-select-option value="CANCELADA">Cancelada</ion-select-option>
+        <ion-select-option value="EXPIRADA">Expirada</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Método de pago -->
+    <ion-item>
+      <ion-label position="stacked">Método de pago</ion-label>
+      <ion-input formControlName="metodoPago"></ion-input>
+    </ion-item>
+
+    <!-- Fecha compra -->
+    <ion-item>
+      <ion-label position="stacked">Fecha y hora de compra</ion-label>
+      <ion-datetime formControlName="fechaHoraCompra"></ion-datetime>
+    </ion-item>
+
+    <!-- Precio total -->
+    <ion-item>
+      <ion-label position="stacked">Precio total</ion-label>
+      <ion-input type="number" formControlName="precioTotal"></ion-input>
+    </ion-item>
+
+    <!-- Descuento automático por volumen -->
+    <ion-item>
+      <ion-label position="stacked">Descuento automático aplicado</ion-label>
+      <ion-input
+        [value]="reservaForm.get('descuentoAplicado')?.value ? reservaForm.get('descuentoAplicado')?.value + '%' : '0%'"
+        readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+  <ion-label position="stacked">Promoción aplicada</ion-label>
+  <ion-select formControlName="promocionAplicada" (ionChange)="actualizarPrecioTotal()">
+    <ion-select-option value="">Ninguna</ion-select-option>
+    <ion-select-option value="10%">10% descuento verano</ion-select-option>
+    <ion-select-option value="50">50 colones descuento cupón</ion-select-option>
+    <ion-select-option value="15%">15% descuento especial</ion-select-option>
+  </ion-select>
+</ion-item>
+
+
+    <!-- Código QR -->
+    <ion-item>
+      <ion-label position="stacked">Código QR</ion-label>
+      <ion-input formControlName="codigoQR"></ion-input>
+    </ion-item>
+
+    <!-- Notificado -->
+    <ion-item>
+      <ion-label>Notificado</ion-label>
+      <ion-toggle formControlName="notificado"></ion-toggle>
+    </ion-item>
+
+    <!-- Lista de asientos -->
+    <ion-list>
+      <ion-item lines="full">
+        <ion-label>
+          <h2>Asientos</h2>
+        </ion-label>
+      </ion-item>
+
+      <div formArrayName="asientos">
+        <div *ngFor="let asiento of asientos.controls; let i = index" [formGroupName]="i">
+          <ion-item>
+            <ion-label position="stacked">Categoría asiento ID</ion-label>
+            <ion-input type="number" formControlName="CategoriaAsientoId" readonly></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Número de asiento</ion-label>
+            <ion-input type="number" formControlName="NumeroAsiento" readonly></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Precio</ion-label>
+            <ion-input type="number" formControlName="Precio" readonly></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" color="danger" (click)="eliminarAsiento(i)">Eliminar asiento</ion-button>
+        </div>
+      </div>
+    </ion-list>
+
+    <!-- Botón enviar -->
+    <ion-button expand="block" type="submit" color="primary">
+      Registrar Reserva
+    </ion-button>
+
+  </form>
+
+</ion-content>

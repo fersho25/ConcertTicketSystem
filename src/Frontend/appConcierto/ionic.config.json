@@ -1,0 +1,7 @@
+{
+  "name": "appConcierto",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

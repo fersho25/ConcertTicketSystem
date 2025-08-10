@@ -1,0 +1,50 @@
+.titulo-centrado {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold; 
+  font-size: 24px;  
+}
+
+.titulo-personalizado-registrar {
+  font-weight: bold;  /* Negrita */
+  font-size: 20px;    /* Tamaño, ajusta a lo que quieras */
+  text-align: center; /* Ya que tu clase es titulo-centrado, si quieres puedes repetir o combinar */
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+ion-card {
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards ease-out;
+}
+
+ion-button.button-34::part(native) {
+  background: #5E5DF0;
+  border-radius: 999px;
+  box-shadow: #5E5DF0 0 10px 20px -10px;
+  color: #FFFFFF;
+  font-family: Inter, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  padding: 8px 18px;
+  width: 100%;
+  border: none;
+}
+
+ion-icon {
+  color: #02ffff;
+}
+
+.error-message{
+  text-align: center;
+  margin-top: 5px;
+
+}

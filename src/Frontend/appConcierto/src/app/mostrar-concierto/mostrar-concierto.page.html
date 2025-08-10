@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/home">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      {{ concierto.nombre }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <ion-card *ngIf="concierto">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <div class="carousel-container">
+            <div class="carousel-slides">
+              <div class="carousel-slide" *ngFor="let archivo of concierto.archivosMultimedia; let i = index"
+                [class.active]="i === activeIndex">
+                <img *ngIf="archivo.tipo.startsWith('image/')" [src]="getSrcArchivo(archivo)" />
+                <video *ngIf="archivo.tipo.startsWith('video/')" [src]="getSrcArchivo(archivo)" controls></video>
+              </div>
+            </div>
+
+            <button class="prev-btn" (click)="prevSlide()">&#10094;</button>
+            <button class="next-btn" (click)="nextSlide()">&#10095;</button>
+          </div>
+
+
+          <div class="ion-padding-top">
+            <h3>Detalles Del Concierto:</h3>
+            <p><strong>Fecha:</strong> {{ concierto.fecha | date:'short' }}</p>
+            <p><strong>Lugar:</strong> {{ concierto.lugar }}</p>
+            <p>{{ concierto.descripcion }}</p>
+          </div>
+        </ion-col>
+
+        <ion-col size="6">
+          <h3 class="ion-text-center">Categorías de Asiento</h3>
+          <table class="tabla-con-bordes ion-text-center" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Precio (₡)</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cat of concierto.categoriasAsiento">
+                <td>{{ cat.nombre }}</td>
+                <td>{{ cat.precio }}</td>
+                <td>{{ cat.cantidad }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ion-button routerLink="/reserva" shape="round" expand="full">
+            Reservar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+  </ion-toolbar>
+</ion-footer>
