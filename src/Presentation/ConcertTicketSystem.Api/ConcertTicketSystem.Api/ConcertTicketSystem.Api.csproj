@@ -10,4 +10,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\ConcertTicketSystem.Application\ConcertTicketSystem.Application\ConcertTicketSystem.Application.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\ConcertTicketSystem.Persistence\ConcertTicketSystem.Persistence\ConcertTicketSystem.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
