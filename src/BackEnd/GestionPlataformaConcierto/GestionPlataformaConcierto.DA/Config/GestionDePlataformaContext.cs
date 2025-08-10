@@ -11,6 +11,8 @@ namespace GestionPlataformaConcierto.DA.Config
         public DbSet<Concierto> Concierto { get; set; }
         public DbSet<CategoriaAsiento> CategoriaAsiento { get; set; }
         public DbSet<ArchivoMultimedia> ArchivoMultimedia { get; set; }
+        public DbSet<Reserva> Reserva { get; set; }
+        public DbSet<AsientoReserva> AsientoReserva { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +35,34 @@ namespace GestionPlataformaConcierto.DA.Config
                 .HasOne(c => c.Usuario)
                 .WithMany(u => u.ConciertosCreados)
                 .HasForeignKey(c => c.UsuarioID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Reserva - Usuario
+            modelBuilder.Entity<Reserva>()
+                .HasOne(r => r.Usuario)
+                .WithMany(u => u.Reservas)
+                .HasForeignKey(r => r.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Reserva - Concierto
+            modelBuilder.Entity<Reserva>()
+                .HasOne(r => r.Concierto)
+                .WithMany(c => c.Reservas)
+                .HasForeignKey(r => r.ConciertoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación AsientoReserva - Reserva
+            modelBuilder.Entity<AsientoReserva>()
+                .HasOne(ar => ar.Reserva)
+                .WithMany(r => r.Asientos)
+                .HasForeignKey(ar => ar.ReservaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación AsientoReserva - CategoriaAsiento
+            modelBuilder.Entity<AsientoReserva>()
+                .HasOne(ar => ar.CategoriaAsiento)
+                .WithMany()
+                .HasForeignKey(ar => ar.CategoriaAsientoId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

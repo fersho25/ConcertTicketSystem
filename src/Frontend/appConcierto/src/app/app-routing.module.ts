@@ -27,6 +27,12 @@ const routes: Routes = [
     path: 'mostrar-concierto/:id',
     loadChildren: () => import('./mostrar-concierto/mostrar-concierto.module').then( m => m.MostrarConciertoPageModule)
   },
+  {
+    path: 'reserva',
+    loadChildren: () => import('./reserva/reserva.module').then( m => m.ReservaPageModule)
+  },
+  
+
 ];
 
 @NgModule({

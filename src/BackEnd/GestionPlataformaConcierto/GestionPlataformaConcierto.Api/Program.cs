@@ -23,7 +23,6 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -34,6 +33,8 @@ builder.Services.AddScoped<IGestionarConciertoDA, GestionarConciertoDA>();
 builder.Services.AddScoped<IGestionarConciertoBW, GestionarConciertoBW>();
 builder.Services.AddScoped<IGestionarUsuarioDA, GestionarUsuarioDA>();
 builder.Services.AddScoped<IGestionarUsuarioBW, GestionarUsuarioBW>();
+builder.Services.AddScoped<IGestionarReservaDA, GestionarReservaDA>();
+builder.Services.AddScoped<IGestionarReservaBW, GestionarReservaBW>();
 
 var app = builder.Build();
 

@@ -12,5 +12,7 @@
 
         public string Rol { get; set; }
         public List<Concierto> ConciertosCreados { get; set; } = new List<Concierto>();
+
+        public ICollection<Reserva> Reservas { get; set; }
     }
 }

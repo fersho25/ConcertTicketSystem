@@ -42,5 +42,37 @@ CREATE TABLE Usuario (
     Rol NVARCHAR(255) NOT NULL
 );
 
+CREATE TABLE Reserva (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UsuarioId INT NOT NULL,
+    ConciertoId INT NOT NULL,
+    FechaHoraReserva DATETIME NOT NULL,
+    FechaHoraExpiracion DATETIME NOT NULL,
+    Estado NVARCHAR(20) NOT NULL,
+    MetodoPago NVARCHAR(50) NOT NULL,
+    FechaHoraCompra DATETIME NULL,
+    PrecioTotal DECIMAL(18,2) NOT NULL,
+    DescuentoAplicado DECIMAL(18,2) NOT NULL,
+    PromocionAplicada NVARCHAR(100) NULL,
+    CodigoQR NVARCHAR(255) NULL,
+    Notificado BIT NOT NULL,
 
+    CONSTRAINT FK_Reserva_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id),
+    CONSTRAINT FK_Reserva_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+
+
+
+CREATE TABLE AsientoReserva (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ReservaId INT NOT NULL,
+    CategoriaAsientoId INT NOT NULL,
+    NumeroAsiento INT NOT NULL,
+    Precio DECIMAL(18,2) NOT NULL,
+
+    CONSTRAINT FK_AsientoReserva_Reserva FOREIGN KEY (ReservaId) REFERENCES Reserva(Id),
+    CONSTRAINT FK_AsientoReserva_CategoriaAsiento FOREIGN KEY (CategoriaAsientoId) REFERENCES CategoriaAsiento(Id)
+);
+
+DROP TABLE dbo.AsientoReserva;
 

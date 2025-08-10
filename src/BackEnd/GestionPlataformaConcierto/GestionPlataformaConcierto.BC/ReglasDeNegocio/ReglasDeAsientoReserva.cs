@@ -2,17 +2,23 @@
 
 namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 {
+
     public static class ReglasDeAsientoReserva
     {
+        private static readonly List<string> EstadosPermitidos = new List<string>
+        {
+            "Disponible",
+            "Reservado",
+            "Vendido"
+        };
         public static bool elAsientoReservaEsValido(AsientoReserva asientoReserva)
         {
-            return elIdEsValido(asientoReserva.Id) &&
-                   elAsientoIdEsValido(asientoReserva.CategoriaAsientoId) &&
+            return elAsientoIdEsValido(asientoReserva.CategoriaAsientoId) &&
                    elNumeroAsientoEsValido(asientoReserva.NumeroAsiento) &&
                    elPrecioEsValido(asientoReserva.Precio);
         }
 
-        public static bool elIdEsValido( int id)
+        public static bool elIdEsValido(int id)
         {
             return id > 0;
         }
@@ -34,6 +40,19 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
         public static bool elPrecioEsValido(decimal precio)
         {
             return precio > 0;
+        }
+
+        public static EstadoAsiento ObtenerEstadoDelAsiento(AsientoReserva asientoReserva)
+        {
+            if (asientoReserva.Reserva == null)
+                return EstadoAsiento.Disponible;
+
+            return asientoReserva.Reserva.Estado switch
+            {
+                "ACTIVA" => EstadoAsiento.Reservado,
+                "COMPRADA" => EstadoAsiento.Vendido,
+                _ => EstadoAsiento.Disponible
+            };
         }
     }
 }

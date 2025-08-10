@@ -58,5 +58,3 @@ El proyecto sigue los principios de **Arquitectura Limpia (Clean Architecture)**
 3. Inicia la aplicación de Ionic: `ionic serve`
 
 La aplicación móvil se abrirá en tu navegador y se conectará al backend que ya está corriendo.
-
-hola pue

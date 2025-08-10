@@ -21,6 +21,8 @@
         public int UsuarioID { get; set; }
 
         public Usuario Usuario { get; set; }
+
+        public ICollection<Reserva> Reservas { get; set; }
     }
 
 }
