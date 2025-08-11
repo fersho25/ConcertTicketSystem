@@ -31,6 +31,11 @@ const routes: Routes = [
     path: 'reserva',
     loadChildren: () => import('./reserva/reserva.module').then( m => m.ReservaPageModule)
   },
+  {
+    path: 'panel-edicion',
+    loadChildren: () => import('./panel-edicion/panel-edicion.module').then( m => m.PanelEdicionPageModule)
+  },
+
   
 
 ];

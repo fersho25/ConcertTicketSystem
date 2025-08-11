@@ -2,6 +2,7 @@
 
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BC.ReglasDeNegocio;
+using GestionPlataformaConcierto.BW.CU;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
 
 namespace GestionPlataformaConcierto.BW.CU
@@ -58,6 +59,14 @@ namespace GestionPlataformaConcierto.BW.CU
             return gestionarConciertoDA.obtenerConciertos();
         }
 
+        public Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario)
+        {
+            return ReglasDeUsuario.ElIdEsValido(idUsuario)
+                ? gestionarConciertoDA.ObtenerConciertosPorUsuario(idUsuario)
+                : Task.FromResult(new List<Concierto>());
+
+        }
+
         public Task<bool> registrarConcierto(Concierto concierto)
         {
             return ReglasDeConcierto.elConciertoEsValido(concierto) 
@@ -66,3 +75,6 @@ namespace GestionPlataformaConcierto.BW.CU
         }
     }
 }
+
+
+

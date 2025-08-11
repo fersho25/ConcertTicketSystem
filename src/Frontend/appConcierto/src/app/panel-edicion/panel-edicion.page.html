@@ -1,34 +1,25 @@
 <ion-header>
   <ion-toolbar>
-    <h2>Bienvenido, {{ usuario.nombreCompleto }}</h2>
 
-    <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
-      routerLink="/crear-concierto" class="ion-text-center ion-margin-top">
-      Crear Concierto
-    </ion-button>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/home">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
 
-    <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
-      routerLink="/panel-edicion" class="ion-text-center ion-margin-top">
-      Mis Conciertos
-    </ion-button>
+    <ion-title class="ion-text-center">
+      Panel de Edicion de Conciertos
+    </ion-title>
 
-    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink=""
-      class="ion-text-center ion-margin-top">
-      Panel de Control
-    </ion-button>
-
-    <ion-button fill="outline" size="small" color="danger" class="ion-text-center ion-margin-end"
-      (click)="cerrarSesion()" slot="end">
-      Cerrar sesión
-    </ion-button>
-
-    <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
-      Modo Oscuro
-    </ion-toggle>
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
 
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
 
   <ng-container *ngIf="conciertos.length > 0; else sinConciertos">
@@ -52,8 +43,8 @@
                 Fecha: {{ concierto.fecha | date: 'short' }} <br />
                 Lugar: {{ concierto.lugar }}
               </ion-card-subtitle>
-              <ion-button [routerLink]="['/mostrar-concierto', concierto.id]" shape="round" expand="full">
-                Ver Detalles
+              <ion-button [routerLink]="['/editar-concierto', concierto.id]" shape="round" expand="full">
+                Editar
               </ion-button>
 
 

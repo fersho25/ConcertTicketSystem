@@ -16,6 +16,7 @@ namespace GestionPlataformaConcierto.BW.CU
         ///
         Task<bool> eliminarCategoriaAsiento(int id);
 
+        Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario);
         Task<bool> eliminarArchivoMultimedia(int id);
     }
 }

@@ -135,6 +135,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al iniciar sesión: {ex.Message}");
             }
         }
+
     }
 
 }

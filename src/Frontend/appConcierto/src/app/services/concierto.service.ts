@@ -37,7 +37,7 @@ export interface ConciertoDTO {
 export class ConciertoService {
   private baseUrl = 'http://localhost:5065/api/Concierto';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerConciertos(): Observable<ConciertoDTO[]> {
     return this.http.get<ConciertoDTO[]>(this.baseUrl);
@@ -65,5 +65,9 @@ export class ConciertoService {
 
   eliminarCategoriaAsiento(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.baseUrl}/categoriaAsiento/${id}`);
+  }
+
+  getConciertosPorUsuario(idUsuario: number): Observable<ConciertoDTO[]> {
+    return this.http.get<ConciertoDTO[]>(`${this.baseUrl}/usuario/${idUsuario}`);
   }
 }

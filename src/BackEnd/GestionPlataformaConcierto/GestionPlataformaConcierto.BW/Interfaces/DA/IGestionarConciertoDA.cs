@@ -18,6 +18,9 @@ namespace GestionPlataformaConcierto.BW.Interfaces.DA
         Task<bool> eliminarCategoriaAsiento(int id);
 
         Task<bool> eliminarArchivoMultimedia(int id);
+
+        Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario);
+
         Task<IEnumerable<SaleDetailDto>> GetSalesDetailsByConcertAsync(int concertId);
     }
 }

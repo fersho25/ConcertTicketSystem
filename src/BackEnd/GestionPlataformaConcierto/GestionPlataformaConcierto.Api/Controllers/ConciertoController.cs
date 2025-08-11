@@ -144,5 +144,23 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al obtener el concierto: {ex.Message}");
             }
         }
+
+        [HttpGet("usuario/{idUsuario}", Name = "ObtenerConciertosPorUsuario")]
+        public async Task<ActionResult<List<ConciertoDTO>>> GetConciertosPorUsuario(int idUsuario)
+        {
+            try
+            {
+                var conciertos = await gestionarConciertoBW.ObtenerConciertosPorUsuario(idUsuario);
+                var conciertosDTO = conciertos.Select(c => ConciertoMapper.MapToDTO(c)).ToList();
+                return Ok(conciertosDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al obtener los conciertos del usuario: {ex.Message}");
+            }
+
+        }
     }
 }
+
+

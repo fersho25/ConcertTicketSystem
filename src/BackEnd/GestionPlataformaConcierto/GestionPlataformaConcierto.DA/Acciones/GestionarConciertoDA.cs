@@ -110,6 +110,16 @@ namespace GestionPlataformaConcierto.DA.Acciones
             return await gestionDePlataformaContext.Concierto.Include(r => r.CategoriasAsiento).Include(r => r.ArchivosMultimedia).ToListAsync();
         }
 
+        public Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario)
+        {
+
+            return gestionDePlataformaContext.Concierto
+                .Where(c => c.UsuarioID == idUsuario)
+                .Include(c => c.CategoriasAsiento)
+                .Include(c => c.ArchivosMultimedia)
+                .ToListAsync();
+        }
+
         public async Task<bool> registrarConcierto(Concierto concierto)
         {
             try
@@ -126,3 +136,5 @@ namespace GestionPlataformaConcierto.DA.Acciones
         }
     }
 }
+
+
