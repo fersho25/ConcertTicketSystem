@@ -1,9 +1,9 @@
-﻿
+
 using GestionPlataformaConcierto.BC.Modelos;
 
-namespace GestionPlataformaConcierto.BW.Interfaces.BW
+namespace GestionPlataformaConcierto.BC.Interfaces.DA
 {
-    public interface IGestionarConciertoBW
+    public interface IGestionarConciertoDA
     {
         Task<bool> registrarConcierto(Concierto concierto);
         Task<bool> actualizarConcierto(int id, Concierto concierto);
@@ -17,5 +17,6 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
         Task<bool> eliminarCategoriaAsiento(int id);
 
         Task<bool> eliminarArchivoMultimedia(int id);
+        Task<IEnumerable<SaleDetailDto>> GetSalesDetailsByConcertAsync(int concertId);
     }
 }

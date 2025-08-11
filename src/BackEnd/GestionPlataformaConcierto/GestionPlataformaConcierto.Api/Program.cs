@@ -1,6 +1,6 @@
 using GestionPlataformaConcierto.BW.CU;
-using GestionPlataformaConcierto.BW.Interfaces.BW;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
+using GestionPlataformaConcierto.BC.Interfaces.BW;
+using GestionPlataformaConcierto.BC.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Acciones;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;

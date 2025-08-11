@@ -1,5 +1,5 @@
 ﻿using GestionPlataformaConcierto.BC.Modelos;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
+using GestionPlataformaConcierto.BC.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,7 +31,6 @@ namespace GestionPlataformaConcierto.DA.Acciones
 
             await gestionDePlataformaContext.SaveChangesAsync();
             return true;
-
         }
 
         public async Task<bool> eliminarArchivoMultimedia(int id)
@@ -71,6 +70,34 @@ namespace GestionPlataformaConcierto.DA.Acciones
             return true;
         }
 
+        // ===== INICIO DEL CÓDIGO NUEVO Y CORREGIDO =====
+        public async Task<IEnumerable<SaleDetailDto>> GetSalesDetailsByConcertAsync(int concertId)
+        {
+            // NOTA: Asumimos que los nombres de las entidades en C# son iguales a los de las tablas en SQL.
+            // Ej: Tabla 'Usuario' -> Entidad 'Usuario'.
+
+            var salesDetails = await gestionDePlataformaContext.AsientoReserva
+                // 1. Incluimos la Reserva a la que pertenece cada asiento
+                .Include(ar => ar.Reserva)
+                    // 2. Desde la Reserva, incluimos el Usuario que la hizo
+                    .ThenInclude(r => r.Usuario)
+                // 3. Incluimos también la Categoría de cada asiento
+                .Include(ar => ar.CategoriaAsiento)
+                // 4. Filtramos para obtener solo los asientos del concierto y estado correctos
+                .Where(ar => ar.Reserva.ConciertoId == concertId && ar.Reserva.Estado == "Comprado")
+                // 5. Proyectamos el resultado a nuestro DTO
+                .Select(ar => new SaleDetailDto
+                {
+                    Comprador = ar.Reserva.Usuario.NombreCompleto,
+                    FechaCompra = ar.Reserva.FechaHoraCompra ?? DateTime.MinValue, // Usamos la fecha de compra de la reserva
+                    CategoriaAsiento = ar.CategoriaAsiento.Nombre,
+                    Precio = ar.Precio // Usamos el precio guardado en el asiento de la reserva
+                })
+                .ToListAsync();
+
+            return salesDetails;
+        }
+        // ===== FIN DEL CÓDIGO NUEVO Y CORREGIDO =====
 
         public async Task<Concierto> obtenerConciertoPorId(int id)
         {
@@ -87,13 +114,12 @@ namespace GestionPlataformaConcierto.DA.Acciones
             try
             {
                 gestionDePlataformaContext.Concierto.Add(concierto);
-
                 await gestionDePlataformaContext.SaveChangesAsync();
-
                 return true;
             }
             catch (Exception ex)
             {
+                // Considera registrar el error 'ex' para depuración
                 return false;
             }
         }

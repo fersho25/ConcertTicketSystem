@@ -1,9 +1,9 @@
-﻿
+
 using GestionPlataformaConcierto.BC.Modelos;
 
-namespace GestionPlataformaConcierto.BW.Interfaces.DA
+namespace GestionPlataformaConcierto.BC.Interfaces.BW
 {
-    public interface IGestionarConciertoDA
+    public interface IGestionarConciertoBW
     {
         Task<bool> registrarConcierto(Concierto concierto);
         Task<bool> actualizarConcierto(int id, Concierto concierto);

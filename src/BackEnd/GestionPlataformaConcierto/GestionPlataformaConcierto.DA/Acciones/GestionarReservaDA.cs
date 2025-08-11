@@ -1,5 +1,5 @@
 ﻿using GestionPlataformaConcierto.BC.Modelos;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
+using GestionPlataformaConcierto.BC.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
 

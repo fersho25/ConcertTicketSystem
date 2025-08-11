@@ -4,7 +4,7 @@ using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
 using GestionPlataformaConcierto.BC.Modelos;
 
-using GestionPlataformaConcierto.BW.Interfaces.BW;
+using GestionPlataformaConcierto.BC.Interfaces.BW;
 
 using Microsoft.AspNetCore.Mvc;
 

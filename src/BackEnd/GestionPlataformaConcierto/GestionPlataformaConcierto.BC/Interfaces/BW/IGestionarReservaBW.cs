@@ -1,6 +1,6 @@
-﻿using GestionPlataformaConcierto.BC.Modelos;
+using GestionPlataformaConcierto.BC.Modelos;
 
-namespace GestionPlataformaConcierto.BW.Interfaces.BW
+namespace GestionPlataformaConcierto.BC.Interfaces.BW
 {
     public interface IGestionarReservaBW
     {
