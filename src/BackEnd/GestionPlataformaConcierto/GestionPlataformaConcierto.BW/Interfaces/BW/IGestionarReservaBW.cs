@@ -1,8 +1,8 @@
 using GestionPlataformaConcierto.BC.Modelos;
 
-namespace GestionPlataformaConcierto.BC.Interfaces.DA
+namespace GestionPlataformaConcierto.BW.Interfaces.BW
 {
-    public interface IGestionarReservaDA
+    public interface IGestionarReservaBW
     {
         Task<bool> registrarReserva(Reserva reserva);
         Task<bool> actualizarReserva(int id, Reserva reserva);
@@ -17,5 +17,6 @@ namespace GestionPlataformaConcierto.BC.Interfaces.DA
         Task<bool> cambiarEstadoReserva(int id, string nuevoEstado);
 
         Task<List<AsientoReserva>> ObtenerAsientosPorConcierto(int conciertoId);
+
     }
 }

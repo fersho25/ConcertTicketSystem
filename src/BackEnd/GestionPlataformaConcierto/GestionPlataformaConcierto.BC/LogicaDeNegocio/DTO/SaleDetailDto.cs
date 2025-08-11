@@ -1,4 +1,4 @@
-﻿namespace GestionPlataformaConcierto.BC.Modelos
+﻿namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 {
     public class SaleDetailDto
     {

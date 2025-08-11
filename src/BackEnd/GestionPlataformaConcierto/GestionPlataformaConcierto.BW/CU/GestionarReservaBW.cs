@@ -1,7 +1,7 @@
 ﻿using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BC.ReglasDeNegocio;
-using GestionPlataformaConcierto.BC.Interfaces.BW;
-using GestionPlataformaConcierto.BC.Interfaces.DA;
+using GestionPlataformaConcierto.BW.Interfaces.BW;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
 
 namespace GestionPlataformaConcierto.BW.CU
 {

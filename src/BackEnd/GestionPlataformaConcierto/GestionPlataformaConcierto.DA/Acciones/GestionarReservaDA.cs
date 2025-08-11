@@ -1,7 +1,7 @@
 ﻿using GestionPlataformaConcierto.BC.Modelos;
-using GestionPlataformaConcierto.BC.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
 
 namespace GestionPlataformaConcierto.DA.Acciones
 {

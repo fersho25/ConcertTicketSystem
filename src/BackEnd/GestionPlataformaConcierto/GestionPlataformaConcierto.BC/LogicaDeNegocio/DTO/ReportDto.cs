@@ -1,5 +1,4 @@
-﻿
-namespace GestionPlataformaConcierto.BC.Reports
+﻿namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 {
     public class ReportDto
     {

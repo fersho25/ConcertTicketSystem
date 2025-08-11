@@ -1,7 +1,8 @@
 
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
 
-namespace GestionPlataformaConcierto.BC.Interfaces.DA
+namespace GestionPlataformaConcierto.BW.Interfaces.DA
 {
     public interface IGestionarConciertoDA
     {

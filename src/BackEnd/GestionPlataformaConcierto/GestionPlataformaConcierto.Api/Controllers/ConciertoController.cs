@@ -1,7 +1,7 @@
 ﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
-using GestionPlataformaConcierto.BC.Interfaces.BW;
 using Microsoft.AspNetCore.Mvc;
+using GestionPlataformaConcierto.BW.CU;
 
 namespace GestionPlataformaConcierto.Api.Controllers
 {

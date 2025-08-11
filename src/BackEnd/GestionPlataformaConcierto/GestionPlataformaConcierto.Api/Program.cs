@@ -1,9 +1,9 @@
 using GestionPlataformaConcierto.BW.CU;
-using GestionPlataformaConcierto.BC.Interfaces.BW;
-using GestionPlataformaConcierto.BC.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Acciones;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
+using GestionPlataformaConcierto.BW.Interfaces.BW;
 
 var builder = WebApplication.CreateBuilder(args);
 
