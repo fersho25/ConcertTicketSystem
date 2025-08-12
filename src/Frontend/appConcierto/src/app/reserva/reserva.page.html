@@ -2,10 +2,10 @@
   <ion-toolbar>
 
     <ion-buttons slot="start">
-      <ion-button fill="clear" routerLink="/home">
-        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
-        Volver
-      </ion-button>
+      <ion-button fill="clear" (click)="volverHome()">
+  <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+  Volver
+</ion-button>
     </ion-buttons>
 
     <ion-title class="ion-text-center">
@@ -40,45 +40,49 @@
   <form [formGroup]="reservaForm" (ngSubmit)="registrarReserva()">
 
     <!-- Usuario -->
-    <ion-item>
-      <ion-label position="stacked">Usuario ID</ion-label>
-      <ion-input type="number" formControlName="usuarioId"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="reservaForm.get('usuarioId')?.invalid && reservaForm.get('usuarioId')?.touched">
-      Usuario requerido y debe ser mayor a 0.
-    </ion-text>
+
+    <ion-input type="hidden" formControlName="usuarioId"></ion-input>
+
 
     <!-- Concierto -->
 
-    <ion-item>
-      <ion-label position="stacked">Concierto ID</ion-label>
-      <ion-input type="number" formControlName="conciertoId"></ion-input>
-    </ion-item>
-    <ion-text color="danger" *ngIf="reservaForm.get('conciertoId')?.invalid && reservaForm.get('conciertoId')?.touched">
-      Concierto requerido y debe ser mayor a 0.
-    </ion-text>
+      <ion-input type="hidden" formControlName="conciertoId"></ion-input>
+    
 
     <!-- Fechas -->
 
+    <ion-input type="hidden" formControlName="fechaHoraReserva"></ion-input>
+    <ion-input type="hidden" formControlName="fechaHoraExpiracion"></ion-input>
+
     <ion-item>
-      <ion-label position="stacked">Fecha y hora de reserva</ion-label>
-      <ion-datetime formControlName="fechaHoraReserva"></ion-datetime>
+      <ion-label>
+        Fecha y hora de reserva (actual):
+      </ion-label>
+      <ion-text>
+        {{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraReserva')?.value) }}
+      </ion-text>
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Fecha y hora de expiración</ion-label>
-      <ion-datetime formControlName="fechaHoraExpiracion"></ion-datetime>
+      <ion-label>
+        Fecha y hora de expiración:
+      </ion-label>
+      <ion-text>
+        {{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraExpiracion')?.value) }}
+      </ion-text>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Tiempo restante para expiración</ion-label>
+      <ion-text>{{ tiempoRestanteSegundos() }} segundos</ion-text>
     </ion-item>
 
     <!-- Estado -->
     <ion-item>
-      <ion-label position="stacked">Estado</ion-label>
-      <ion-select formControlName="estado">
-        <ion-select-option value="ACTIVA">Activa</ion-select-option>
-        <ion-select-option value="CANCELADA">Cancelada</ion-select-option>
-        <ion-select-option value="EXPIRADA">Expirada</ion-select-option>
-      </ion-select>
-    </ion-item>
+  <ion-label position="stacked">Estado</ion-label>
+  <ion-input [value]="reservaForm.get('estado')?.value" readonly></ion-input>
+</ion-item>
+
 
     <!-- Método de pago -->
     <ion-item>
@@ -95,7 +99,7 @@
     <!-- Precio total -->
     <ion-item>
       <ion-label position="stacked">Precio total</ion-label>
-      <ion-input type="number" formControlName="precioTotal"></ion-input>
+       <ion-input [value]="'₡ ' + reservaForm.get('precioTotal')?.value" readonly></ion-input>
     </ion-item>
 
     <!-- Descuento automático por volumen -->
@@ -107,14 +111,14 @@
     </ion-item>
 
     <ion-item>
-  <ion-label position="stacked">Promoción aplicada</ion-label>
-  <ion-select formControlName="promocionAplicada" (ionChange)="actualizarPrecioTotal()">
-    <ion-select-option value="">Ninguna</ion-select-option>
-    <ion-select-option value="10%">10% descuento verano</ion-select-option>
-    <ion-select-option value="50">50 colones descuento cupón</ion-select-option>
-    <ion-select-option value="15%">15% descuento especial</ion-select-option>
-  </ion-select>
-</ion-item>
+      <ion-label position="stacked">Promoción aplicada</ion-label>
+      <ion-select formControlName="promocionAplicada" (ionChange)="actualizarPrecioTotal()">
+        <ion-select-option value="">Ninguna</ion-select-option>
+        <ion-select-option value="10%">10% descuento verano</ion-select-option>
+        <ion-select-option value="50">50 colones descuento cupón</ion-select-option>
+        <ion-select-option value="15%">15% descuento especial</ion-select-option>
+      </ion-select>
+    </ion-item>
 
 
     <!-- Código QR -->

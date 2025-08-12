@@ -67,3 +67,4 @@ namespace GestionPlataformaConcierto.DA.Config
         }
     }
 }
+

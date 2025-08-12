@@ -9,7 +9,7 @@
     </ion-buttons>
 
     <ion-title class="ion-text-center">
-      {{ concierto.nombre }}
+      {{ concierto?.nombre }}
     </ion-title>
 
     <ion-buttons slot="end">
@@ -67,8 +67,7 @@
               </tr>
             </tbody>
           </table>
-          <ion-button routerLink="/reserva" shape="round" expand="full">
-            Reservar
+          <ion-button (click)="irAReserva(concierto.id)">Reservar
           </ion-button>
         </ion-col>
       </ion-row>

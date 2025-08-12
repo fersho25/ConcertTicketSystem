@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConciertoDTO, ConciertoService } from '../services/concierto.service';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mostrar-concierto',
@@ -15,8 +16,14 @@ export class MostrarConciertoPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private conciertoService: ConciertoService
+    private conciertoService: ConciertoService,
+    private router: Router
   ) { }
+
+  irAReserva(conciertoId: number) {
+  localStorage.setItem('conciertoId', conciertoId.toString());
+  this.router.navigate(['/reserva']); // aquí sin pasar parámetros
+}
 
   ngOnInit() {
 
