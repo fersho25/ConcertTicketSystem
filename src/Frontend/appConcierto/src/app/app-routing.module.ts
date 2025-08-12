@@ -35,6 +35,11 @@ const routes: Routes = [
     path: 'panel-edicion',
     loadChildren: () => import('./panel-edicion/panel-edicion.module').then( m => m.PanelEdicionPageModule)
   },
+  {
+    path: 'edicion-concierto/:id',
+    loadChildren: () => import('./edicion-concierto/edicion-concierto.module').then( m => m.EdicionConciertoPageModule)
+  },
+
 
   
 

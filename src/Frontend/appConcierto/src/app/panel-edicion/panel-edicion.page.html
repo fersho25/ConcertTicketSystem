@@ -43,7 +43,7 @@
                 Fecha: {{ concierto.fecha | date: 'short' }} <br />
                 Lugar: {{ concierto.lugar }}
               </ion-card-subtitle>
-              <ion-button [routerLink]="['/editar-concierto', concierto.id]" shape="round" expand="full">
+              <ion-button [routerLink]="['/edicion-concierto', concierto.id]" shape="round" expand="full">
                 Editar
               </ion-button>
 

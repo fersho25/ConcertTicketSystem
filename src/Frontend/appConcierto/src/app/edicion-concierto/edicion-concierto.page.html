@@ -1,0 +1,171 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/home">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      {{ modoEdicion ? 'Editar Concierto' : 'Crear Concierto' }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="container">
+
+    <ion-card>
+      <ion-card-header class="titulo-personalizado-crearConcierto">
+        {{ modoEdicion ? 'Editar Concierto' : 'Crear Concierto' }}
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="conciertoEditForm" (ngSubmit)="editarConcierto()">
+
+          <!-- Campos básicos -->
+          <ion-item>
+            <ion-icon name="bulb-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Nombre:</ion-label>
+            <ion-input type="text" formControlName="nombre" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="conciertoEditForm.controls['nombre'].invalid && conciertoEditForm.controls['nombre'].touched">
+            <ion-text color="danger">
+              <p>El nombre es inválido</p>
+            </ion-text>
+          </div>
+
+          <!-- Más campos iguales para descripcion, fecha, lugar, capacidad -->
+
+          <!-- Categorías de asiento -->
+          <ion-list>
+            <ion-item lines="none">
+              <ion-icon name="podium-outline" slot="start"></ion-icon>
+              <ion-label>Categorías de Asiento:</ion-label>
+              <ion-label>
+                Asientos asignados: {{ capacidad - cantidadRestante }} / {{ capacidad }}
+              </ion-label>
+              <ion-text color="danger" *ngIf="cantidadRestante < 0">
+                <p>Número de asientos no disponibles.</p>
+              </ion-text>
+            </ion-item>
+
+            <div formArrayName="categoriasAsiento">
+              <div *ngFor="let categoria of categoriasAsiento.controls; let i = index" [formGroupName]="i">
+
+                <ion-item>
+                  <ion-icon name="bulb-outline" slot="start"></ion-icon>
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input type="text" formControlName="nombre" required></ion-input>
+                </ion-item>
+                <div class="error-message" *ngIf="categoria.get('nombre')?.invalid && categoria.get('nombre')?.touched">
+                  <ion-text color="danger">
+                    <p>Nombre inválido</p>
+                  </ion-text>
+                </div>
+
+                <ion-item>
+                  <ion-label position="floating">Precio</ion-label>
+                  <ion-icon name="cash-outline" slot="start"></ion-icon>
+                  <ion-input type="number" formControlName="precio" required></ion-input>
+                </ion-item>
+                <div class="error-message" *ngIf="categoria.get('precio')?.invalid && categoria.get('precio')?.touched">
+                  <ion-text color="danger">
+                    <p>Precio inválido</p>
+                  </ion-text>
+                </div>
+
+                <ion-item>
+                  <ion-icon name="people-circle-outline" slot="start"></ion-icon>
+                  <ion-label position="floating">Cantidad</ion-label>
+                  <ion-input type="number" formControlName="cantidad" required></ion-input>
+                </ion-item>
+                <div class="error-message"
+                  *ngIf="categoria.get('cantidad')?.invalid && categoria.get('cantidad')?.touched">
+                  <ion-text color="danger">
+                    <p>Cantidad inválida</p>
+                  </ion-text>
+                </div>
+
+                <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar</ion-button>
+              </div>
+            </div>
+
+            <ion-button shape="round" expand="full" (click)="agregarCategoriaAsiento()">
+              Agregar Categoría
+            </ion-button>
+          </ion-list>
+
+          <!-- Archivos multimedia -->
+          <ion-list>
+            <ion-item lines="none">
+              <ion-icon name="images-outline" slot="start"></ion-icon>
+              <ion-label>Archivos Multimedia:</ion-label>
+            </ion-item>
+
+            <div formArrayName="archivosMultimedia">
+              <div *ngFor="let archivo of archivosMultimedia.controls; let i = index" [formGroupName]="i">
+                <ion-item>
+                  <ion-icon name="bulb-outline" slot="start"></ion-icon>
+                  <ion-label position="floating">Nombre del Archivo</ion-label>
+                  <ion-input type="text" formControlName="nombreArchivo" required></ion-input>
+                </ion-item>
+                <div class="error-message"
+                  *ngIf="archivo.get('nombreArchivo')?.invalid && archivo.get('nombreArchivo')?.touched">
+                  <ion-text color="danger">
+                    <p>Nombre inválido</p>
+                  </ion-text>
+                </div>
+
+                <ion-item>
+                  <ion-icon name="share-outline" slot="start"></ion-icon>
+                  <input type="file" accept="image/*,video/*" (change)="onArchivoSeleccionado($event, i)" />
+                </ion-item>
+
+                <img *ngIf="archivo.get('urlTemporal')?.value && archivo.get('tipo')?.value.startsWith('image/')"
+                  [src]="archivo.get('urlTemporal')?.value" style="max-width: 50%; margin-top: 10px;" />
+
+                <video *ngIf="archivo.get('urlTemporal')?.value && archivo.get('tipo')?.value.startsWith('video/')"
+                  [src]="archivo.get('urlTemporal')?.value" controls style="max-width: 50%; margin-top: 10px;">
+                </video>
+
+                <ion-button shape="round" color="danger" (click)="removerArchivoMultimedia(i)">
+                  Eliminar Archivo
+                </ion-button>
+              </div>
+            </div>
+
+            <ion-button shape="round" expand="full" (click)="agregarArchivoMultimedia()">
+              Agregar Archivo Multimedia
+            </ion-button>
+          </ion-list>
+
+          <!-- Botón enviar -->
+          <ion-button
+            shape="round"
+            expand="full"
+            type="submit"
+            class="ion-margin-top button-34"
+            [disabled]="!conciertoEditForm.valid || cantidadRestante < 0 || categoriasAsiento.length === 0"
+          >
+            {{ modoEdicion ? 'Guardar Cambios' : 'Crear Concierto' }}
+          </ion-button>
+
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+  </ion-toolbar>
+</ion-footer>

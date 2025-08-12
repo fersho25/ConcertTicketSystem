@@ -203,4 +203,12 @@ export class ReservaPage implements OnInit {
     localStorage.setItem('modoOscuro', JSON.stringify(shouldAdd));
     this.modoOscuroActivado = shouldAdd;
   }
+
+
+
+
+  darkPaletteToggleChange(event: CustomEvent) {
+    this.toggleDarkPalette(event.detail.checked);
+  }
+
 }

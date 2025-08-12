@@ -1,6 +1,23 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Crear Reserva</ion-title>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/home">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      Reserva
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
