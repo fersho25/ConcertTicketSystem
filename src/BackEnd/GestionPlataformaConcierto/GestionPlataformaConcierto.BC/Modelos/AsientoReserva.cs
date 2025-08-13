@@ -15,7 +15,9 @@
         public decimal Precio { get; set; }
         public int ReservaId { get; set; }
         public Reserva Reserva { get; set; }
-        
+        public int? CompraId { get; set; }        
+        public Compra Compra { get; set; }
+
 
     }
 }

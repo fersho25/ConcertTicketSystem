@@ -21,9 +21,9 @@ export class MostrarConciertoPage implements OnInit {
   ) { }
 
   irAReserva(conciertoId: number) {
-  localStorage.setItem('conciertoId', conciertoId.toString());
-  this.router.navigate(['/reserva']); // aquí sin pasar parámetros
-}
+    localStorage.setItem('conciertoId', conciertoId.toString());
+    this.router.navigate(['/reserva']); // aquí sin pasar parámetros
+  }
 
   ngOnInit() {
 
@@ -43,24 +43,24 @@ export class MostrarConciertoPage implements OnInit {
       : `data:${archivo.tipo};base64,${archivo.contenido}`;
   }
 
-  
-activeIndex = 0;
 
-prevSlide() {
-  if(this.activeIndex === 0) {
-    this.activeIndex = this.concierto.archivosMultimedia.length - 1;
-  } else {
-    this.activeIndex--;
-  }
-}
+  activeIndex = 0;
 
-nextSlide() {
-  if(this.activeIndex === this.concierto.archivosMultimedia.length - 1) {
-    this.activeIndex = 0;
-  } else {
-    this.activeIndex++;
+  prevSlide() {
+    if (this.activeIndex === 0) {
+      this.activeIndex = this.concierto.archivosMultimedia.length - 1;
+    } else {
+      this.activeIndex--;
+    }
   }
-}
+
+  nextSlide() {
+    if (this.activeIndex === this.concierto.archivosMultimedia.length - 1) {
+      this.activeIndex = 0;
+    } else {
+      this.activeIndex++;
+    }
+  }
 
 
   darkPaletteToggleChange(event: CustomEvent) {

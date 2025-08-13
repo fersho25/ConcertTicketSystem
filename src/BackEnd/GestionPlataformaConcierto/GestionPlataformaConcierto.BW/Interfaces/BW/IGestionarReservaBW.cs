@@ -15,6 +15,8 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
         Task<List<Reserva>> obtenerReservasPorEstado(string estado);
 
         Task<bool> cambiarEstadoReserva(int id, string nuevoEstado);
+        Task<bool> MarcarReservaComoComprada(int id);
+        Task<bool> CancelarReserva(int id);
 
         Task<List<AsientoReserva>> ObtenerAsientosPorConcierto(int conciertoId);
 

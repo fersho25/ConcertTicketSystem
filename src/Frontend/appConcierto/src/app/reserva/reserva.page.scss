@@ -1,6 +1,6 @@
 .mapa-container {
   display: grid;
-  grid-template-columns: repeat(10, 40px); /* 10 asientos por fila, por ejemplo */
+  grid-template-columns: repeat(10, 40px); 
   gap: 8px;
 }
 

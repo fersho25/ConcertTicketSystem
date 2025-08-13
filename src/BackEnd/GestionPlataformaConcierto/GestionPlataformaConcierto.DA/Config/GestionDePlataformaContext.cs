@@ -15,6 +15,7 @@ namespace GestionPlataformaConcierto.DA.Config
         public DbSet<Reserva> Reserva { get; set; }
         public DbSet<AsientoReserva> AsientoReserva { get; set; }
         public DbSet<Venta> Venta { get; set; }
+        public DbSet<Compra> Compra { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,6 +75,14 @@ namespace GestionPlataformaConcierto.DA.Config
                 .WithMany(c => c.Venta)
                 .HasForeignKey(v => v.ConciertoId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // AsientoReserva - Compra
+            modelBuilder.Entity<AsientoReserva>()
+                .HasOne(ar => ar.Compra)
+                .WithMany(c => c.Asientos)
+                .HasForeignKey(ar => ar.CompraId)
+                .OnDelete(DeleteBehavior.SetNull);
+
 
         }
     }

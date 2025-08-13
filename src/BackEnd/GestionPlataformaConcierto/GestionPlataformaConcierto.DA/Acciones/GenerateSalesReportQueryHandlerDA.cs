@@ -21,7 +21,7 @@ namespace GestionPlataformaConcierto.BC.Reports
         public async Task<ReportDto> GenerateSalesReportAsync(int concertId, string format, CancellationToken cancellationToken)
         {
             var salesData = await gestionDePlataformaContext.Reserva
-         .Where(r => r.ConciertoId == concertId && r.FechaHoraCompra != null && r.Estado == "Comprado")
+         .Where(r => r.ConciertoId == concertId && DateTime.MinValue != null && r.Estado == "Comprado")
          .Select(r => new SaleDetailDto
          {
              //ReservaId = r.Id,

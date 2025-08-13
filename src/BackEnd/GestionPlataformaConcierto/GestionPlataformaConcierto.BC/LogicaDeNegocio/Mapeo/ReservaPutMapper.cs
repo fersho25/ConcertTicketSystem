@@ -15,13 +15,6 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 FechaHoraReserva = reservaPutdto.FechaHoraReserva,
                 FechaHoraExpiracion = reservaPutdto.FechaHoraExpiracion,
                 Estado = reservaPutdto.Estado,
-                MetodoPago = reservaPutdto.MetodoPago,
-                FechaHoraCompra = reservaPutdto.FechaHoraCompra,
-                PrecioTotal = reservaPutdto.PrecioTotal,
-                DescuentoAplicado = reservaPutdto.DescuentoAplicado,
-                PromocionAplicada = reservaPutdto.PromocionAplicada,
-                CodigoQR = reservaPutdto.CodigoQR,
-                Notificado = reservaPutdto.Notificado,
                 Asientos = reservaPutdto.Asientos == null ? new List<AsientoReserva>() : reservaPutdto.Asientos.Select(a => new AsientoReserva
                 {
                     Id = a.Id,

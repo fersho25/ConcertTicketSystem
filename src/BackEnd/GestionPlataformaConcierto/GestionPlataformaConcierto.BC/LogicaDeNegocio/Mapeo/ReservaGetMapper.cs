@@ -17,13 +17,6 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 FechaHoraReserva = entity.FechaHoraReserva,
                 FechaHoraExpiracion = entity.FechaHoraExpiracion,
                 Estado = entity.Estado,
-                MetodoPago = entity.MetodoPago,
-                FechaHoraCompra = entity.FechaHoraCompra,
-                PrecioTotal = entity.PrecioTotal,
-                DescuentoAplicado = entity.DescuentoAplicado,
-                PromocionAplicada = entity.PromocionAplicada,
-                CodigoQR = entity.CodigoQR,
-                Notificado = entity.Notificado,
                 Asientos = entity.Asientos?.Select(a => new AsientoReservaDTO
                 {
                     CategoriaAsientoId = a.CategoriaAsientoId,

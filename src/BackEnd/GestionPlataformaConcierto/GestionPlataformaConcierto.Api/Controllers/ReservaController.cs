@@ -62,9 +62,6 @@ namespace GestionPlataformaConcierto.Api.Controllers
             {
                 var reserva = ReservaMapper.MapToEntity(reservaDto);
 
-                reserva.PrecioTotal = ReglasDeReserva.CalcularPrecioTotal(reserva);
-
-
                 var resultado = await gestionarReservaBW.registrarReserva(reserva);
 
                 if (!resultado)
@@ -89,8 +86,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
 
                 var reserva = ReservaPutMapper.MapToEntity(reservaPutDto);
 
-                reserva.PrecioTotal = ReglasDeReserva.CalcularPrecioTotal(reserva);
-                var resultado = await gestionarReservaBW.actualizarReserva(id, reserva);
+               var resultado = await gestionarReservaBW.actualizarReserva(id, reserva);
 
                 if (!resultado)
                     return NotFound("Reserva no encontrada");

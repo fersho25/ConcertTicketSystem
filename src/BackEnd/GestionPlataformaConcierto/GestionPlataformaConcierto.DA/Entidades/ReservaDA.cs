@@ -33,29 +33,6 @@ namespace GestionPlataformaConcierto.DA.Entidades
         [MaxLength(20)]
         public string Estado { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string MetodoPago { get; set; }
-
-        public DateTime? FechaHoraCompra { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal PrecioTotal { get; set; }
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal DescuentoAplicado { get; set; }
-
-        [MaxLength(100)]
-        public string PromocionAplicada { get; set; }
-
-        [MaxLength(255)]
-        public string CodigoQR { get; set; }
-
-        [Required]
-        public bool Notificado { get; set; }
-
         public ICollection<AsientoReserva> Asientos { get; set; }
     }
 }

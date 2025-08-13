@@ -11,6 +11,10 @@ namespace GestionPlataformaConcierto.DA.Entidades
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [ForeignKey("Compra")]
+        public int? CompraId { get; set; }   
+        public Compra Compra { get; set; }
+
         [Required]
         [ForeignKey("Reserva")]
         public int ReservaId { get; set; }

@@ -168,7 +168,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Select(ar => new SaleDetailDto
                 {
                     Comprador = ar.Reserva.Usuario.NombreCompleto,
-                    FechaCompra = ar.Reserva.FechaHoraCompra ?? DateTime.MinValue, // Usamos la fecha de compra de la reserva
+                    FechaCompra = DateTime.MinValue, // Usamos la fecha de compra de la reserva
                     CategoriaAsiento = ar.CategoriaAsiento.Nombre,
                     Precio = ar.Precio // Usamos el precio guardado en el asiento de la reserva
                 })

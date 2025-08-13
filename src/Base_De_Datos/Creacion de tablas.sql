@@ -49,29 +49,28 @@ CREATE TABLE Reserva (
     FechaHoraReserva DATETIME NOT NULL,
     FechaHoraExpiracion DATETIME NOT NULL,
     Estado NVARCHAR(20) NOT NULL,
-    MetodoPago NVARCHAR(50) NOT NULL,
-    FechaHoraCompra DATETIME NULL,
-    PrecioTotal DECIMAL(18,2) NOT NULL,
-    DescuentoAplicado DECIMAL(18,2) NOT NULL,
-    PromocionAplicada NVARCHAR(100) NULL,
-    CodigoQR NVARCHAR(255) NULL,
-    Notificado BIT NOT NULL,
-
     CONSTRAINT FK_Reserva_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id),
     CONSTRAINT FK_Reserva_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
 );
 
 
-
 CREATE TABLE AsientoReserva (
     Id INT IDENTITY(1,1) PRIMARY KEY,
+    CompraId INT NULL,
     ReservaId INT NOT NULL,
     CategoriaAsientoId INT NOT NULL,
     NumeroAsiento INT NOT NULL,
     Precio DECIMAL(18,2) NOT NULL,
-
-    CONSTRAINT FK_AsientoReserva_Reserva FOREIGN KEY (ReservaId) REFERENCES Reserva(Id),
-    CONSTRAINT FK_AsientoReserva_CategoriaAsiento FOREIGN KEY (CategoriaAsientoId) REFERENCES CategoriaAsiento(Id)
+    
+    CONSTRAINT FK_AsientoReserva_Compra FOREIGN KEY (CompraId)
+        REFERENCES Compra(Id)
+        ON DELETE SET NULL,
+    
+    CONSTRAINT FK_AsientoReserva_Reserva FOREIGN KEY (ReservaId)
+        REFERENCES Reserva(Id),
+    
+    CONSTRAINT FK_AsientoReserva_CategoriaAsiento FOREIGN KEY (CategoriaAsientoId)
+        REFERENCES CategoriaAsiento(Id)
 );
 
 
@@ -84,13 +83,32 @@ CREATE TABLE Venta (
     CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
 );
 
+CREATE TABLE Compra (
+    [Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [ReservaId] INT NOT NULL,
+    [MetodoPago] NVARCHAR(20) NOT NULL,
+    [FechaHoraCompra] DATETIME NULL,
+    [PrecioTotal] DECIMAL(18,2) NOT NULL,
+    [DescuentoAplicado] DECIMAL(18,2) NOT NULL,
+    [PromocionAplicada] NVARCHAR(100) NULL,
+    [CodigoQR] NVARCHAR(255) NULL,
+    [Notificado] BIT NOT NULL DEFAULT 0,
+    [Estado] NVARCHAR(20) NOT NULL,
+
+    CONSTRAINT [FK_Compra_Reserva] FOREIGN KEY ([ReservaId])
+        REFERENCES [dbo].[Reserva] ([Id])
+        ON DELETE CASCADE
+);
+
 DROP TABLE dbo.AsientoReserva;
 
 
 Select *
-From dbo.Venta
+From Compra
 
 
 
 Select *
-From dbo.Concierto
+From dbo.AsientoReserva
+
+SELECT * FROM CategoriaAsiento;
