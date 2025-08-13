@@ -1,8 +1,10 @@
-﻿using GestionPlataformaConcierto.BC.Modelos;
+﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.Modelos;
+using GestionPlataformaConcierto.BC.ReglasDeNegocio;
+using GestionPlataformaConcierto.BW.CU;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
-using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
 
 namespace GestionPlataformaConcierto.DA.Acciones
 {
@@ -14,6 +16,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
         {
             this.gestionDePlataformaContext = gestionDePlataformaContext;
         }
+
 
         public async Task<bool> actualizarConcierto(int id, Concierto concierto)
         {
@@ -95,6 +98,19 @@ namespace GestionPlataformaConcierto.DA.Acciones
             return true;
         }
 
+        public async Task<bool> cambiarEstadoVenta(int idConcierto, int idVenta, Venta venta)
+        {
+            var estadoVentaExistente = await gestionDePlataformaContext.Venta
+                .FirstOrDefaultAsync(v => v.Id == idVenta && v.ConciertoId == idConcierto);
+
+            if (estadoVentaExistente == null)
+                return false;
+
+            estadoVentaExistente.Estado = venta.Estado;
+
+            await gestionDePlataformaContext.SaveChangesAsync();
+            return true;
+        }
 
         public async Task<bool> eliminarArchivoMultimedia(int id)
         {
@@ -180,6 +196,11 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
                 .ToListAsync();
+        }
+
+        public Task<List<Venta>> ObtenerVentaPorConcierto(int idConcierto)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> registrarConcierto(Concierto concierto)

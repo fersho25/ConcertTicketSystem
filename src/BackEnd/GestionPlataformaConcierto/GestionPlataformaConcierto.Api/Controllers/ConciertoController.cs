@@ -1,7 +1,9 @@
 ﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
-using Microsoft.AspNetCore.Mvc;
+using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.CU;
+using GestionPlataformaConcierto.DA.Entidades;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GestionPlataformaConcierto.Api.Controllers
 {
@@ -160,6 +162,32 @@ namespace GestionPlataformaConcierto.Api.Controllers
             }
 
         }
+
+        [HttpPut("{id}/venta", Name = "ActualizarVenta")]
+        public async Task<ActionResult<bool>> Put(int id, [FromBody] Venta venta)
+        {
+            try
+            {
+                if (id != venta.Id)
+                {
+                    return BadRequest("El ID de la venta no coincide con el parámetro proporcionado.");
+                }
+
+                var resultado = await gestionarConciertoBW.cambiarEstadoVenta(venta.ConciertoId, id, venta);
+
+                if (!resultado)
+                {
+                    return NotFound("Venta no encontrada o no válida.");
+                }
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al actualizar la venta: {ex.Message}");
+            }
+        }
+
     }
 }
 

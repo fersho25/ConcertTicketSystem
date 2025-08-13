@@ -18,5 +18,9 @@ namespace GestionPlataformaConcierto.BW.CU
 
         Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario);
         Task<bool> eliminarArchivoMultimedia(int id);
+
+        Task<bool> cambiarEstadoVenta(int idConcierto, int idVenta, Venta venta);
+
+        Task<List<Venta>> ObtenerVentaPorConcierto(int idConcierto);
     }
 }

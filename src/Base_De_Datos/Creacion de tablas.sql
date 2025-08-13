@@ -74,5 +74,23 @@ CREATE TABLE AsientoReserva (
     CONSTRAINT FK_AsientoReserva_CategoriaAsiento FOREIGN KEY (CategoriaAsientoId) REFERENCES CategoriaAsiento(Id)
 );
 
+
+CREATE TABLE Venta (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ConciertoId INT NOT NULL,
+    FechaInicio DATETIME NOT NULL,
+    FechaFin DATETIME NOT NULL,
+    Estado INT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+
 DROP TABLE dbo.AsientoReserva;
 
+
+Select *
+From dbo.Venta
+
+
+
+Select *
+From dbo.Concierto

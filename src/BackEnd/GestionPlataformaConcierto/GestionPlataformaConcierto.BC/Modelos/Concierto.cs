@@ -1,4 +1,6 @@
-﻿namespace GestionPlataformaConcierto.BC.Modelos
+﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
+
+namespace GestionPlataformaConcierto.BC.Modelos
 {
     public class Concierto
     {
@@ -21,6 +23,8 @@
         public int UsuarioID { get; set; }
 
         public Usuario Usuario { get; set; }
+
+        public ICollection<Venta> Venta { get; set; }
 
         public ICollection<Reserva> Reservas { get; set; }
     }

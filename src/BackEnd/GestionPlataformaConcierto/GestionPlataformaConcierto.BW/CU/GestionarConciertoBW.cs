@@ -15,6 +15,8 @@ namespace GestionPlataformaConcierto.BW.CU
             this.gestionarConciertoDA = gestionarConciertoDA;
         }
 
+
+
         public Task<bool> actualizarConcierto(int id, Concierto concierto)
         {
             if (!ReglasDeConcierto.elIdEsValido(id) || !ReglasDeConcierto.elConciertoEsValido(concierto))
@@ -24,6 +26,13 @@ namespace GestionPlataformaConcierto.BW.CU
 
             return gestionarConciertoDA.actualizarConcierto(id, concierto);
 
+        }
+
+        public Task<bool> cambiarEstadoVenta(int idConcierto, int idVenta, Venta venta)
+        {
+            return ReglasDeVenta.ventaEsValida(venta) 
+                ? gestionarConciertoDA.cambiarEstadoVenta(idConcierto, idVenta, venta) 
+                : Task.FromResult(false);
         }
 
         public Task<bool> eliminarArchivoMultimedia(int id)
@@ -65,6 +74,11 @@ namespace GestionPlataformaConcierto.BW.CU
                 ? gestionarConciertoDA.ObtenerConciertosPorUsuario(idUsuario)
                 : Task.FromResult(new List<Concierto>());
 
+        }
+
+        public Task<List<Venta>> ObtenerVentaPorConcierto(int idConcierto)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<bool> registrarConcierto(Concierto concierto)

@@ -42,10 +42,20 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     Tipo = am.Tipo,
                     ConciertoId = am.ConciertoId,
                     Concierto = null
-                }).ToList() ?? new List<ArchivoMultimedia>()
+                }).ToList() ?? new List<ArchivoMultimedia>(),
+
+                // Aquí agregar:
+                Venta = dto.Venta?.Select(v => new Venta
+                {
+                    Id = v.Id,
+                    ConciertoId = v.ConciertoId,
+                    FechaInicio = DateTime.Parse(v.FechaInicio),
+                    FechaFin = DateTime.Parse(v.FechaFin),
+                    Estado = v.Estado,
+                    Concierto = null
+                }).ToList() ?? new List<Venta>()
             };
         }
-
 
         public static ConciertoDTO MapToDTO(Concierto concierto)
         {
@@ -73,9 +83,20 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     NombreArchivo = am.NombreArchivo,
                     Tipo = am.Tipo,
                     ConciertoId = am.ConciertoId
-                }).ToList() ?? new List<ArchivoMultimediaDTO>()
+                }).ToList() ?? new List<ArchivoMultimediaDTO>(),
+
+                // Aquí agregar:
+                Venta = concierto.Venta?.Select(v => new VentaDTO
+                {
+                    Id = v.Id,
+                    ConciertoId = v.ConciertoId,
+                    FechaInicio = v.FechaInicio.ToString("o"), // ISO 8601
+                    FechaFin = v.FechaFin.ToString("o"),
+                    Estado = v.Estado
+                }).ToList() ?? new List<VentaDTO>()
             };
         }
+
 
     }
 }

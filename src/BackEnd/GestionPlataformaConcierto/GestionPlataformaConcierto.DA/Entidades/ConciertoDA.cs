@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
 using GestionPlataformaConcierto.BC.Modelos;
 
 namespace GestionPlataformaConcierto.DA.Entidades
@@ -32,6 +33,8 @@ namespace GestionPlataformaConcierto.DA.Entidades
         public ICollection<CategoriaAsiento> CategoriasAsiento { get; set; }
 
         public ICollection<ArchivoMultimedia> ArchivosMultimedia { get; set; }
+
+        public ICollection<Venta> Venta { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GestionPlataformaConcierto.BC.Modelos;
+using GestionPlataformaConcierto.DA.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionPlataformaConcierto.DA.Config
@@ -13,6 +14,7 @@ namespace GestionPlataformaConcierto.DA.Config
         public DbSet<ArchivoMultimedia> ArchivoMultimedia { get; set; }
         public DbSet<Reserva> Reserva { get; set; }
         public DbSet<AsientoReserva> AsientoReserva { get; set; }
+        public DbSet<Venta> Venta { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +66,15 @@ namespace GestionPlataformaConcierto.DA.Config
                 .WithMany()
                 .HasForeignKey(ar => ar.CategoriaAsientoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Relación Venta - Concierto
+            modelBuilder.Entity<Venta>()
+                .HasOne(v => v.Concierto)
+                .WithMany(c => c.Venta)
+                .HasForeignKey(v => v.ConciertoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

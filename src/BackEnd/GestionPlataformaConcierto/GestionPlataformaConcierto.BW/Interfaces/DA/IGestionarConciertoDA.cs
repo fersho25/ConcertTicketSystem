@@ -22,5 +22,9 @@ namespace GestionPlataformaConcierto.BW.Interfaces.DA
         Task<List<Concierto>> ObtenerConciertosPorUsuario(int idUsuario);
 
         Task<IEnumerable<SaleDetailDto>> GetSalesDetailsByConcertAsync(int concertId);
+
+        Task<bool> cambiarEstadoVenta(int idConcierto, int idVenta, Venta venta);
+
+        Task<List<Venta>> ObtenerVentaPorConcierto(int idConcierto);
     }
 }

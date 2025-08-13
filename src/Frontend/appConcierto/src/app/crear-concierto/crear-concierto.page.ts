@@ -57,6 +57,12 @@ export class CrearConciertoPage implements OnInit {
       fecha: ['', [Validators.required, fechaHoraFuturaValidator]],
       lugar: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       capacidad: ['', [Validators.required, Validators.min(1)]],
+
+      venta: this.fb.group({
+        fechaInicio: ['', Validators.required],
+        fechaFin: ['', Validators.required],
+        estado: ['Inactivo', Validators.required]
+      }),
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
     });
@@ -83,7 +89,7 @@ export class CrearConciertoPage implements OnInit {
       contenido: ['', Validators.required],
       nombreArchivo: ['', [Validators.required, Validators.minLength(3)]],
       tipo: [''],
-      urlTemporal: ['']  
+      urlTemporal: ['']
     });
   }
 
@@ -104,13 +110,22 @@ export class CrearConciertoPage implements OnInit {
       return;
     }
 
-
+    const ventaForm = this.conciertoForm.get('venta')?.value;
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     const usuarioID = usuario.id;
 
     const concierto: ConciertoDTO = {
       ...this.conciertoForm.value,
-      usuarioID: usuarioID
+      usuarioID: usuarioID,
+      venta: [
+    {
+      id: 0,
+      conciertoId: 0,
+      fechaInicio: ventaForm.fechaInicio,
+      fechaFin: ventaForm.fechaFin,
+      estado: ventaForm.estado
+    }
+  ]
     };
     console.log(concierto);
 
@@ -126,6 +141,7 @@ export class CrearConciertoPage implements OnInit {
         this.router.navigate(['/home']);
       },
       async (error) => {
+        console.error('Error al registrar concierto:', error);
         const alert = await this.alertController.create({
           header: 'Error',
           message: 'No se pudo registrar el concierto.',

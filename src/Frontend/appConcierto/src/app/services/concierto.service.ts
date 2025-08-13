@@ -2,6 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type EstadoVenta = 'activo' | 'inactivo' | 'cancelado' | 'finalizado';
+
+export interface VentaDTO {
+  id: number;
+  conciertoId: number;
+  fechaInicio: string; // ISO string
+  fechaFin: string;    // ISO string
+  estado: EstadoVenta;
+}
 export interface CategoriaAsientoDTO {
   id: number;
   nombre: string;
@@ -26,6 +35,7 @@ export interface ConciertoDTO {
   lugar: string;
   capacidad: number;
   usuarioID: number;
+  venta?: VentaDTO;
 
   categoriasAsiento: CategoriaAsientoDTO[];
   archivosMultimedia: ArchivoMultimediaDTO[];
@@ -70,4 +80,9 @@ export class ConciertoService {
   getConciertosPorUsuario(idUsuario: number): Observable<ConciertoDTO[]> {
     return this.http.get<ConciertoDTO[]>(`${this.baseUrl}/usuario/${idUsuario}`);
   }
+
+  actualizarVenta(id: number, venta: VentaDTO): Observable<boolean> {
+  return this.http.put<boolean>(`${this.baseUrl}/${id}/venta`, venta);
+}
+
 }
