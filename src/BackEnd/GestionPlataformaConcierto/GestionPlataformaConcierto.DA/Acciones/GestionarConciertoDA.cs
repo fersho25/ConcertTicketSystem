@@ -17,22 +17,84 @@ namespace GestionPlataformaConcierto.DA.Acciones
 
         public async Task<bool> actualizarConcierto(int id, Concierto concierto)
         {
-            Concierto conciertoExistente = await gestionDePlataformaContext.Concierto.FindAsync(id);
+            // Cargar el concierto existente con las colecciones relacionadas
+            var conciertoExistente = await gestionDePlataformaContext.Concierto
+                .Include(c => c.CategoriasAsiento)
+                .Include(c => c.ArchivosMultimedia)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (conciertoExistente == null)
                 return false;
 
+            // Actualizar campos simples
             conciertoExistente.Nombre = concierto.Nombre;
             conciertoExistente.Descripcion = concierto.Descripcion;
             conciertoExistente.Fecha = concierto.Fecha;
             conciertoExistente.Lugar = concierto.Lugar;
             conciertoExistente.Capacidad = concierto.Capacidad;
-            conciertoExistente.CategoriasAsiento = concierto.CategoriasAsiento;
-            conciertoExistente.ArchivosMultimedia = concierto.ArchivosMultimedia;
 
+            // --- Actualizar CategoriasAsiento ---
+
+            // Eliminar las categorías que ya no están en la lista nueva
+            foreach (var categoriaExistente in conciertoExistente.CategoriasAsiento.ToList())
+            {
+                if (!concierto.CategoriasAsiento.Any(c => c.Id == categoriaExistente.Id))
+                    gestionDePlataformaContext.CategoriaAsiento.Remove(categoriaExistente);
+            }
+
+            // Actualizar o agregar categorías nuevas o existentes
+            foreach (var categoriaNueva in concierto.CategoriasAsiento)
+            {
+                var categoriaExistente = conciertoExistente.CategoriasAsiento
+                    .FirstOrDefault(c => c.Id == categoriaNueva.Id);
+
+                if (categoriaExistente != null)
+                {
+                    // Actualizar propiedades
+                    categoriaExistente.Nombre = categoriaNueva.Nombre;
+                    categoriaExistente.Precio = categoriaNueva.Precio;
+                    categoriaExistente.CantidadAsientos = categoriaNueva.CantidadAsientos;
+                }
+                else
+                {
+                    // Agregar nueva categoría y vincularla al concierto
+                    conciertoExistente.CategoriasAsiento.Add(categoriaNueva);
+                }
+            }
+
+            // --- Actualizar ArchivosMultimedia ---
+
+            // Eliminar archivos que ya no existen en la lista nueva
+            foreach (var archivoExistente in conciertoExistente.ArchivosMultimedia.ToList())
+            {
+                if (!concierto.ArchivosMultimedia.Any(a => a.Id == archivoExistente.Id))
+                    gestionDePlataformaContext.ArchivoMultimedia.Remove(archivoExistente);
+            }
+
+            // Actualizar o agregar archivos nuevos o existentes
+            foreach (var archivoNuevo in concierto.ArchivosMultimedia)
+            {
+                var archivoExistente = conciertoExistente.ArchivosMultimedia
+                    .FirstOrDefault(a => a.Id == archivoNuevo.Id);
+
+                if (archivoExistente != null)
+                {
+                    archivoExistente.NombreArchivo = archivoNuevo.NombreArchivo;
+                    archivoExistente.Contenido = archivoNuevo.Contenido;
+                    archivoExistente.Tipo = archivoNuevo.Tipo;
+                }
+                else
+                {
+                    conciertoExistente.ArchivosMultimedia.Add(archivoNuevo);
+                }
+            }
+
+            // Guardar cambios
             await gestionDePlataformaContext.SaveChangesAsync();
+
             return true;
         }
+
 
         public async Task<bool> eliminarArchivoMultimedia(int id)
         {

@@ -112,6 +112,7 @@ export class CrearConciertoPage implements OnInit {
       ...this.conciertoForm.value,
       usuarioID: usuarioID
     };
+    console.log(concierto);
 
     this.conciertoService.registrarConcierto(concierto).subscribe(
       async (response) => {

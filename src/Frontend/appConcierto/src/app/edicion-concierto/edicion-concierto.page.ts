@@ -1,26 +1,45 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConciertoService } from '../services/concierto.service';
+import { AlertController, NavController } from '@ionic/angular';
+
+
+function fechaHoraFuturaValidator(control: AbstractControl): ValidationErrors | null {
+  const valor = control.value;
+
+  if (!valor) return null;
+
+  const fechaIngresada = new Date(valor);
+  const ahora = new Date();
+
+  if (fechaIngresada <= ahora) {
+    return { fechaHoraPasada: true };
+  }
+
+  return null;
+}
 
 @Component({
   selector: 'app-edicion-concierto',
-  standalone : false,
+  standalone: false,
   templateUrl: './edicion-concierto.page.html',
   styleUrls: ['./edicion-concierto.page.scss'],
 })
 export class EdicionConciertoPage implements OnInit {
 
   conciertoEditForm!: FormGroup;
-  modoEdicion = false;
   modoOscuroActivado = false;
-  conciertoId!: number; 
+  conciertoId!: number;
+  formularioCargado = false;
 
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
+    private navCtrl: NavController,
     private conciertoService: ConciertoService,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -28,18 +47,41 @@ export class EdicionConciertoPage implements OnInit {
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
-      this.modoEdicion = true;
       this.conciertoId = Number(idParam);
       this.cargarConcierto(this.conciertoId);
+    } else {
+      this.router.navigate(['/home']);
     }
+  }
+  async volver() {
+    const alert = await this.alertController.create({
+      header: 'Perderás los cambios',
+      message: 'Si sales de la edición tus cambios no se verán reflejados.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel', 
+          handler: () => {
+          }
+        },
+        {
+          text: 'Salir',
+          handler: () => {
+            this.navCtrl.back();  
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   inicializarFormulario() {
     this.conciertoEditForm = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       descripcion: ['', [Validators.required, Validators.minLength(50)]],
-      fecha: ['', Validators.required],
-      lugar: ['', Validators.required],
+      fecha: ['', [Validators.required, fechaHoraFuturaValidator]],
+      lugar: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
       capacidad: ['', [Validators.required, Validators.min(1)]],
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
@@ -56,8 +98,9 @@ export class EdicionConciertoPage implements OnInit {
 
   cargarConcierto(id: number) {
     this.conciertoService.obtenerConciertoPorId(id).subscribe(concierto => {
-      // Rellenar el formulario con los datos del concierto
-      this.conciertoEditForm.patchValue({
+      if (this.formularioCargado) return;
+
+      this.conciertoEditForm.reset({
         nombre: concierto.nombre,
         descripcion: concierto.descripcion,
         fecha: concierto.fecha,
@@ -65,7 +108,6 @@ export class EdicionConciertoPage implements OnInit {
         capacidad: concierto.capacidad
       });
 
-      // Limpiar arrays antes de llenarlos
       this.categoriasAsiento.clear();
       concierto.categoriasAsiento.forEach(cat => {
         this.categoriasAsiento.push(this.fb.group({
@@ -77,27 +119,92 @@ export class EdicionConciertoPage implements OnInit {
 
       this.archivosMultimedia.clear();
       concierto.archivosMultimedia.forEach(archivo => {
+        const base64Data = archivo.contenido || '';
+        const tipo = archivo.tipo || '';
+        let urlTemp = '';
+
+        if (base64Data && tipo) {
+          urlTemp = `data:${tipo};base64,${base64Data}`;
+        }
+
         this.archivosMultimedia.push(this.fb.group({
+          contenido: [base64Data, Validators.required],
           nombreArchivo: [archivo.nombreArchivo, Validators.required],
-          urlTemporal: [archivo.contenido || ''],
-          tipo: [archivo.tipo || '']
+          tipo: [tipo],
+          urlTemporal: [urlTemp]
         }));
       });
+
+      this.formularioCargado = true;
     }, error => {
       console.error('Error cargando concierto:', error);
-      // Opcional: Navegar a otra página si no existe el concierto
     });
   }
 
-  editarConcierto() {
-    this.conciertoService.actualizarConcierto(this.conciertoId, this.conciertoEditForm.value).subscribe(() => {
-      // Mostrar mensaje de éxito, luego navegar
-      alert('Concierto actualizado correctamente.');
-      this.router.navigate(['/home']);
-    }, error => {
-      console.error('Error actualizando concierto:', error);
-    });
+
+
+  async editarConcierto() {
+    if (
+      this.conciertoEditForm.invalid ||
+      this.cantidadRestante !== 0 ||
+      this.categoriasAsiento.length === 0
+    ) {
+      const alert = await this.alertController.create({
+        header: 'Concierto inválido',
+        message: 'Verifique que todos los campos estén completos y que se hayan asignado todos los asientos.',
+        buttons: ['Ok']
+      });
+      await alert.present();
+      return;
+    }
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const usuarioID = usuario.id;
+
+    const formValue = this.conciertoEditForm.value;
+
+
+    formValue.archivosMultimedia = formValue.archivosMultimedia.filter(
+      (archivo: any) => archivo.nombreArchivo && archivo.contenido
+    );
+
+
+    formValue.categoriasAsiento = formValue.categoriasAsiento.filter(
+      (categoria: any) =>
+        categoria.nombre && categoria.nombre.trim() !== '' &&
+        categoria.precio > 0 &&
+        categoria.cantidad > 0
+    );
+
+    const conciertoEditado = {
+      ...formValue,
+      id: this.conciertoId,
+
+      usuarioID: usuarioID
+    };
+    console.log('Concierto que enviarás:', conciertoEditado);
+
+    this.conciertoService.actualizarConcierto(this.conciertoId, conciertoEditado).subscribe(
+      async () => {
+        const alert = await this.alertController.create({
+          header: 'Éxito',
+          message: 'Concierto actualizado correctamente.',
+          buttons: ['Ok']
+        });
+        await alert.present();
+        this.router.navigate(['/home']);
+      },
+      async (error) => {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'No se pudo editar el concierto.',
+          buttons: ['Ok']
+        });
+        await alert.present();
+      }
+    );
+
   }
+
 
 
   crearCategoriaAsiento(): FormGroup {
@@ -131,46 +238,49 @@ export class EdicionConciertoPage implements OnInit {
 
   removerArchivoMultimedia(index: number) {
     this.archivosMultimedia.removeAt(index);
+    console.log(this.archivosMultimedia.value);
   }
 
   onArchivoSeleccionado(event: any, index: number) {
     const archivo = event.target.files[0];
 
     if (archivo) {
-
       const tiposPermitidos = ['image/jpeg', 'image/png', 'video/mp4'];
       if (!tiposPermitidos.includes(archivo.type)) {
-        alert("Tipo de archivo no permitido. Solo se permiten imágenes JPEG/PNG o videos MP4.");
+        alert("Tipo de archivo no permitido.");
         return;
       }
-
 
       const tamanioMaximoMB = 10;
       if (archivo.size > tamanioMaximoMB * 1024 * 1024) {
-        alert(`El archivo excede el tamaño máximo permitido de ${tamanioMaximoMB}MB.`);
+        alert(`El archivo excede ${tamanioMaximoMB}MB.`);
         return;
       }
 
-
       const reader = new FileReader();
+
       reader.onload = () => {
-        const base64 = reader.result as string;
+        const base64 = (reader.result as string).split(',')[1];
+        const urlTemp = URL.createObjectURL(archivo);
+
+        // Guardar todo en el formArray
         this.archivosMultimedia.at(index).patchValue({
-          contenido: base64,
+          contenido: base64,        // Para enviar al backend
           nombreArchivo: archivo.name,
-          tipo: archivo.type,
-          urlTemporal: URL.createObjectURL(archivo)
+          tipo: archivo.type,       // Para distinguir imagen o video
+          urlTemporal: urlTemp      // Para previsualización
         });
       };
+
       reader.readAsDataURL(archivo);
     }
   }
 
-    get capacidad(): number {
+  get capacidad(): number {
     return this.conciertoEditForm?.get('capacidad')?.value || 0;
   }
 
-    get cantidadRestante(): number {
+  get cantidadRestante(): number {
     const capacidad = this.conciertoEditForm.get('capacidad')?.value || 0;
     const totalAsignado = this.categoriasAsiento.controls.reduce((suma, categoria) => {
       const cantidad = categoria.get('cantidad')?.value || 0;
@@ -179,14 +289,14 @@ export class EdicionConciertoPage implements OnInit {
     return capacidad - totalAsignado;
   }
 
+
+
   ionViewWillEnter() {
-    // Leer estado guardado
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
     this.modoOscuroActivado = modoOscuro;
-
-    // Aplicar o quitar clase dark al <html>
     document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
   }
+
 
   darkPaletteToggleChange(event: CustomEvent) {
     this.toggleDarkPalette(event.detail.checked);

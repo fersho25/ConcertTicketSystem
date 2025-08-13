@@ -1,14 +1,14 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="clear" routerLink="/home">
+      <ion-button fill="clear" (click)="volver()">
         <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
         Volver
       </ion-button>
     </ion-buttons>
 
     <ion-title class="ion-text-center">
-      {{ modoEdicion ? 'Editar Concierto' : 'Crear Concierto' }}
+      Editar de Concierto
     </ion-title>
 
     <ion-buttons slot="end">
@@ -23,13 +23,11 @@
   <div class="container">
 
     <ion-card>
-      <ion-card-header class="titulo-personalizado-crearConcierto">
-        {{ modoEdicion ? 'Editar Concierto' : 'Crear Concierto' }}
-      </ion-card-header>
+      <ion-card-header class="titulo-personalizado-editarConcierto">Editar Concierto</ion-card-header>
       <ion-card-content>
         <form [formGroup]="conciertoEditForm" (ngSubmit)="editarConcierto()">
 
-          <!-- Campos básicos -->
+
           <ion-item>
             <ion-icon name="bulb-outline" slot="start"></ion-icon>
             <ion-label position="floating">Nombre:</ion-label>
@@ -42,9 +40,56 @@
             </ion-text>
           </div>
 
-          <!-- Más campos iguales para descripcion, fecha, lugar, capacidad -->
+          <ion-item class="ion-margin-top">
+            <ion-icon name="book-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Descripción:</ion-label>
+            <ion-input type="text" formControlName="descripcion" required></ion-input>
+          </ion-item>
 
-          <!-- Categorías de asiento -->
+          <div class="error-message"
+            *ngIf="conciertoEditForm.controls['descripcion'].invalid && conciertoEditForm.controls['descripcion'].touched">
+            <ion-text color="danger">
+              <p>Mínimo 50 caracteres.</p>
+            </ion-text>
+          </div>
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Fecha y Hora:</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
+          </ion-item>
+
+          <div class="error-message"
+            *ngIf="conciertoEditForm.controls['fecha'].invalid && conciertoEditForm.controls['fecha'].touched">
+            <ion-text color="danger">
+              <p>Fecha invalida.</p>
+            </ion-text>
+          </div>
+
+          <ion-item>
+            <ion-icon name="location-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Lugar:</ion-label>
+            <ion-input type="text" formControlName="lugar" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="conciertoEditForm.controls['lugar'].invalid && conciertoEditForm.controls['lugar'].touched">
+            <ion-text color="danger">
+              <p>El lugar es invalido</p>
+            </ion-text>
+          </div>
+
+          <ion-item>
+            <ion-icon name="people-circle-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Capacidad:</ion-label>
+            <ion-input type="number" formControlName="capacidad" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="conciertoEditForm.controls['capacidad'].invalid && conciertoEditForm.controls['capacidad'].touched">
+            <ion-text color="danger">
+              <p>Capacidad Invalida</p>
+            </ion-text>
+          </div>
+
           <ion-list>
             <ion-item lines="none">
               <ion-icon name="podium-outline" slot="start"></ion-icon>
@@ -98,12 +143,12 @@
               </div>
             </div>
 
-            <ion-button shape="round" expand="full" (click)="agregarCategoriaAsiento()">
+             <ion-button shape="round" expand="full" [disabled]="cantidadRestante <= 0 || !categoriasAsiento.valid"
+              (click)="agregarCategoriaAsiento()">
               Agregar Categoría
             </ion-button>
           </ion-list>
 
-          <!-- Archivos multimedia -->
           <ion-list>
             <ion-item lines="none">
               <ion-icon name="images-outline" slot="start"></ion-icon>
@@ -147,15 +192,9 @@
             </ion-button>
           </ion-list>
 
-          <!-- Botón enviar -->
-          <ion-button
-            shape="round"
-            expand="full"
-            type="submit"
-            class="ion-margin-top button-34"
-            [disabled]="!conciertoEditForm.valid || cantidadRestante < 0 || categoriasAsiento.length === 0"
-          >
-            {{ modoEdicion ? 'Guardar Cambios' : 'Crear Concierto' }}
+          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="
+          !conciertoEditForm.valid ||cantidadRestante < 0 || cantidadRestante > 0 ||categoriasAsiento.length === 0">
+            Editar Concierto 
           </ion-button>
 
         </form>
