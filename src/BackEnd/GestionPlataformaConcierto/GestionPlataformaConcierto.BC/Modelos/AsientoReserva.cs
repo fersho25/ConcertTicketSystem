@@ -19,5 +19,7 @@
         public Compra Compra { get; set; }
 
 
+
+
     }
 }

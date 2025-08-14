@@ -180,6 +180,12 @@ namespace GestionPlataformaConcierto.DA.Acciones
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<Reserva> obtenerReservaPorId(int id)
+        {
+            return await _context.Reserva
+                .Include(r => r.Asientos)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
 
     }
 }

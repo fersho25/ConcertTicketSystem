@@ -7,7 +7,6 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
         public static bool laCompraEsValida(Compra compra)
         {
             return
-                elIdReservaEsValido(compra.ReservaId) &&
                 elMetodoPagoEsValido(compra) &&
                 elPrecioTotalEsValido(compra.PrecioTotal) &&
                 elDescuentoEsValido(compra.DescuentoAplicado) &&

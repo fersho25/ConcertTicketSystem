@@ -27,5 +27,7 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
         Task<bool> cancelarCompra(int id);
 
         Task<List<AsientoReserva>> obtenerAsientosPorCompra(int compraId);
+
+        Task<Reserva> obtenerReservaPorId(int id);
     }
 }

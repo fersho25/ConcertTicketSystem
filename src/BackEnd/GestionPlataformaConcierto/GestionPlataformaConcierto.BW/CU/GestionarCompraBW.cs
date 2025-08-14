@@ -83,5 +83,9 @@ namespace GestionPlataformaConcierto.BW.CU
         {
             return await gestionarCompraDA.obtenerAsientosPorCompra(compraId);
         }
+        public async Task<Reserva> obtenerReservaPorId(int id)
+        {
+            return await gestionarCompraDA.obtenerReservaPorId(id);
+        }
     }
 }

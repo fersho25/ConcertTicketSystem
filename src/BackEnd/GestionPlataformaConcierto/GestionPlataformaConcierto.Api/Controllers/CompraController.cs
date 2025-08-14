@@ -86,10 +86,14 @@ namespace GestionPlataformaConcierto.Api.Controllers
         {
             try
             {
-                var compra = CompraMapper.MapToEntity(compraDto);
+                var reserva = await _gestionarCompraBW.obtenerReservaPorId(compraDto.ReservaId);
+                if (reserva == null)
+                    return BadRequest("La reserva indicada no existe.");
 
-                compra.PrecioTotal = ReglasDeCompra.CalcularPrecioTotal(compra);
+                // Mapear a entidad incluyendo los asientos
+                var compra = CompraMapper.MapToEntity(compraDto, reserva);
 
+                // Guardar la compra
                 var ok = await _gestionarCompraBW.registrarCompra(compra);
                 if (!ok) return BadRequest("No se pudo registrar la compra.");
 

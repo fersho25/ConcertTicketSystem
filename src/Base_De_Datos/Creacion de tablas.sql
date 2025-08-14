@@ -99,7 +99,7 @@ CREATE TABLE Compra (
         ON DELETE CASCADE
 );
 
-DROP TABLE dbo.AsientoReserva;
+DROP TABLE dbo.Venta;
 
 
 Select *

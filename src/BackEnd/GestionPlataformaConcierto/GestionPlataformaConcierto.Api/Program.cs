@@ -39,6 +39,8 @@ builder.Services.AddScoped<IGestionarUsuarioDA, GestionarUsuarioDA>();
 builder.Services.AddScoped<IGestionarUsuarioBW, GestionarUsuarioBW>();
 builder.Services.AddScoped<IGestionarReservaDA, GestionarReservaDA>();
 builder.Services.AddScoped<IGestionarReservaBW, GestionarReservaBW>();
+builder.Services.AddScoped<IGestionarCompraDA, GestionarCompraDA>();
+builder.Services.AddScoped<IGestionarCompraBW, GestionarCompraBW>();
 
 var app = builder.Build();
 

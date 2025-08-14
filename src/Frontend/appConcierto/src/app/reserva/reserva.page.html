@@ -84,55 +84,6 @@
 </ion-item>
 
 
-    <!-- Método de pago -->
-    <ion-item>
-      <ion-label position="stacked">Método de pago</ion-label>
-      <ion-input formControlName="metodoPago"></ion-input>
-    </ion-item>
-
-    <!-- Fecha compra -->
-    <ion-item>
-      <ion-label position="stacked">Fecha y hora de compra</ion-label>
-      <ion-datetime formControlName="fechaHoraCompra"></ion-datetime>
-    </ion-item>
-
-    <!-- Precio total -->
-    <ion-item>
-      <ion-label position="stacked">Precio total</ion-label>
-       <ion-input [value]="'₡ ' + reservaForm.get('precioTotal')?.value" readonly></ion-input>
-    </ion-item>
-
-    <!-- Descuento automático por volumen -->
-    <ion-item>
-      <ion-label position="stacked">Descuento automático aplicado</ion-label>
-      <ion-input
-        [value]="reservaForm.get('descuentoAplicado')?.value ? reservaForm.get('descuentoAplicado')?.value + '%' : '0%'"
-        readonly></ion-input>
-    </ion-item>
-
-    <ion-item>
-      <ion-label position="stacked">Promoción aplicada</ion-label>
-      <ion-select formControlName="promocionAplicada" (ionChange)="actualizarPrecioTotal()">
-        <ion-select-option value="">Ninguna</ion-select-option>
-        <ion-select-option value="10%">10% descuento verano</ion-select-option>
-        <ion-select-option value="50">50 colones descuento cupón</ion-select-option>
-        <ion-select-option value="15%">15% descuento especial</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-
-    <!-- Código QR -->
-    <ion-item>
-      <ion-label position="stacked">Código QR</ion-label>
-      <ion-input formControlName="codigoQR"></ion-input>
-    </ion-item>
-
-    <!-- Notificado -->
-    <ion-item>
-      <ion-label>Notificado</ion-label>
-      <ion-toggle formControlName="notificado"></ion-toggle>
-    </ion-item>
-
     <!-- Lista de asientos -->
     <ion-list>
       <ion-item lines="full">

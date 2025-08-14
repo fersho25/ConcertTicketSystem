@@ -50,13 +50,6 @@ export class ReservaPage implements OnInit, OnDestroy {
       fechaHoraReserva: [this.obtenerFechaHoraActual(), Validators.required],
       fechaHoraExpiracion: [this.obtenerFechaHoraExpiracion(), Validators.required],
       estado: ['ACTIVA', Validators.required],
-      metodoPago: ['', Validators.required],
-      fechaHoraCompra: ['', Validators.required],
-      precioTotal: [0, [Validators.required, Validators.min(0)]],
-      descuentoAplicado: [0],
-      promocionAplicada: [''],
-      codigoQR: [''],
-      notificado: [false],
       asientos: this.fb.array([])
     });
 
@@ -64,9 +57,7 @@ export class ReservaPage implements OnInit, OnDestroy {
 
     this.iniciarTimer();
 
-    this.asientos.valueChanges.subscribe(() => {
-      this.actualizarPrecioTotal();
-    });
+    
 
     this.cargarMapaAsientos();
   }
@@ -110,7 +101,7 @@ export class ReservaPage implements OnInit, OnDestroy {
       }
     }
 
-    this.actualizarPrecioTotal();
+  
   }
 
   eliminarAsiento(index: number) {
@@ -125,21 +116,9 @@ export class ReservaPage implements OnInit, OnDestroy {
       this.asientosMapa[indexMapa].estado = 'DISPONIBLE';
     }
 
-    this.actualizarPrecioTotal();
+  
   }
 
-
-  private obtenerPorcentajeDescuento(cantidadAsientos: number): number {
-    if (cantidadAsientos >= 10) return 30;
-    if (cantidadAsientos >= 8) return 25;
-    if (cantidadAsientos >= 4) return 10;
-    return 0;
-  }
-
-  private calcularDescuentoAutomatico(cantidadAsientos: number, totalSinDescuento: number): number {
-    const porcentaje = this.obtenerPorcentajeDescuento(cantidadAsientos);
-    return (totalSinDescuento * porcentaje) / 100;
-  }
 
   ngOnDestroy() {
     this.detenerTimer();
@@ -256,44 +235,7 @@ export class ReservaPage implements OnInit, OnDestroy {
 }
 
 
-  public actualizarPrecioTotal() {
-    const asientos = this.asientos.value;
-    const totalSinDescuento = asientos.reduce((sum: number, asiento: any) => sum + (asiento.Precio || 0), 0);
 
-    // Descuento automático por volumen
-    const porcentajeDescuento = this.obtenerPorcentajeDescuento(asientos.length);
-    const descuentoAutomatico = this.calcularDescuentoAutomatico(asientos.length, totalSinDescuento);
-
-    // Descuento por promoción aplicada (string)
-    const promocionStr = this.reservaForm.get('promocionAplicada')?.value?.trim() || '';
-    let descuentoPromo = 0;
-    let promocionMostrar = '';
-
-    if (promocionStr) {
-      if (promocionStr.endsWith('%')) {
-        const porcentaje = parseFloat(promocionStr.slice(0, -1));
-        if (!isNaN(porcentaje) && porcentaje > 0) {
-          descuentoPromo = (totalSinDescuento * porcentaje) / 100;
-        }
-      } else {
-        const fijo = parseFloat(promocionStr);
-        if (!isNaN(fijo) && fijo > 0) {
-          descuentoPromo = fijo;
-        }
-      }
-    }
-
-    
-    let total = totalSinDescuento - descuentoAutomatico - descuentoPromo;
-    if (total < 0) total = 0;
-
-    
-    this.reservaForm.patchValue({
-      precioTotal: total,
-      descuentoAplicado: porcentajeDescuento,
-      promocionAplicada: promocionMostrar
-    }, { emitEvent: false });
-  }
 
   cargarMapaAsientos() {
     const conciertoId = this.reservaForm.get('conciertoId')?.value || 1;

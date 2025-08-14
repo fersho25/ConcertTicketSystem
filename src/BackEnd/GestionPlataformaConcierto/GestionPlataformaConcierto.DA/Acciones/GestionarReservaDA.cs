@@ -165,5 +165,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Where(ar => ar.Reserva.ConciertoId == conciertoId)
                 .ToListAsync();
         }
+
+
     }
 }
