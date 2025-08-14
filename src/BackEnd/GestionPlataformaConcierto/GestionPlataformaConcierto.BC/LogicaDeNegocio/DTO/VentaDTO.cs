@@ -11,7 +11,6 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
     {
         public int Id { get; set; }
         public int ConciertoId { get; set; }
-        public string FechaInicio { get; set; } 
         public string FechaFin { get; set; }
         public EstadoVenta Estado { get; set; }
     }

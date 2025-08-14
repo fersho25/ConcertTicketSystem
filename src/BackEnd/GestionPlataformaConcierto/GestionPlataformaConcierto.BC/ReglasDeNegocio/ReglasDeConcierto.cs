@@ -12,7 +12,8 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
                    elLugarEsValido(concierto) &&
                    laCapacidadEsValida(concierto) &&
                    laCategoriaAsientoEsValida(concierto) &&
-                   laMultimediaEsValida(concierto);
+                   laMultimediaEsValida(concierto) &&
+                   ventaEsValida(concierto);
 
         }
 
@@ -56,7 +57,10 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 
             return concierto.ArchivosMultimedia.All(archivo => ReglasDeArchivoMultimedia.ElArchivoEsValido(archivo));
         }
-
+        public static bool ventaEsValida(Concierto concierto)
+        {
+            return ReglasDeVenta.VentaEsValida(concierto.Venta, concierto);
+        }
         public static bool elIdEsValido(int id)
         {
             return id > 0;

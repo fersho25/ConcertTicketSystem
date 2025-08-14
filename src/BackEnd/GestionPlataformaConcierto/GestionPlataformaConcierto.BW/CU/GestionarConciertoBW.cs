@@ -28,10 +28,10 @@ namespace GestionPlataformaConcierto.BW.CU
 
         }
 
-        public Task<bool> cambiarEstadoVenta(int idConcierto, int idVenta, Venta venta)
+        public Task<bool> cambiarEstadoVenta(int idConcierto)
         {
-            return ReglasDeVenta.ventaEsValida(venta) 
-                ? gestionarConciertoDA.cambiarEstadoVenta(idConcierto, idVenta, venta) 
+            return ReglasDeConcierto.elIdEsValido(idConcierto)
+                ? gestionarConciertoDA.cambiarEstadoVenta(idConcierto)
                 : Task.FromResult(false);
         }
 

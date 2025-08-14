@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ConciertoDTO, ConciertoService } from '../services/concierto.service';
+import { ConciertoDTO, ConciertoService, VentaDTO } from '../services/concierto.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-panel-edicion',
@@ -25,7 +25,7 @@ export class PanelEdicionPage implements OnInit {
 
   conciertos: ConciertoDTO[] = [];
 
-  constructor(private conciertoService: ConciertoService, private router: Router) { }
+  constructor(private conciertoService: ConciertoService, private router: Router, private alertController: AlertController) { }
 
   ngOnInit() {
     const data = localStorage.getItem('usuario');
@@ -35,23 +35,52 @@ export class PanelEdicionPage implements OnInit {
     }
   }
 
-cargarConciertos(usuarioID?: number) {
-  const id = usuarioID ?? this.usuario?.id;
+  cargarConciertos(usuarioID?: number) {
+    const id = usuarioID ?? this.usuario?.id;
 
-  if (!id) {
-    console.error('No hay ID de usuario disponible para cargar conciertos');
-    return;
+    if (!id) {
+      console.error('No hay ID de usuario disponible para cargar conciertos');
+      return;
+    }
+
+    this.conciertoService.getConciertosPorUsuario(id).subscribe({
+      next: (conciertos) => {
+        this.conciertos = conciertos;
+      },
+      error: (error) => {
+        console.error('Error cargando conciertos por usuario', error);
+      }
+    });
   }
 
-  this.conciertoService.getConciertosPorUsuario(id).subscribe({
-    next: (conciertos) => {
-      this.conciertos = conciertos;
-    },
-    error: (error) => {
-      console.error('Error cargando conciertos por usuario', error);
-    }
-  });
-}
+  cambiarEstadoVenta(concierto: ConciertoDTO) {
+    this.conciertoService.toggleEstadoVenta(concierto.id).subscribe({
+      next: (exito) => {
+        if (exito) {
+          concierto.venta!.estado = concierto.venta!.estado === 'Activo' ? 'Inactivo' : 'Activo';
+        }
+      }
+    });
+  }
+
+  async ventaFinalizada(concierto: any) {
+    const alert = await this.alertController.create({
+      header: `${concierto.nombre}`,
+      message: 'Este concierto termino su venta',
+      buttons: ['Ok']
+    });
+    await alert.present();
+  }
+
+  esVentaHabilitable(venta: VentaDTO | undefined): boolean {
+    if (!venta) return false;
+    const fechaFin = new Date(venta.fechaFin);
+    const ahora = new Date();
+    return venta.estado === 'Inactivo' && fechaFin > ahora;
+  }
+
+
+
 
 
 

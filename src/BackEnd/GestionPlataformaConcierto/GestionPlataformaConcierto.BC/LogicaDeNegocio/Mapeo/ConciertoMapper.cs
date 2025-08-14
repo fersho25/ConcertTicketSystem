@@ -45,15 +45,15 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 }).ToList() ?? new List<ArchivoMultimedia>(),
 
                 // Aquí agregar:
-                Venta = dto.Venta?.Select(v => new Venta
+                Venta = dto.Venta != null ? new Venta
                 {
-                    Id = v.Id,
-                    ConciertoId = v.ConciertoId,
-                    FechaInicio = DateTime.Parse(v.FechaInicio),
-                    FechaFin = DateTime.Parse(v.FechaFin),
-                    Estado = v.Estado,
+                    Id = dto.Venta.Id,
+                    ConciertoId = dto.Id,
+                    FechaFin = DateTime.Parse(dto.Venta.FechaFin),
+                    Estado = dto.Venta.Estado,
                     Concierto = null
-                }).ToList() ?? new List<Venta>()
+                } : null
+
             };
         }
 
@@ -85,15 +85,15 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     ConciertoId = am.ConciertoId
                 }).ToList() ?? new List<ArchivoMultimediaDTO>(),
 
-                // Aquí agregar:
-                Venta = concierto.Venta?.Select(v => new VentaDTO
+                Venta = concierto.Venta != null ? new VentaDTO
                 {
-                    Id = v.Id,
-                    ConciertoId = v.ConciertoId,
-                    FechaInicio = v.FechaInicio.ToString("o"), // ISO 8601
-                    FechaFin = v.FechaFin.ToString("o"),
-                    Estado = v.Estado
-                }).ToList() ?? new List<VentaDTO>()
+                    Id = concierto.Venta.Id,
+                    ConciertoId = concierto.Venta.ConciertoId,
+                    FechaFin = concierto.Venta.FechaFin.ToString("yyyy-MM-ddTHH:mm:ss"),
+                    Estado = concierto.Venta.Estado
+                } : null
+
+
             };
         }
 

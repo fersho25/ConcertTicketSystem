@@ -24,7 +24,7 @@ namespace GestionPlataformaConcierto.BC.Modelos
 
         public Usuario Usuario { get; set; }
 
-        public ICollection<Venta> Venta { get; set; }
+        public Venta Venta { get; set; }
 
         public ICollection<Reserva> Reservas { get; set; }
     }

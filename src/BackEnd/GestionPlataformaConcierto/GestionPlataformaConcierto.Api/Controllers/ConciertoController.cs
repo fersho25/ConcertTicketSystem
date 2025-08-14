@@ -2,8 +2,10 @@
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.CU;
+using GestionPlataformaConcierto.DA.Config;
 using GestionPlataformaConcierto.DA.Entidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionPlataformaConcierto.Api.Controllers
 {
@@ -12,6 +14,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
     public class ConciertoController : ControllerBase
     {
         private readonly IGestionarConciertoBW gestionarConciertoBW;
+        private readonly GestionDePlataformaContext _context;
 
         public ConciertoController(IGestionarConciertoBW gestionarConciertoBW)
         {
@@ -25,6 +28,12 @@ namespace GestionPlataformaConcierto.Api.Controllers
             {
                 var concierto = ConciertoMapper.MapToEntity(conciertoDto);
                 var resultado = await gestionarConciertoBW.registrarConcierto(concierto);
+
+                if (!resultado) 
+                {
+                    return BadRequest("No se pudo registrar el concierto.");
+                }
+
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -163,30 +172,15 @@ namespace GestionPlataformaConcierto.Api.Controllers
 
         }
 
-        [HttpPut("{id}/venta", Name = "ActualizarVenta")]
-        public async Task<ActionResult<bool>> Put(int id, [FromBody] Venta venta)
+        [HttpPut("{conciertoId}/venta/toggle")]
+        public async Task<ActionResult<bool>> ToggleVenta(int conciertoId)
         {
-            try
-            {
-                if (id != venta.Id)
-                {
-                    return BadRequest("El ID de la venta no coincide con el parámetro proporcionado.");
-                }
-
-                var resultado = await gestionarConciertoBW.cambiarEstadoVenta(venta.ConciertoId, id, venta);
-
-                if (!resultado)
-                {
-                    return NotFound("Venta no encontrada o no válida.");
-                }
-
-                return Ok(true);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error al actualizar la venta: {ex.Message}");
-            }
+            var resultado = await gestionarConciertoBW.cambiarEstadoVenta(conciertoId);
+            if (!resultado) return NotFound("Concierto o venta no encontrada");
+            return Ok(true);
         }
+
+
 
     }
 }

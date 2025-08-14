@@ -11,9 +11,7 @@ namespace GestionPlataformaConcierto.BC.Modelos
     {
         public int Id { get; set; }
         public int ConciertoId { get; set; }
-        public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
-
         public EstadoVenta Estado { get; set; }
         public Concierto Concierto { get; set; }
     }

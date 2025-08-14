@@ -46,9 +46,23 @@
               <ion-button [routerLink]="['/edicion-concierto', concierto.id]" shape="round" expand="full">
                 Editar
               </ion-button>
-              <ion-button color="success" shape="round" expand="full">
+              <ion-button class="ion-margin-top" *ngIf="esVentaHabilitable(concierto.venta)" color="success"
+                shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
                 Habilitar Venta
               </ion-button>
+
+              <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Activo'" color="danger"
+                shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
+                Desactivar Venta
+              </ion-button>
+
+              <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Finalizado'" color="danger"
+                shape="round" expand="full" (click)="ventaFinalizada(concierto)">
+                Venta Finalizada
+              </ion-button>
+
+
+
 
 
 

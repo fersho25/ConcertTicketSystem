@@ -55,19 +55,6 @@
             </ion-text>
           </div>
 
-          <ion-item class="ion-margin-top">
-            <ion-icon name="calendar-outline" slot="start"></ion-icon>
-            <ion-label position="floating">Fecha y Hora:</ion-label>
-            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
-          </ion-item>
-
-          <div class="error-message"
-            *ngIf="conciertoForm.controls['fecha'].invalid && conciertoForm.controls['fecha'].touched">
-            <ion-text color="danger">
-              <p>Fecha invalida.</p>
-            </ion-text>
-          </div>
-
           <ion-item>
             <ion-icon name="location-outline" slot="start"></ion-icon>
             <ion-label position="floating">Lugar:</ion-label>
@@ -91,25 +78,44 @@
               <p>Capacidad Invalida</p>
             </ion-text>
           </div>
-          
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label position="floating fecha-separada">Fecha y Hora:</ion-label>
+            <ion-datetime formControlName="fecha" presentation="date-time"></ion-datetime>
+          </ion-item>
+
+          <div class="error-message"
+            *ngIf="conciertoForm.controls['fecha'].invalid && conciertoForm.controls['fecha'].touched">
+            <ion-text color="danger">
+              <p>Fecha invalida.</p>
+            </ion-text>
+          </div>
+
           <div formGroupName="venta">
             <ion-item>
-              <ion-label position="floating">Fecha Inicio Venta:</ion-label>
-              <ion-datetime formControlName="fechaInicio"></ion-datetime>
-            </ion-item>
-
-            <ion-item>
-              <ion-label position="floating">Fecha Fin Venta:</ion-label>
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              <ion-label position="floating fecha-separada">Fecha Limite de Venta:</ion-label>
               <ion-datetime formControlName="fechaFin"></ion-datetime>
             </ion-item>
+            <div class="error-message"
+              *ngIf="conciertoForm.hasError('fechaFinMayor') && conciertoForm.get('venta.fechaFin')?.touched">
+              <ion-text color="danger">
+                <p>La fecha límite de venta no puede ser mayor que la fecha del concierto.</p>
+              </ion-text>
+            </div>
+
+            <div class="error-message"
+              *ngIf="conciertoForm.hasError('fechaFinPasada') && conciertoForm.get('venta.fechaFin')?.touched">
+              <ion-text color="danger">
+                <p>La fecha límite de venta debe ser mayor que hoy.</p>
+              </ion-text>
+            </div>
 
             <ion-item>
               <ion-label>Estado Venta:</ion-label>
-              <ion-select formControlName="estado">
-                <ion-select-option value="Activo">Activo</ion-select-option>
+              <ion-select formControlName="estado" placeholder="Seleccione un estado">
                 <ion-select-option value="Inactivo">Inactivo</ion-select-option>
-                <ion-select-option value="Cancelado">Cancelado</ion-select-option>
-                <ion-select-option value="Finalizado">Finalizado</ion-select-option>
               </ion-select>
             </ion-item>
           </div>
@@ -217,8 +223,8 @@
           </ion-list>
 
 
-          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="
-          !conciertoForm.valid ||cantidadRestante < 0 || cantidadRestante > 0 ||categoriasAsiento.length === 0">
+          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="!conciertoForm.valid || cantidadRestante !== 0 || categoriasAsiento.length === 0 || !hayArchivo() || 
+              conciertoForm.hasError('fechaFinMayor') || conciertoForm.hasError('fechaFinPasada')">
             Crear Concierto
           </ion-button>
 

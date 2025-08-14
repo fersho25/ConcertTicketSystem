@@ -67,8 +67,19 @@
               </tr>
             </tbody>
           </table>
-          <ion-button (click)="irAReserva(concierto.id)">Reservar
+          <ion-button *ngIf="concierto.venta?.estado === 'Activo'" class="ion-margin-top" shape="round" expand="full"
+            (click)="irAReserva(concierto.id)">Reservar
           </ion-button>
+          <ion-button *ngIf="concierto.venta?.estado === 'Inactivo'" class="ion-margin-top" shape="round" expand="full"
+            (click)="mostrarAlerta('proximamente')">
+            Próximamente en Venta
+          </ion-button>
+
+          <ion-button *ngIf="concierto.venta?.estado === 'Finalizado'" class="ion-margin-top" shape="round"
+            expand="full" (click)="mostrarAlerta('finalizado')">
+            Venta Terminada
+          </ion-button>
+
         </ion-col>
       </ion-row>
     </ion-grid>

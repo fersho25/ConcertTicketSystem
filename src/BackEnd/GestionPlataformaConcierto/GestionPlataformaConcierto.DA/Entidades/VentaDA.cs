@@ -15,9 +15,6 @@ namespace GestionPlataformaConcierto.DA.Entidades
         public ConciertoDA Concierto { get; set; }
 
         [Required]
-        public DateTime FechaInicio { get; set; }
-
-        [Required]
         public DateTime FechaFin { get; set; }
 
         [Required]

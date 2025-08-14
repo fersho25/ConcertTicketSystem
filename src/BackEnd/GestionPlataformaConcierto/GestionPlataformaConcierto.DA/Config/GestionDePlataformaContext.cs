@@ -72,8 +72,8 @@ namespace GestionPlataformaConcierto.DA.Config
             // Relación Venta - Concierto
             modelBuilder.Entity<Venta>()
                 .HasOne(v => v.Concierto)
-                .WithMany(c => c.Venta)
-                .HasForeignKey(v => v.ConciertoId)
+                .WithOne(c => c.Venta) 
+                .HasForeignKey<Venta>(v => v.ConciertoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // AsientoReserva - Compra

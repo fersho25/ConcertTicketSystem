@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ConciertoDTO, ConciertoService } from '../services/concierto.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-mostrar-concierto',
@@ -17,7 +18,8 @@ export class MostrarConciertoPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private conciertoService: ConciertoService,
-    private router: Router
+    private router: Router,
+    private alertController : AlertController
   ) { }
 
   irAReserva(conciertoId: number) {
@@ -62,6 +64,44 @@ export class MostrarConciertoPage implements OnInit {
     }
   }
 
+  ionViewWillEnter() {
+    // Esto se ejecuta cada vez que se entra a la vista
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.conciertoService.obtenerConciertoPorId(id).subscribe(concierto => {
+      this.concierto = concierto;
+      this.activeIndex = 0; // Reiniciar slider al entrar
+    });
+  }
+
+   async mostrarAlerta(tipo: string) {
+    let header = '';
+    let message = '';
+
+    switch (tipo) {
+      case 'proximamente':
+        header = 'Próximamente en Venta';
+        message = 'Este concierto aún no está disponible para la venta.';
+        break;
+
+      case 'finalizado':
+        header = 'Venta Terminada';
+        message = 'Este concierto ya finalizó y no está disponible.';
+        break;
+
+      default:
+        header = 'Aviso';
+        message = 'Información no disponible.';
+        break;
+    }
+
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
 
   darkPaletteToggleChange(event: CustomEvent) {
     this.toggleDarkPalette(event.detail.checked);

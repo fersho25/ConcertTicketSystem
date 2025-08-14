@@ -19,6 +19,6 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 
         public List<CategoriaAsientoDTO> CategoriasAsiento { get; set; }
         public List<ArchivoMultimediaDTO> ArchivosMultimedia { get; set; }
-        public List<VentaDTO> Venta { get; set; } 
+        public VentaDTO Venta { get; set; }
     }
 }

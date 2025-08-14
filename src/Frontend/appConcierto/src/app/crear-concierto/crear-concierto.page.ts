@@ -59,13 +59,12 @@ export class CrearConciertoPage implements OnInit {
       capacidad: ['', [Validators.required, Validators.min(1)]],
 
       venta: this.fb.group({
-        fechaInicio: ['', Validators.required],
         fechaFin: ['', Validators.required],
-        estado: ['Inactivo', Validators.required]
+        estado: ['', Validators.required]
       }),
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
-    });
+    }, { validators: this.fechaFinValidaValidator });
   }
 
   get categoriasAsiento(): FormArray {
@@ -117,15 +116,12 @@ export class CrearConciertoPage implements OnInit {
     const concierto: ConciertoDTO = {
       ...this.conciertoForm.value,
       usuarioID: usuarioID,
-      venta: [
-    {
-      id: 0,
-      conciertoId: 0,
-      fechaInicio: ventaForm.fechaInicio,
-      fechaFin: ventaForm.fechaFin,
-      estado: ventaForm.estado
-    }
-  ]
+      venta: {
+        id: 0,
+        conciertoId: 0,
+        fechaFin: ventaForm.fechaFin,
+        estado: ventaForm.estado
+      }
     };
     console.log(concierto);
 
@@ -186,6 +182,14 @@ export class CrearConciertoPage implements OnInit {
     }
   }
 
+  hayArchivo(): boolean {
+    if (!this.archivosMultimedia || !this.archivosMultimedia.controls) return false;
+
+    return this.archivosMultimedia.controls.some(archivo =>
+      archivo.get('tipo')?.value?.startsWith('image/') ||
+      archivo.get('tipo')?.value?.startsWith('video/')
+    );
+  }
 
   get cantidadRestante(): number {
     const capacidad = this.conciertoForm.get('capacidad')?.value || 0;
@@ -194,6 +198,28 @@ export class CrearConciertoPage implements OnInit {
       return suma + cantidad;
     }, 0);
     return capacidad - totalAsignado;
+  }
+
+  fechaFinValidaValidator(group: AbstractControl): ValidationErrors | null {
+    const fechaControl = group.get('fecha');
+    const fechaFinControl = group.get('venta.fechaFin');
+
+    if (!fechaControl || !fechaFinControl) return null;
+
+    const fecha = new Date(fechaControl.value);
+    const fechaFin = new Date(fechaFinControl.value);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // comparar solo fecha
+
+    if (fechaFin > fecha) {
+      return { fechaFinMayor: true };
+    }
+
+    if (fechaFin <= hoy) {
+      return { fechaFinPasada: true };
+    }
+
+    return null;
   }
 
 

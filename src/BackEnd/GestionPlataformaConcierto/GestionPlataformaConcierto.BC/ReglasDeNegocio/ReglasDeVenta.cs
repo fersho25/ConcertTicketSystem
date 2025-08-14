@@ -10,31 +10,34 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 {
     public class ReglasDeVenta
     {
-        public static bool ventaEsValida(Venta venta)
+        public static bool VentaEsValida(Venta venta, Concierto concierto)
         {
-            return fechasEsValida(venta) &&
-                conciertoEsValido(venta)&&
-                ValidarEstado(venta);
+            return FechasEsValida(venta, concierto) &&
+                   conciertoEsValido(venta, concierto) &&
+                   ValidarEstado(venta);
         }
 
-        private  static bool fechasEsValida(Venta venta)
+        private static bool FechasEsValida(Venta venta, Concierto concierto)
         {
-            if (venta.FechaInicio >= venta.FechaFin)
+            if (venta.FechaFin <= DateTime.Now)
                 return false;
 
-            if (venta.FechaInicio.Date < DateTime.Now.Date && venta.Estado == EstadoVenta.Activo)
+            if (venta.FechaFin >= concierto.Fecha)
                 return false;
 
             return true;
         }
 
-        private static bool conciertoEsValido(Venta venta)
+        private static bool conciertoEsValido(Venta venta, Concierto concierto)
         {
-            if (venta.ConciertoId <= 0)
+
+            if (concierto == null)
                 return false;
 
-            if (venta.Concierto == null)
+            if (concierto.Id < 0)
                 return false;
+
+            
 
             return true;
         }

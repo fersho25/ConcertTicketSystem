@@ -77,7 +77,6 @@ CREATE TABLE AsientoReserva (
 CREATE TABLE Venta (
     Id INT PRIMARY KEY IDENTITY(1,1),
     ConciertoId INT NOT NULL,
-    FechaInicio DATETIME NOT NULL,
     FechaFin DATETIME NOT NULL,
     Estado INT NOT NULL DEFAULT 0,
     CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
@@ -112,3 +111,10 @@ Select *
 From dbo.AsientoReserva
 
 SELECT * FROM CategoriaAsiento;
+
+Select * 
+From dbo.Venta
+
+
+Select * 
+From dbo.Concierto
