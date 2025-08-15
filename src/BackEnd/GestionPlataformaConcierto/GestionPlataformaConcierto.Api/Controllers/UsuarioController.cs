@@ -1,5 +1,6 @@
 ﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
+using GestionPlataformaConcierto.BW.CU;
 using GestionPlataformaConcierto.BW.Interfaces.BW;
 using Microsoft.AspNetCore.Mvc;
 
@@ -132,6 +133,41 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al iniciar sesión: {ex.Message}");
             }
         }
+
+        [HttpPut("admin/{id}", Name = "ActualizarUsuarioAdministrador")]
+        public async Task<IActionResult> ActualizarUsuarioAdmin(int id, [FromBody] UsuarioActualizarAdminDTO usuarioDto)
+        {
+            var usuario = UsuarioMapper.MapToEntity(usuarioDto);
+            usuario.Id = id;
+
+            var resultado = await gestionarUsuarioBW.actualizarUsuarioAdmin(id, usuario);
+
+            if (!resultado)
+                return BadRequest("No se pudo actualizar el usuario.");
+
+            return Ok("Usuario actualizado correctamente.");
+        }
+
+        [HttpGet("admin/{id}", Name = "ObtenerUsuarioAdministrador")]
+        public async Task<ActionResult<UsuarioActualizarAdminDTO>> ObtenerUsuarioAdministrador(int id)
+        {
+            try
+            {
+                var usuario = await gestionarUsuarioBW.obtenerUsuarioPorId(id);
+                if (usuario == null)
+                    return NotFound("Usuario no encontrado");
+
+                var usuarioDto = UsuarioMapper.ToActualizarAdminDTO(usuario);
+
+                return Ok(usuarioDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al obtener el usuario: {ex.Message}");
+            }
+        }
+
+
 
     }
 

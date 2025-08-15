@@ -1,5 +1,6 @@
 ﻿
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Hash;
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
@@ -10,10 +11,11 @@ namespace GestionPlataformaConcierto.DA.Acciones
     public class GestionarUsuarioDA : IGestionarUsuarioDA
     {
         private readonly GestionDePlataformaContext gestionDePlataformaContext;
-
-        public GestionarUsuarioDA(GestionDePlataformaContext gestionDePlataformaContext)
+        private Seguridad seguridad;
+        public GestionarUsuarioDA(GestionDePlataformaContext gestionDePlataformaContext, Seguridad seguridad)
         {
             this.gestionDePlataformaContext = gestionDePlataformaContext;
+            this.seguridad = seguridad;
         }
 
       
@@ -41,24 +43,54 @@ namespace GestionPlataformaConcierto.DA.Acciones
 
             if (!string.IsNullOrEmpty(usuario.ContrasenaNueva))
             {
-                usuarioExistente.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.ContrasenaNueva);
+                usuarioExistente.Contrasena = seguridad.HashearContrasena(usuario.ContrasenaNueva);
             }
 
             await gestionDePlataformaContext.SaveChangesAsync();
             return true;
         }
 
+        public async Task<bool> actualizarUsuarioAdmin(int id, Usuario usuario)
+        {
+            try
+            {
+                var usuarioExistente = await gestionDePlataformaContext.Usuario.FindAsync(id);
+                if (usuarioExistente == null) return false;
+
+                usuarioExistente.NombreCompleto = usuario.NombreCompleto;
+                usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
+                usuarioExistente.Rol = usuario.Rol;
+
+                await gestionDePlataformaContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> CambiarContrasena(string correoElectronico, string nuevaContrasena)
         {
-            var usuario = gestionDePlataformaContext.Usuario.FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico);
-            if (usuario == null)
+            try
+            {
+                var usuario = await gestionDePlataformaContext.Usuario
+                    .FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico);
+
+                if (usuario == null)
+                    return false;
+
+               
+                usuario.Contrasena = seguridad.HashearContrasena(nuevaContrasena);
+
+                await gestionDePlataformaContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
-
-            usuario.Result.Contrasena = nuevaContrasena;
-
-            await gestionDePlataformaContext.SaveChangesAsync();
-
-            return true;
+            }
 
         }
 
@@ -87,6 +119,14 @@ namespace GestionPlataformaConcierto.DA.Acciones
             return true;
         }
 
+        public async Task<Usuario> ObtenerUsuarioAdministrador(int id)
+        {
+      
+           
+            return await gestionDePlataformaContext.Usuario.FirstOrDefaultAsync(u => u.Id == id);
+            
+        }
+
         public async Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena)
         {
             var usuario = await gestionDePlataformaContext.Usuario
@@ -95,7 +135,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
             if (usuario == null)
                 return null;
 
-            bool esValida = BCrypt.Net.BCrypt.Verify(contrasena, usuario.Contrasena);
+            bool esValida = seguridad.VerificarContrasena(contrasena, usuario.Contrasena);
 
             if (esValida)
                 return usuario;
@@ -129,16 +169,20 @@ namespace GestionPlataformaConcierto.DA.Acciones
         {
             try
             {
-                var correoExiste = await gestionDePlataformaContext.Usuario.AnyAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
+                var correoExiste = await gestionDePlataformaContext.Usuario
+                    .AnyAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
+
                 if (correoExiste) return false;
 
-                gestionDePlataformaContext.Usuario.Add(usuario);
+               
+                usuario.Contrasena = seguridad.HashearContrasena(usuario.Contrasena);
 
+                gestionDePlataformaContext.Usuario.Add(usuario);
                 await gestionDePlataformaContext.SaveChangesAsync();
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

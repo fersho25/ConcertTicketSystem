@@ -1,3 +1,4 @@
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Hash;
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.CU;
 using GestionPlataformaConcierto.BW.Interfaces.BW;
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IGestionarCompraDA, GestionarCompraDA>();
 builder.Services.AddScoped<IGestionarCompraBW, GestionarCompraBW>();
 builder.Services.AddScoped<IEmailDA, EmailDA>();
 builder.Services.AddScoped<IEmailBW, EmailBW>();
+builder.Services.AddScoped<Seguridad>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailDA, EmailDA>();
 

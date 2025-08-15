@@ -41,6 +41,31 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
         }
 
 
+        public static Usuario MapToEntity(UsuarioActualizarAdminDTO dto)
+        {
+            return new Usuario
+            {
+                Id = dto.id,
+                NombreCompleto = dto.NombreCompleto,
+                CorreoElectronico = dto.CorreoElectronico,
+                Rol = dto.Rol
+            };
+        }
+
+
+        public static UsuarioActualizarAdminDTO ToActualizarAdminDTO(Usuario usuario)
+        {
+            return new UsuarioActualizarAdminDTO
+            {
+                id = usuario.Id,
+                NombreCompleto = usuario.NombreCompleto,
+                CorreoElectronico = usuario.CorreoElectronico,
+                Rol = usuario.Rol
+            };
+        }
+
+
+
 
     }
 }

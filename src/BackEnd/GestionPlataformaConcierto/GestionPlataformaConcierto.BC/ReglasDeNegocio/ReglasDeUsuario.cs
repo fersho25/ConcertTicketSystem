@@ -1,16 +1,11 @@
 ﻿using System.Text.RegularExpressions;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
 using GestionPlataformaConcierto.BC.Modelos;
 
 namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 {
     public class ReglasDeUsuario
     {
-        private static readonly List<string> RolesPermitos = new List<string>
-        {
-            "administrador",
-            "promotor",
-            "usuario"
-        };
 
         public static bool ElUsuarioEsValido(Usuario usuario)
         {
@@ -45,7 +40,10 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 
         public static bool ElRolEsValido(Usuario usuario)
         {
-            return !string.IsNullOrEmpty(usuario.Rol.ToString()) && RolesPermitos.Contains(usuario.Rol.ToString().ToLower());
+            if (!Enum.IsDefined(typeof(RolesPermitidos), usuario.Rol))
+                return false;
+
+            return true;
         }
 
         public static bool ElIdEsValido(int id)

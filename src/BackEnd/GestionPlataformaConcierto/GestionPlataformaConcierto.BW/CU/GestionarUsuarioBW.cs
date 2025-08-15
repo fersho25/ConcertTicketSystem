@@ -26,19 +26,18 @@ namespace GestionPlataformaConcierto.BW.CU
 
         }
 
+        public Task<bool> actualizarUsuarioAdmin(int id, Usuario usuario)
+        {
+            return ReglasDeUsuario.ElIdEsValido(id) && ReglasDeUsuario.ElEmailEsValido(usuario) && ReglasDeUsuario.ElNombreEsValido(usuario) && ReglasDeUsuario.ElRolEsValido(usuario)
+                ? gestionarUsuarioDA.actualizarUsuarioAdmin(id, usuario)
+                : Task.FromResult(false);
+        }
+
         public Task<bool> CambiarContrasena(string correoElectronico, string nuevaContrasena)
         {
-            if (!ReglasDeUsuario.lasCredencialesSonValidas(correoElectronico, nuevaContrasena))
-                return Task.FromResult(false);
-
-            
-            var seguridad = new Seguridad();
-            string hash = seguridad.HashearContrasena(nuevaContrasena);
-
-           
-            return  gestionarUsuarioDA.CambiarContrasena(correoElectronico, hash);
-
-
+            return ReglasDeUsuario.lasCredencialesSonValidas(correoElectronico, nuevaContrasena)
+                ? gestionarUsuarioDA.CambiarContrasena(correoElectronico, nuevaContrasena)
+                : Task.FromResult(false);
         }
 
         public Task<bool> eliminarUsuario(int id)
@@ -46,6 +45,13 @@ namespace GestionPlataformaConcierto.BW.CU
             return ReglasDeUsuario.ElIdEsValido(id) 
                 ? gestionarUsuarioDA.eliminarUsuario(id) 
                 : Task.FromResult(false);
+        }
+
+        public Task<Usuario> ObtenerUsuarioAdministrador(int id)
+        {
+            return ReglasDeUsuario.ElIdEsValido(id) 
+                ? gestionarUsuarioDA.ObtenerUsuarioAdministrador(id) 
+                : Task.FromResult<Usuario>(null);
         }
 
         public Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena)
@@ -69,13 +75,10 @@ namespace GestionPlataformaConcierto.BW.CU
 
         public Task<bool> registrarUsuario(Usuario usuario)
         {
-            if (!ReglasDeUsuario.ElUsuarioEsValido(usuario))
-                return Task.FromResult(false);
+            return ReglasDeUsuario.ElUsuarioEsValido(usuario)
+                ? gestionarUsuarioDA.registrarUsuario(usuario)
+                : Task.FromResult(false);
 
-            var seguridad = new Seguridad();
-            usuario.Contrasena = seguridad.HashearContrasena(usuario.Contrasena);
-
-            return  gestionarUsuarioDA.registrarUsuario(usuario);
         }
     }
 }
