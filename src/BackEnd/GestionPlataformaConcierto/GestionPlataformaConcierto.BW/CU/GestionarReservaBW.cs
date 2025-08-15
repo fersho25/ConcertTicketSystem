@@ -14,12 +14,14 @@ namespace GestionPlataformaConcierto.BW.CU
             this.gestionarReservaDA = gestionarReservaDA;
         }
 
-        public async Task<bool> registrarReserva(Reserva reserva)
+        public async Task<Reserva> registrarReserva(Reserva reserva)
         {
             if (!ReglasDeReserva.laReservaEsValida(reserva))
-                return false;
+                return null; 
 
-            return await gestionarReservaDA.registrarReserva(reserva);
+           
+            var reservaCreada = await gestionarReservaDA.registrarReserva(reserva);
+            return reservaCreada;
         }
 
         public async Task<bool> actualizarReserva(int id, Reserva reserva)

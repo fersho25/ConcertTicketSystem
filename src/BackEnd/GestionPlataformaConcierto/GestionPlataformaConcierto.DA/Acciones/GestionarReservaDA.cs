@@ -143,20 +143,11 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .ToListAsync();
         }
 
-        public async Task<bool> registrarReserva(Reserva reserva)
-        {
-            try
-            {
-                await _context.Reserva.AddAsync(reserva);
+        public async Task<Reserva> registrarReserva(Reserva reserva)
+        {                _context.Reserva.Add(reserva);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                return reserva;
         }
-
         public async Task<List<AsientoReserva>> ObtenerAsientosPorConcierto(int conciertoId)
         {
             return await _context.AsientoReserva

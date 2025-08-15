@@ -194,7 +194,7 @@ export class ReservaPage implements OnInit, OnDestroy {
 
   private obtenerFechaHoraExpiracion(): string {
     const expiracion = new Date();
-    expiracion.setMinutes(expiracion.getMinutes() + 1);
+    expiracion.setMinutes(expiracion.getMinutes() + 3);
     return expiracion.toISOString();
   }
 
@@ -221,7 +221,7 @@ export class ReservaPage implements OnInit, OnDestroy {
 
   if (fechaCompra) {
     // Ya fue comprada
-    this.reservaForm.patchValue({ estado: 'COMPRA' }, { emitEvent: false });
+    this.reservaForm.patchValue({ estado: 'COMPRADA' }, { emitEvent: false });
   } else if (estadoActual === 'CANCELADA') {
     
     this.reservaForm.patchValue({ estado: 'CANCELADA' }, { emitEvent: false });
@@ -259,48 +259,46 @@ export class ReservaPage implements OnInit, OnDestroy {
     switch (estado) {
       case 'DISPONIBLE': return 'green';
       case 'RESERVADO': return 'yellow';
-      case 'VENDIDO': return 'red';
+      case 'COMPRADA': return 'red';
       default: return 'gray';
     }
   }
 
   async registrarReserva() {
-    if (this.reservaForm.invalid) {
+  if (this.reservaForm.invalid) {
+    const alert = await this.alertController.create({
+      header: 'Formulario inválido',
+      message: 'Por favor, complete todos los campos correctamente.',
+      buttons: ['Ok']
+    });
+    await alert.present();
+    return;
+  }
+
+  const reserva: ReservaDTO = this.reservaForm.value;
+
+  this.reservaService.registrarReserva(reserva).subscribe(
+    async (reservaGuardada) => {
+      // Guardamos la reserva en localStorage para usarla en compra
+      localStorage.setItem('reservaActual', JSON.stringify(reservaGuardada));
+      this.detenerTimer();
+
+      // Vamos directo a compra
+      this.router.navigate(['/compra']);
+    },
+    async () => {
       const alert = await this.alertController.create({
-        header: 'Formulario inválido',
-        message: 'Por favor, complete todos los campos correctamente.',
+        header: 'Error',
+        message: 'No se pudo registrar la reserva.',
         buttons: ['Ok']
       });
       await alert.present();
-      return;
     }
+  );
+}
 
-    const reserva: ReservaDTO = this.reservaForm.value;
 
-    this.reservaService.registrarReserva(reserva).subscribe(
-      async () => {
-        this.detenerTimer();
-        localStorage.removeItem('conciertoId');
-        const alert = await this.alertController.create({
-          header: 'Reserva registrada',
-          message: 'La reserva se ha registrado correctamente.',
-          buttons: ['Ok']
-        });
-        await alert.present();
-        this.reservaForm.reset();
-        this.asientos.clear();
-        this.router.navigate(['/home']);
-      },
-      async () => {
-        const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'No se pudo registrar la reserva.',
-          buttons: ['Ok']
-        });
-        await alert.present();
-      }
-    );
-  }
+
 
   ionViewWillEnter() {
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
@@ -318,7 +316,7 @@ export class ReservaPage implements OnInit, OnDestroy {
     } else {
       const ahora = new Date();
       const expiracion = new Date();
-      expiracion.setMinutes(ahora.getMinutes() + 1);
+      expiracion.setMinutes(ahora.getMinutes() + 3);
       this.reservaForm.patchValue({
         fechaHoraReserva: ahora.toISOString(),
         fechaHoraExpiracion: expiracion.toISOString()

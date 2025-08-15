@@ -49,7 +49,7 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
             if (reserva == null)
                 return false;
 
-            var estadosValidos = new[] { "ACTIVA", "VENCIDA", "COMPRA", "CANCELADA" };
+            var estadosValidos = new[] { "ACTIVA", "VENCIDA", "COMPRADA", "CANCELADA" };
 
             return estadosValidos.Contains((reserva.Estado ?? string.Empty).Trim().ToUpper());
         }

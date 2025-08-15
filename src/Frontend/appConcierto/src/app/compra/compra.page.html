@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Completar Compra</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/reserva"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Formulario Reactive Forms -->
+  <form [formGroup]="compraForm" (ngSubmit)="confirmarCompra()">
+
+    <!-- Reserva ID (solo lectura) -->
+    <ion-item>
+      <ion-label>Reserva ID</ion-label>
+      <ion-input [value]="reserva?.id" readonly></ion-input>
+    </ion-item>
+
+    <!-- Método de Pago -->
+    <ion-item>
+      <ion-label position="floating">Método de Pago</ion-label>
+      <ion-select formControlName="metodoPago" placeholder="Seleccione método">
+        <ion-select-option value="PAYPAL">PAYPAL</ion-select-option>
+        <ion-select-option value="STRIPE">STRIPE</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Código de Promoción -->
+    <ion-item>
+      <ion-label position="floating">Código de Promoción</ion-label>
+      <ion-input formControlName="promocionAplicada" placeholder="Opcional"></ion-input>
+    </ion-item>
+
+    <!-- Precios -->
+    <ion-item>
+      <ion-label>Precio Total</ion-label>
+      <ion-input [value]="precioTotal | currency:'USD'" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Descuento Aplicado</ion-label>
+      <ion-input [value]="compraForm.get('descuentoAplicado')?.value | currency:'USD'" readonly></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Precio Final</ion-label>
+      <ion-input [value]="precioFinal | currency:'USD'" readonly></ion-input>
+    </ion-item>
+
+    <p>Estado de la compra: {{ compraForm.get('estado')?.value }}</p>
+
+    <!-- Botón de Confirmar Compra -->
+    <ion-button expand="block" type="submit" [disabled]="compraForm.invalid">
+      Confirmar Compra
+    </ion-button>
+  </form>
+
+  <!-- Lista de Asientos -->
+  <ion-card *ngIf="reserva?.asientos?.length">
+    <ion-card-header>
+      <ion-card-title>Asientos reservados</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let asiento of reserva.asientos">
+          <ion-label>
+            Categoría: {{asiento.categoriaAsientoId}} - Asiento: {{asiento.numeroAsiento}} - Precio: {{asiento.precio | currency:'USD'}}
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

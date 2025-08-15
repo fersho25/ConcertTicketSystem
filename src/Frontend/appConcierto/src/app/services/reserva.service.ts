@@ -6,22 +6,16 @@ export interface AsientoReservaDTO {
   categoriaAsientoId: number;
   numeroAsiento: number;
   precio: number;
+  estado?: 'DISPONIBLE' | 'RESERVADO' | 'COMPRADA';
 }
 
 export interface ReservaDTO {
-  id?: number; // opcional
+  id?: number;
   usuarioId: number;
   conciertoId: number;
   fechaHoraReserva: string;
   fechaHoraExpiracion: string;
   estado: string;
-  metodoPago: string;
-  fechaHoraCompra: string;
-  precioTotal: number;
-  descuentoAplicado: number;
-  promocionAplicada?: string;
-  codigoQR?: string;
-  notificado: boolean;
   asientos: AsientoReservaDTO[];
 }
 
@@ -30,7 +24,7 @@ export interface AsientoMapaDTO {
   categoriaNombre: string;
   numeroAsiento: number;
   precio: number;
-  estado: 'DISPONIBLE' | 'RESERVADO' | 'VENDIDO';
+  estado: 'DISPONIBLE' | 'RESERVADO' | 'COMPRADA';
 }
 
 @Injectable({
@@ -39,7 +33,7 @@ export interface AsientoMapaDTO {
 export class ReservaService {
   private baseUrl = 'http://localhost:5065/api/Reserva';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerReservas(): Observable<ReservaDTO[]> {
     return this.http.get<ReservaDTO[]>(this.baseUrl);
@@ -61,8 +55,13 @@ export class ReservaService {
     return this.http.delete<boolean>(`${this.baseUrl}/${id}`);
   }
 
-   obtenerMapaAsientos(conciertoId: number): Observable<AsientoMapaDTO[]> {
-  return this.http.get<AsientoMapaDTO[]>(`${this.baseUrl}/mapa-asientos/${conciertoId}`);
+  obtenerMapaAsientos(conciertoId: number): Observable<AsientoMapaDTO[]> {
+    return this.http.get<AsientoMapaDTO[]>(`${this.baseUrl}/mapa-asientos/${conciertoId}`);
+  }
 
-   }
+  cancelarReserva(id: number): Observable<boolean> {
+    return this.http.put<boolean>(`${this.baseUrl}/${id}/cambiarEstado`, '"CANCELADA"', {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }

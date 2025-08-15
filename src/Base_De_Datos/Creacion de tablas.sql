@@ -53,6 +53,23 @@ CREATE TABLE Reserva (
     CONSTRAINT FK_Reserva_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
 );
 
+CREATE TABLE Compra (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ReservaId INT NOT NULL,
+    MetodoPago NVARCHAR(50) NOT NULL,
+    FechaHoraCompra DATETIME NULL,
+    PrecioTotal DECIMAL(18,2) NOT NULL,
+    DescuentoAplicado DECIMAL(18,2) NOT NULL,
+    PromocionAplicada NVARCHAR(100) NULL,
+    CodigoQR NVARCHAR(200) NULL,
+    Notificado BIT NOT NULL,
+    Estado NVARCHAR(50) NOT NULL
+
+    CONSTRAINT [FK_Compra_Reserva] FOREIGN KEY ([ReservaId])
+        REFERENCES [dbo].[Reserva] ([Id])
+        ON DELETE CASCADE
+);
+
 
 CREATE TABLE AsientoReserva (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -82,24 +99,9 @@ CREATE TABLE Venta (
     CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
 );
 
-CREATE TABLE Compra (
-    [Id] INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    [ReservaId] INT NOT NULL,
-    [MetodoPago] NVARCHAR(20) NOT NULL,
-    [FechaHoraCompra] DATETIME NULL,
-    [PrecioTotal] DECIMAL(18,2) NOT NULL,
-    [DescuentoAplicado] DECIMAL(18,2) NOT NULL,
-    [PromocionAplicada] NVARCHAR(100) NULL,
-    [CodigoQR] NVARCHAR(255) NULL,
-    [Notificado] BIT NOT NULL DEFAULT 0,
-    [Estado] NVARCHAR(20) NOT NULL,
 
-    CONSTRAINT [FK_Compra_Reserva] FOREIGN KEY ([ReservaId])
-        REFERENCES [dbo].[Reserva] ([Id])
-        ON DELETE CASCADE
-);
 
-DROP TABLE dbo.Venta;
+DROP TABLE dbo.Compra;
 
 
 Select *
@@ -113,8 +115,7 @@ From dbo.AsientoReserva
 SELECT * FROM CategoriaAsiento;
 
 Select * 
-From dbo.Venta
-
+From dbo.Usuario
 
 Select * 
 From dbo.Concierto

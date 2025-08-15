@@ -56,18 +56,18 @@ namespace GestionPlataformaConcierto.Api.Controllers
         }
 
         [HttpPost(Name = "RegistrarReserva")]
-        public async Task<ActionResult<bool>> Post([FromBody] ReservaDTO reservaDto)
+        public async Task<ActionResult<ReservaDTO>> Post([FromBody] ReservaDTO reservaDto)
         {
             try
             {
                 var reserva = ReservaMapper.MapToEntity(reservaDto);
 
-                var resultado = await gestionarReservaBW.registrarReserva(reserva);
+                var reservaCreada = await gestionarReservaBW.registrarReserva(reserva);
 
-                if (!resultado)
+                if (reservaCreada == null)
                     return BadRequest("No se pudo registrar la reserva.");
 
-                return Ok(true);
+                return Ok(ReservaMapper.MapToDTO(reservaCreada));
             }
             catch (Exception ex)
             {

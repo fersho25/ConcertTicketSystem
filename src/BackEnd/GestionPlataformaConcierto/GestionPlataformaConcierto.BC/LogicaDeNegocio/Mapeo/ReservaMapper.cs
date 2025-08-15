@@ -24,5 +24,26 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 }).ToList()
             };
         }
+            
+public static ReservaDTO MapToDTO(Reserva entity)
+        {
+            if (entity == null) return null;
+
+            return new ReservaDTO
+            {
+                Id = entity.Id,
+                UsuarioId = entity.UsuarioId,
+                ConciertoId = entity.ConciertoId,
+                FechaHoraReserva = entity.FechaHoraReserva,
+                FechaHoraExpiracion = entity.FechaHoraExpiracion,
+                Estado = entity.Estado,
+                Asientos = entity.Asientos?.Select(a => new AsientoReservaDTO
+                {
+                    CategoriaAsientoId = a.CategoriaAsientoId,
+                    NumeroAsiento = a.NumeroAsiento,
+                    Precio = a.Precio
+                }).ToList()
+            };
+        }
     }
 }

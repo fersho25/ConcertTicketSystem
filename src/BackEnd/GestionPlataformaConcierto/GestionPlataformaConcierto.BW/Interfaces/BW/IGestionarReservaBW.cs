@@ -4,7 +4,7 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
 {
     public interface IGestionarReservaBW
     {
-        Task<bool> registrarReserva(Reserva reserva);
+        Task<Reserva> registrarReserva(Reserva reserva);
         Task<bool> actualizarReserva(int id, Reserva reserva);
         Task<bool> eliminarReserva(int id);
         Task<List<Reserva>> obtenerReservas();
