@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button fill="clear" routerLink="/home">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      Panel de Usuarios
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <ion-content class="ion-padding">
+
+    <table class="tabla-con-bordes ion-text-center" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Nombres</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.nombreCompleto }}</td>
+          <td>{{ usuario.correoElectronico }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td>
+            <ion-button size="small" color="primary" (click)="editarUsuario(usuario)">Editar</ion-button>
+            <ion-button size="small" color="danger" (click)="eliminarUsuario(usuario)">Eliminar</ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+
+  </ion-content>

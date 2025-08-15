@@ -7,17 +7,16 @@
   font-size: 24px;  
 }
 
-.titulo-personalizado-editarConcierto {
-  font-weight: bold;  
-  font-size: 20px;    
-  text-align: center; 
+.titulo-personalizado-editar {
+  font-weight: bold;  /* Negrita */
+  font-size: 20px;    /* Tamaño, ajusta a lo que quieras */
+  text-align: center; /* Ya que tu clase es titulo-centrado, si quieres puedes repetir o combinar */
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
 }
-
 
 ion-card {
   border-radius: 50px;
@@ -48,8 +47,4 @@ ion-icon {
   text-align: center;
   margin-top: 5px;
 
-}
-
-.fecha-separada{
-  margin-bottom: 25px;
 }

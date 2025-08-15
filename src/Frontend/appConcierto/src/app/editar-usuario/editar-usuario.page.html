@@ -1,0 +1,143 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button fill="clear" (click)="volver()">
+                <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+                Volver
+            </ion-button>
+        </ion-buttons>
+
+        <ion-title class="ion-text-center">
+            Editar de Usuario
+        </ion-title>
+
+        <ion-buttons slot="end">
+            <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+                Modo Oscuro
+            </ion-toggle>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+    <div class="container">
+
+        <ion-card>
+            <ion-card-header class="titulo-personalizado-editar">Editar Usuario</ion-card-header>
+            <ion-card-content>
+                <form [formGroup]="usuarioEditForm" (ngSubmit)="editarUsuario()">
+
+                    <ion-item>
+                        <ion-icon name="person" slot="start"></ion-icon>
+                        <ion-label position="floating">Nombre Completo:</ion-label>
+                        <ion-input type="text" formControlName="nombreCompleto" required></ion-input>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="usuarioEditForm.controls['nombreCompleto'].invalid && usuarioEditForm.controls['nombreCompleto'].touched">
+                        <ion-text color="danger">
+                            <p>El nombre no es valido.</p>
+                        </ion-text>
+                    </div>
+
+                    <ion-item class="ion-margin-top">
+                        <ion-icon name="mail-outline" slot="start"></ion-icon>
+                        <ion-label position="floating">Correo:</ion-label>
+                        <ion-input type="text" formControlName="correoElectronico" required></ion-input>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="usuarioEditForm.controls['correoElectronico'].invalid && usuarioEditForm.controls['correoElectronico'].touched">
+                        <ion-text color="danger">
+                            <p>El formato del correo es invalido.</p>
+                        </ion-text>
+                    </div>
+
+                    <ion-item *ngIf="this.usuarioActual.id === usuario.id" class="ion-margin-top">
+                        <ion-icon name="lock-closed" slot="start"></ion-icon>
+                        <ion-label position="floating">Contraseña Actual:</ion-label>
+                        <ion-input type="password" formControlName="contrasena" required>
+                            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                        </ion-input>
+                    </ion-item>
+
+                    <div class="error-message"
+                        *ngIf="usuarioEditForm.controls['contrasena'].invalid && usuarioEditForm.controls['contrasena'].touched">
+                        <ion-text color="danger">
+                            <p>Rellenar este campo para confirmar cambios.</p>
+                        </ion-text>
+                    </div>
+
+
+                    <div *ngIf="contrasenaNueva=== true">
+                        <ion-item class="ion-margin-top">
+                            <ion-icon name="lock-closed" slot="start"></ion-icon>
+                            <ion-label position="floating">Nueva Contraseña:</ion-label>
+                            <ion-input type="password" formControlName="contrasenaNueva" required>
+                                <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                            </ion-input>
+                        </ion-item>
+
+                        <div class="error-message"
+                            *ngIf="usuarioEditForm.get('contrasenaNueva')?.touched && usuarioEditForm.get('contrasenaNueva')?.invalid"
+                            lines="none">
+                            <ion-text color="danger" style="display: block;">
+                                <p *ngIf="usuarioEditForm.get('contrasenaNueva')?.errors?.['required']">La contraseña es
+                                    obligatoria.</p>
+                                <p *ngIf="usuarioEditForm.get('contrasenaNueva')?.errors?.['minLength']">Debe tener al
+                                    menos
+                                    8
+                                    caracteres.</p>
+                                <p *ngIf="usuarioEditForm.get('contrasenaNueva')?.errors?.['uppercase']">Debe contener
+                                    al
+                                    menos una
+                                    letra mayúscula.</p>
+                                <p *ngIf="usuarioEditForm.get('contrasenaNueva')?.errors?.['number']">Debe contener al
+                                    menos
+                                    un
+                                    número.</p>
+                                <p *ngIf="usuarioEditForm.get('contrasenaNueva')?.errors?.['symbol']">Debe contener al
+                                    menos
+                                    un
+                                    símbolo especial.</p>
+                            </ion-text>
+                        </div>
+                    </div>
+                    <ion-item class="ion-margin-top">
+                        <ion-icon name="people-circle-outline" slot="start"></ion-icon>
+                        <ion-label position="floating">Rol:</ion-label>
+                        <ion-list>
+                            <ion-item>
+                                <ion-select formControlName="rol" placeholder="Seleccione el rol" required>
+                                    <ion-select-option value="usuario">Usuario</ion-select-option>
+                                    <ion-select-option value="promotor">Promotor</ion-select-option>
+                                    <ion-select-option value="administrador">Administrador</ion-select-option>
+                                </ion-select>
+                            </ion-item>
+                        </ion-list>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="usuarioEditForm.controls['rol'].invalid && usuarioEditForm.controls['rol'].touched">
+                        <ion-text color="danger">
+                            <p>Seleccione el rol.</p>
+                        </ion-text>
+                    </div>
+
+                    <ion-button shape="round" expand="full" type="submit"
+                        [disabled]="usuarioEditForm.invalid || (contrasenaNueva && !usuarioEditForm.get('contrasenaNueva')?.value)"
+                        class="ion-margin-top button-34">
+                        Editar Usuario
+                    </ion-button>
+                </form>
+                <ion-button shape="round" expand="full" type="button" class="ion-margin-top button-34"
+                    (click)="habilitarNuevaContrasena()">
+                    {{ contrasenaNueva ? 'Deshabilitar Cambio de Contraseña' : 'Habilitar Cambio de Contraseña' }}
+                </ion-button>
+            </ion-card-content>
+        </ion-card>
+    </div>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+    </ion-toolbar>
+</ion-footer>

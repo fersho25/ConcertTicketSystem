@@ -23,6 +23,16 @@ export interface UsuarioDTO {
   rol: string;
 }
 
+export interface UsuarioActualizarDTO {
+  id: number;
+  nombreCompleto: string;
+  correoElectronico: string;
+  rol: string;
+  ContrasenaActual: string;
+  ContrasenaNueva?: string;
+}
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +40,8 @@ export interface UsuarioDTO {
 export class AuthenticatorService {
 
   private loginUrl = 'http://localhost:5065/api/Usuario/login';
-  private registerUrl = 'http://localhost:5065/api/Usuario';
+  private url = 'http://localhost:5065/api/Usuario';
+  
 
   constructor(private http: HttpClient) { }
 
@@ -39,6 +50,25 @@ export class AuthenticatorService {
   }
 
   registrarUsuario(usuario: UsuarioDTO): Observable<boolean> {
-    return this.http.post<boolean>(this.registerUrl, usuario);
+    return this.http.post<boolean>(this.url, usuario);
   }
+
+
+   obtenerUsuarios(): Observable<UsuarioDTO[]> {
+    return this.http.get<UsuarioDTO[]>(this.url);
+  }
+
+   obtenerUsuarioPorId(id: number): Observable<UsuarioDTO> {
+    return this.http.get<UsuarioDTO>(`${this.url}/${id}`);
+  }
+
+   actualizarUsuario(id: number, usuario: UsuarioActualizarDTO): Observable<boolean> {
+    return this.http.put<boolean>(`${this.url}/${id}`, usuario);
+  }
+  
+  
+  eliminarUsuario(id: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.url}/${id}`);
+  }
+
 }

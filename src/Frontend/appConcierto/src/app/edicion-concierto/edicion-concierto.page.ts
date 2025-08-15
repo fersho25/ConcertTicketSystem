@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConciertoDTO, ConciertoService, VentaDTO } from '../services/concierto.service';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, IonContent, NavController } from '@ionic/angular';
 
 
 function fechaHoraFuturaValidator(control: AbstractControl): ValidationErrors | null {
@@ -105,7 +105,7 @@ export class EdicionConciertoPage implements OnInit {
 
   cargarConcierto(id: number) {
     this.conciertoService.obtenerConciertoPorId(id).subscribe(concierto => {
-      this.concierto = concierto; 
+      this.concierto = concierto;
       if (this.formularioCargado) return;
 
       // Resetear formulario con valores del concierto
@@ -203,7 +203,7 @@ export class EdicionConciertoPage implements OnInit {
       }
     };
 
-    console.log('Concierto que enviarás:', conciertoEditado);
+    // console.log('Concierto que se envia:', conciertoEditado);
 
     this.conciertoService.actualizarConcierto(this.conciertoId, conciertoEditado).subscribe(
       async () => {
@@ -341,6 +341,11 @@ export class EdicionConciertoPage implements OnInit {
 
     return null;
   }
+
+
+
+
+
 
 
   ionViewWillEnter() {

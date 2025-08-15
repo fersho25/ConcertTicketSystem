@@ -23,6 +23,7 @@ export class PanelEdicionPage implements OnInit {
   usuario: any = {};
   modoOscuroActivado = false;
 
+  conciertosUsuarios: ConciertoDTO[] = [];
   conciertos: ConciertoDTO[] = [];
 
   constructor(private conciertoService: ConciertoService, private router: Router, private alertController: AlertController) { }
@@ -31,7 +32,7 @@ export class PanelEdicionPage implements OnInit {
     const data = localStorage.getItem('usuario');
     if (data) {
       this.usuario = JSON.parse(data);
-      this.cargarConciertos(this.usuario.id);
+      this.cargarSegunRol();
     }
   }
 
@@ -44,13 +45,25 @@ export class PanelEdicionPage implements OnInit {
     }
 
     this.conciertoService.getConciertosPorUsuario(id).subscribe({
-      next: (conciertos) => {
-        this.conciertos = conciertos;
+      next: (conciertosUsuario) => {
+        this.conciertosUsuarios = conciertosUsuario;
       },
       error: (error) => {
         console.error('Error cargando conciertos por usuario', error);
       }
     });
+  }
+
+  cargarTodosLosConciertos() {
+    this.conciertoService.obtenerConciertos().subscribe({
+      next: (data) => {
+        this.conciertos = data;
+      },
+      error: (error) => {
+        console.error("Error cargando todos los conciertos");
+      }
+    });
+
   }
 
   cambiarEstadoVenta(concierto: ConciertoDTO) {
@@ -79,6 +92,13 @@ export class PanelEdicionPage implements OnInit {
     return venta.estado === 'Inactivo' && fechaFin > ahora;
   }
 
+  cargarSegunRol() {
+    if (this.usuario.rol === 'promotor') {
+      this.cargarConciertos();
+    } else if (this.usuario.rol === 'administrador') {
+      this.cargarTodosLosConciertos();
+    }
+  }
 
 
 
@@ -101,7 +121,11 @@ export class PanelEdicionPage implements OnInit {
 
     document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
 
-    this.cargarConciertos();
+    const data = localStorage.getItem('usuario');
+    if (data) {
+      this.usuario = JSON.parse(data);
+      this.cargarSegunRol();
+    }
   }
 
   darkPaletteToggleChange(event: CustomEvent) {

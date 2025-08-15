@@ -1,4 +1,6 @@
 ﻿
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Hash;
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BC.ReglasDeNegocio;
 using GestionPlataformaConcierto.BW.Interfaces.BW;
@@ -15,13 +17,28 @@ namespace GestionPlataformaConcierto.BW.CU
             this.gestionarUsuarioDA = gestionarUsuarioDA;
         }
 
-        public Task<bool> actualizarUsuario(int id, Usuario usuario)
+
+        public  Task<bool> actualizarUsuario(int id, UsuarioActualizarDTO usuario)
         {
-            if (!ReglasDeUsuario.ElIdEsValido(id) || !ReglasDeUsuario.ElUsuarioEsValido(usuario))
-            {
+            return ReglasDeUsuario.ElIdEsValido(id)
+                ? gestionarUsuarioDA.actualizarUsuario(id, usuario)
+                : Task.FromResult(false);
+
+        }
+
+        public Task<bool> CambiarContrasena(string correoElectronico, string nuevaContrasena)
+        {
+            if (!ReglasDeUsuario.lasCredencialesSonValidas(correoElectronico, nuevaContrasena))
                 return Task.FromResult(false);
-            }
-            return gestionarUsuarioDA.actualizarUsuario(id, usuario);
+
+            
+            var seguridad = new Seguridad();
+            string hash = seguridad.HashearContrasena(nuevaContrasena);
+
+           
+            return  gestionarUsuarioDA.CambiarContrasena(correoElectronico, hash);
+
+
         }
 
         public Task<bool> eliminarUsuario(int id)
@@ -52,9 +69,13 @@ namespace GestionPlataformaConcierto.BW.CU
 
         public Task<bool> registrarUsuario(Usuario usuario)
         {
-            return ReglasDeUsuario.ElUsuarioEsValido(usuario)
-                ? gestionarUsuarioDA.registrarUsuario(usuario)
-                : Task.FromResult(false);
+            if (!ReglasDeUsuario.ElUsuarioEsValido(usuario))
+                return Task.FromResult(false);
+
+            var seguridad = new Seguridad();
+            usuario.Contrasena = seguridad.HashearContrasena(usuario.Contrasena);
+
+            return  gestionarUsuarioDA.registrarUsuario(usuario);
         }
     }
 }

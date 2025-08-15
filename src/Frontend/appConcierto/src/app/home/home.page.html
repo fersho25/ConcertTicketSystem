@@ -9,12 +9,18 @@
 
     <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
       routerLink="/panel-edicion" class="ion-text-center ion-margin-top">
-      Mis Conciertos
+      {{ usuario.rol === 'promotor' ? 'Mis Conciertos' : 'Panel de Conciertos' }}
     </ion-button>
 
-    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink=""
+    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/panel-usuario"
       class="ion-text-center ion-margin-top">
-      Panel de Control
+      Panel de Usuarios
+    </ion-button>
+
+
+    <ion-button fill="outline" size="small" color="primary" class="ion-text-center ion-margin-end"
+      [routerLink]="['/editar-usuario', usuario.id]" slot="end">
+      Editar Perfil
     </ion-button>
 
     <ion-button fill="outline" size="small" color="danger" class="ion-text-center ion-margin-end"
@@ -31,7 +37,7 @@
 
 <ion-content>
 
-  <ng-container *ngIf="conciertos.length > 0; else sinConciertos">
+  <ng-container *ngIf="conciertos.length  > 0; else sinConciertos">
 
     <ion-grid>
       <ion-row>

@@ -22,58 +22,98 @@
 </ion-header>
 <ion-content>
 
-  <ng-container *ngIf="conciertos.length > 0; else sinConciertos">
+  <ng-container *ngIf="usuario.rol === 'promotor'; else adminTemplate">
+    <ng-container *ngIf="conciertosUsuarios.length > 0; else sinConciertos">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="3" *ngFor="let concierto of conciertosUsuarios">
+            <ion-card>
+              <ion-card-header>
+                <div *ngIf="(concierto.archivosMultimedia?.length ?? 0) > 0">
+                  <ng-container *ngIf="primerImagen(concierto.archivosMultimedia) as imagen">
+                    <img [src]="getSrcArchivo(imagen)" alt="{{ imagen.nombreArchivo }}"
+                      style="width: 100%; border-radius: 6px;" />
+                  </ng-container>
+                </div>
+              </ion-card-header>
 
-    <ion-grid>
-      <ion-row>
-        <ion-col size="3" *ngFor="let concierto of conciertos">
-          <ion-card>
-            <ion-card-header>
-              <div *ngIf="(concierto.archivosMultimedia?.length ?? 0) > 0">
-                <ng-container *ngIf="primerImagen(concierto.archivosMultimedia) as imagen">
-                  <img [src]="getSrcArchivo(imagen)" alt="{{ imagen.nombreArchivo }}"
-                    style="width: 100%; border-radius: 6px;" />
-                </ng-container>
-              </div>
-            </ion-card-header>
+              <ion-card-content>
+                <ion-card-title class="ion-text-center">{{ concierto.nombre }}</ion-card-title>
+                <ion-card-subtitle class="ion-text-center">
+                  Fecha: {{ concierto.fecha | date: 'short' }} <br />
+                  Lugar: {{ concierto.lugar }}
+                </ion-card-subtitle>
+                <ion-button [routerLink]="['/edicion-concierto', concierto.id]" shape="round" expand="full">
+                  Editar
+                </ion-button>
+                <ion-button class="ion-margin-top" *ngIf="esVentaHabilitable(concierto.venta)" color="success"
+                  shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
+                  Habilitar Venta
+                </ion-button>
 
-            <ion-card-content>
-              <ion-card-title class="ion-text-center">{{ concierto.nombre }}</ion-card-title>
-              <ion-card-subtitle class="ion-text-center">
-                Fecha: {{ concierto.fecha | date: 'short' }} <br />
-                Lugar: {{ concierto.lugar }}
-              </ion-card-subtitle>
-              <ion-button [routerLink]="['/edicion-concierto', concierto.id]" shape="round" expand="full">
-                Editar
-              </ion-button>
-              <ion-button class="ion-margin-top" *ngIf="esVentaHabilitable(concierto.venta)" color="success"
-                shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
-                Habilitar Venta
-              </ion-button>
+                <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Activo'" color="danger"
+                  shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
+                  Desactivar Venta
+                </ion-button>
 
-              <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Activo'" color="danger"
-                shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
-                Desactivar Venta
-              </ion-button>
-
-              <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Finalizado'" color="danger"
-                shape="round" expand="full" (click)="ventaFinalizada(concierto)">
-                Venta Finalizada
-              </ion-button>
-
-
-
-
-
-
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
+                <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Finalizado'" color="danger"
+                  shape="round" expand="full" (click)="ventaFinalizada(concierto)">
+                  Venta Finalizada
+                </ion-button>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-container>
   </ng-container>
 
+  <ng-template #adminTemplate>
+    <ng-container *ngIf="conciertos.length > 0; else sinConciertos">
+
+      <ion-grid>
+        <ion-row>
+          <ion-col size="3" *ngFor="let concierto of conciertos">
+            <ion-card>
+              <ion-card-header>
+                <div *ngIf="(concierto.archivosMultimedia?.length ?? 0) > 0">
+                  <ng-container *ngIf="primerImagen(concierto.archivosMultimedia) as imagen">
+                    <img [src]="getSrcArchivo(imagen)" alt="{{ imagen.nombreArchivo }}"
+                      style="width: 100%; border-radius: 6px;" />
+                  </ng-container>
+                </div>
+              </ion-card-header>
+
+              <ion-card-content>
+                <ion-card-title class="ion-text-center">{{ concierto.nombre }}</ion-card-title>
+                <ion-card-subtitle class="ion-text-center">
+                  Fecha: {{ concierto.fecha | date: 'short' }} <br />
+                  Lugar: {{ concierto.lugar }}
+                </ion-card-subtitle>
+                <ion-button [routerLink]="['/edicion-concierto', concierto.id]" shape="round" expand="full">
+                  Editarrr
+                </ion-button>
+                <ion-button class="ion-margin-top" *ngIf="esVentaHabilitable(concierto.venta)" color="success"
+                  shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
+                  Habilitar Venta
+                </ion-button>
+
+                <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Activo'" color="danger"
+                  shape="round" expand="full" (click)="cambiarEstadoVenta(concierto)">
+                  Desactivar Venta
+                </ion-button>
+
+                <ion-button class="ion-margin-top" *ngIf="concierto.venta?.estado === 'Finalizado'" color="danger"
+                  shape="round" expand="full" (click)="ventaFinalizada(concierto)">
+                  Venta Finalizada
+                </ion-button>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-container>
+  </ng-template>
   <ng-template #sinConciertos>
     <div class="ion-text-center ion-padding">
       <ion-icon name="sad-outline" size="large"></ion-icon>

@@ -34,7 +34,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
         }
 
         [HttpGet("{id}", Name = "ObtenerUsuarioPorId")]
-        public async Task<ActionResult<UsuarioGetDTO>> Get(int id)
+        public async Task<ActionResult<UsuarioDTO>> Get(int id)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 if (usuario == null)
                     return NotFound("Usuario no encontrado");
 
-                var usuarioDTO = UsuarioGetMapper.ToDTO(usuario);
+                var usuarioDTO = UsuarioMapper.MapToDTO(usuario);
 
                 return Ok(usuarioDTO);
             }
@@ -73,19 +73,16 @@ namespace GestionPlataformaConcierto.Api.Controllers
         }
 
         [HttpPut("{id}", Name = "ActualizarUsuario")]
-        public async Task<ActionResult<bool>> Put(int id, [FromBody] UsuarioDTO usuarioDto)
+        public async Task<ActionResult<bool>> Put(int id, [FromBody] UsuarioActualizarDTO usuarioActualizarDto)
         {
             try
             {
-                if (id != usuarioDto.Id)
+                if (id != usuarioActualizarDto.id)
                     return BadRequest("El ID no coincide con el parámetro.");
 
-
-                var usuario = UsuarioMapper.MapToEntity(usuarioDto);
-
-                var resultado = await gestionarUsuarioBW.actualizarUsuario(id, usuario);
+                var resultado = await gestionarUsuarioBW.actualizarUsuario(id, usuarioActualizarDto);
                 if (!resultado)
-                    return NotFound("Usuario no encontrado");
+                    return NotFound("Usuario no encontrado o contraseña incorrecta");
 
                 return Ok(true);
             }

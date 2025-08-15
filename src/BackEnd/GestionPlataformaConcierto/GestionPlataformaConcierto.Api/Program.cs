@@ -1,9 +1,10 @@
+using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.CU;
+using GestionPlataformaConcierto.BW.Interfaces.BW;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Acciones;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
-using GestionPlataformaConcierto.BW.Interfaces.BW;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,10 @@ builder.Services.AddScoped<IGestionarReservaDA, GestionarReservaDA>();
 builder.Services.AddScoped<IGestionarReservaBW, GestionarReservaBW>();
 builder.Services.AddScoped<IGestionarCompraDA, GestionarCompraDA>();
 builder.Services.AddScoped<IGestionarCompraBW, GestionarCompraBW>();
+builder.Services.AddScoped<IEmailDA, EmailDA>();
+builder.Services.AddScoped<IEmailBW, EmailBW>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailDA, EmailDA>();
 
 var app = builder.Build();
 

@@ -32,7 +32,7 @@ export class HomePage implements OnInit {
       localStorage.setItem('modoOscuro', modoOscuro);
     }
 
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   
@@ -64,13 +64,17 @@ export class HomePage implements OnInit {
 
 
   ionViewWillEnter() {
-    
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
     this.modoOscuroActivado = modoOscuro;
 
      
     document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
 
+    const data = localStorage.getItem('usuario');
+    if (data) {
+      this.usuario = JSON.parse(data);
+    }
+    
     this.cargarConciertos();
   }
 

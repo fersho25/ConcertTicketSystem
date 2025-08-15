@@ -1,4 +1,5 @@
 ﻿
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
@@ -15,18 +16,45 @@ namespace GestionPlataformaConcierto.DA.Acciones
             this.gestionDePlataformaContext = gestionDePlataformaContext;
         }
 
-        public async Task<bool> actualizarUsuario(int id, Usuario usuario)
+      
+
+        public async Task<bool> actualizarUsuario(int id, UsuarioActualizarDTO usuario)
         {
-            Usuario usuarioExistente = await gestionDePlataformaContext.Usuario.FindAsync(id);
-            
+            var usuarioExistente = await gestionDePlataformaContext.Usuario.FindAsync(id);
+
             if (usuarioExistente == null)
                 return false;
 
+            if (!string.IsNullOrEmpty(usuario.ContrasenaActual))
+            {
+                if (!BCrypt.Net.BCrypt.Verify(usuario.ContrasenaActual, usuarioExistente.Contrasena))
+                {
+                    return false;
+                }
+            }
+
+
             usuarioExistente.NombreCompleto = usuario.NombreCompleto;
             usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
-            usuarioExistente.Contrasena = usuario.Contrasena;
             usuarioExistente.Rol = usuario.Rol;
-            usuarioExistente.ConciertosCreados = usuario.ConciertosCreados;
+
+
+            if (!string.IsNullOrEmpty(usuario.ContrasenaNueva))
+            {
+                usuarioExistente.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.ContrasenaNueva);
+            }
+
+            await gestionDePlataformaContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> CambiarContrasena(string correoElectronico, string nuevaContrasena)
+        {
+            var usuario = gestionDePlataformaContext.Usuario.FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico);
+            if (usuario == null)
+                return false;
+
+            usuario.Result.Contrasena = nuevaContrasena;
 
             await gestionDePlataformaContext.SaveChangesAsync();
 
@@ -61,9 +89,21 @@ namespace GestionPlataformaConcierto.DA.Acciones
 
         public async Task<Usuario> ObtenerUsuarioPorCredenciales(string correoElectronico, string contrasena)
         {
-            return await gestionDePlataformaContext.Usuario.FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico && u.Contrasena == contrasena);
+            var usuario = await gestionDePlataformaContext.Usuario
+                .FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico);
+
+            if (usuario == null)
+                return null;
+
+            bool esValida = BCrypt.Net.BCrypt.Verify(contrasena, usuario.Contrasena);
+
+            if (esValida)
+                return usuario;
+
+            return null;
         }
-        
+
+
 
         public async Task<Usuario> obtenerUsuarioPorId(int id)
         {

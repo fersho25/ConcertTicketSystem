@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volver()">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      Recuperacion de Contraseña
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="container">
+
+    <ng-container>
+      <div class="container">
+
+        <ion-card *ngIf="OTPEnviado === false">
+          <ion-card-header class="titulo-personalizado-recuperar">Enviar OTP <p>Escribir el correo el cual tiene
+              asociado a la cuenta por recuperar</p></ion-card-header>
+          <ion-card-content>
+            <form [formGroup]="enviarOTPForm" (ngSubmit)="enviarOTP()">
+
+
+              <ion-item class="ion-margin-top">
+                <ion-icon name="mail-outline" slot="start"></ion-icon>
+                <ion-label position="floating">Correo:</ion-label>
+                <ion-input type="text" formControlName="To" required></ion-input>
+              </ion-item>
+              <div class="error-message"
+                *ngIf="enviarOTPForm.controls['To'].invalid && enviarOTPForm.controls['To'].touched">
+                <ion-text color="danger">
+                  <p>El formato del correo es invalido.</p>
+                </ion-text>
+              </div>
+
+              <ion-button shape="round" expand="full" type="submit" [disabled]="!enviarOTPForm.valid"
+                class="ion-margin-top button-34">
+                Enviar OTP
+              </ion-button>
+            </form>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card *ngIf="OTPEnviado === true">
+          <ion-card-header class="titulo-personalizado-recuperar">Volver enviar OTP</ion-card-header>
+          <ion-card-content>
+            <ion-button shape="round" expand="full" type="button" [disabled]="!enviarOTPForm.valid"
+              class="ion-margin-top button-34" (click)="volverEnviarOTP()">
+              Volver enviar OTP
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ng-container>
+
+    <ion-card>
+      <ion-card-header class="titulo-personalizado-recuperar">Cambio de contraseña</ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="recuperarContraForm" (ngSubmit)="recuperacionContrasena()">
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Correo:</ion-label>
+            <ion-input type="text" formControlName="correoElectronico" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="recuperarContraForm.controls['correoElectronico'].invalid && recuperarContraForm.controls['correoElectronico'].touched">
+            <ion-text color="danger">
+              <p>El formato del correo es invalido.</p>
+            </ion-text>
+          </div>
+          
+          <ion-item class="ion-margin-top">
+            <ion-icon name="lock-closed" slot="start"></ion-icon>
+            <ion-label position="floating">Nueva contraseña:</ion-label>
+            <ion-input type="password" formControlName="contrasena" required>
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+          </ion-item>
+
+          <div class="error-message"
+            *ngIf="recuperarContraForm.get('contrasena')?.touched && recuperarContraForm.get('contrasena')?.invalid"
+            lines="none">
+            <ion-text color="danger" style="display: block;">
+              <p *ngIf="recuperarContraForm.get('contrasena')?.errors?.['required']">La contraseña es
+                obligatoria.</p>
+              <p *ngIf="recuperarContraForm.get('contrasena')?.errors?.['minLength']">Debe tener al menos 8
+                caracteres.</p>
+              <p *ngIf="recuperarContraForm.get('contrasena')?.errors?.['uppercase']">Debe contener al menos una
+                letra mayúscula.</p>
+              <p *ngIf="recuperarContraForm.get('contrasena')?.errors?.['number']">Debe contener al menos un
+                número.</p>
+              <p *ngIf="recuperarContraForm.get('contrasena')?.errors?.['symbol']">Debe contener al menos un
+                símbolo especial.</p>
+            </ion-text>
+          </div>
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label position="floating">OTP:</ion-label>
+            <ion-input type="text" formControlName="OTP" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="recuperarContraForm.controls['OTP'].invalid && recuperarContraForm.controls['OTP'].touched">
+            <ion-text color="danger">
+              <p>Rellenar este espacio</p>
+            </ion-text>
+          </div>
+
+          <ion-button shape="round" expand="full" type="submit" [disabled]="!recuperarContraForm.valid"
+            class="ion-margin-top button-34">
+            Cambiar contraseña
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+  </ion-toolbar>
+</ion-footer>

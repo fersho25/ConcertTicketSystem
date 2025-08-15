@@ -39,6 +39,19 @@ const routes: Routes = [
     path: 'edicion-concierto/:id',
     loadChildren: () => import('./edicion-concierto/edicion-concierto.module').then( m => m.EdicionConciertoPageModule)
   },
+  {
+    path: 'panel-usuario',
+    loadChildren: () => import('./panel-usuario/panel-usuario.module').then( m => m.PanelUsuarioPageModule)
+  },
+  {
+    path: 'editar-usuario/:id',
+    loadChildren: () => import('./editar-usuario/editar-usuario.module').then( m => m.EditarUsuarioPageModule)
+  },  {
+    path: 'recuperacion-contrasena',
+    loadChildren: () => import('./recuperacion-contrasena/recuperacion-contrasena.module').then( m => m.RecuperacionContrasenaPageModule)
+  },
+
+
 
 
   

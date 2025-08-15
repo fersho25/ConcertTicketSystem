@@ -36,7 +36,6 @@ export class LoginPage implements OnInit {
       correoElectronico: ['', [Validators.required, Validators.email]],
       contrasena: ['', [Validators.required, Validators.minLength(1)]]
     });
-
   }
 
   async onLogin() {
