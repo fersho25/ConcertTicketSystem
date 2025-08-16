@@ -44,7 +44,7 @@ export interface ConciertoDTO {
   providedIn: 'root'
 })
 export class ConciertoService {
-  private baseUrl = 'http://localhost:5065/api/Concierto';
+  private baseUrl = 'https://localhost:7131/api/Concierto';
 
   constructor(private http: HttpClient) { }
 

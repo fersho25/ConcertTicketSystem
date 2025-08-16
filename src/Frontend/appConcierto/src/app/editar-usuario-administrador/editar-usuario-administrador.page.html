@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volver()">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      Editar de Usuario
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="container">
+
+    <ion-card>
+      <ion-card-header class="titulo-personalizado-editar">Editar Usuario</ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="usuarioEditAdminForm" (ngSubmit)="editarUsuarioAdmin()">
+
+          <ion-item>
+            <ion-icon name="person" slot="start"></ion-icon>
+            <ion-label position="floating">Nombre Completo:</ion-label>
+            <ion-input type="text" formControlName="nombreCompleto" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="usuarioEditAdminForm.controls['nombreCompleto'].invalid && usuarioEditAdminForm.controls['nombreCompleto'].touched">
+            <ion-text color="danger">
+              <p>El nombre no es valido.</p>
+            </ion-text>
+          </div>
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Correo:</ion-label>
+            <ion-input type="text" formControlName="correoElectronico" required></ion-input>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="usuarioEditAdminForm.controls['correoElectronico'].invalid && usuarioEditAdminForm.controls['correoElectronico'].touched">
+            <ion-text color="danger">
+              <p>El formato del correo es invalido, solo se aceptan correos de GMAIL.</p>
+            </ion-text>
+          </div>
+
+          <ion-item class="ion-margin-top">
+            <ion-icon name="people-circle-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Rol:</ion-label>
+            <ion-list>
+              <ion-item>
+                <ion-select formControlName="rol" placeholder="Seleccione el rol" required>
+                  <ion-select-option value="usuario">Usuario</ion-select-option>
+                  <ion-select-option value="promotor">Promotor</ion-select-option>
+                  <ion-select-option value="administrador">Administrador</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
+          </ion-item>
+          <div class="error-message"
+            *ngIf="usuarioEditAdminForm.controls['rol'].invalid && usuarioEditAdminForm.controls['rol'].touched">
+            <ion-text color="danger">
+              <p>Seleccione el rol.</p>
+            </ion-text>
+          </div>
+
+
+          <ion-button shape="round" expand="full" type="submit" [disabled]="usuarioEditAdminForm.invalid"
+            class="ion-margin-top button-34">
+            Editar Usuario
+          </ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+  </ion-toolbar>
+</ion-footer>

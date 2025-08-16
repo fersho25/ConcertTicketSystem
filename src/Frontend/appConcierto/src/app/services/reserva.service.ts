@@ -31,7 +31,7 @@ export interface AsientoMapaDTO {
   providedIn: 'root'
 })
 export class ReservaService {
-  private baseUrl = 'http://localhost:5065/api/Reserva';
+  private baseUrl = 'https://localhost:7131/api/Reserva';
 
   constructor(private http: HttpClient) { }
 

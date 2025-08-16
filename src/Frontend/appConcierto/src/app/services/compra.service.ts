@@ -26,7 +26,7 @@ export interface CompraDTO {
 })
 export class CompraService {
 
-  private baseUrl = 'http://localhost:5065/api/compra'; 
+  private baseUrl = 'https://localhost:7131/api/compra'; 
 
   constructor(private http: HttpClient) { }
 

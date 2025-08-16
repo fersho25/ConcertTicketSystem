@@ -1,33 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { AuthenticatorService, UsuarioActualizarDTO, UsuarioDTO } from '../services/authenticator.service';
+import { AuthenticatorService, UsuarioActualizarAdminDTO } from '../services/authenticator.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
-export function passwordValidator(control: AbstractControl): ValidationErrors | null {
-  const val = control.value;
-
-  if (!val) {
-    return { required: true };
-  }
-
-  const errors: ValidationErrors = {};
-
-  if (val.length < 8) {
-    errors['minLength'] = true;
-  }
-  if (!/[A-Z]/.test(val)) {
-    errors['uppercase'] = true;
-  }
-  if (!/\d/.test(val)) {
-    errors['number'] = true;
-  }
-  if (!/[!@#$%^&*(),.?":{}|<>_\-\\[\];'/+=~`]/.test(val)) {
-    errors['symbol'] = true;
-  }
-
-  return Object.keys(errors).length ? errors : null;
-}
 
 export function correoGmailValidator(control: AbstractControl): ValidationErrors | null {
   const email = control.value;
@@ -44,20 +20,18 @@ export function correoGmailValidator(control: AbstractControl): ValidationErrors
 }
 
 @Component({
-  selector: 'app-editar-usuario',
+  selector: 'app-editar-usuario-administrador',
   standalone: false,
-  templateUrl: './editar-usuario.page.html',
-  styleUrls: ['./editar-usuario.page.scss'],
+  templateUrl: './editar-usuario-administrador.page.html',
+  styleUrls: ['./editar-usuario-administrador.page.scss'],
 })
-export class EditarUsuarioPage implements OnInit {
+export class EditarUsuarioAdministradorPage implements OnInit {
 
-  usuarioEditForm!: FormGroup;
+  usuarioEditAdminForm!: FormGroup;
   modoOscuroActivado = false;
-  usuario!: UsuarioDTO;
-  usuarioActualizar!: UsuarioActualizarDTO;
-  contrasenaNueva = false;
+  usuario!: UsuarioActualizarAdminDTO;
+  usuarioActualizar!: UsuarioActualizarAdminDTO;
   formularioCargado = false;
-  usuarioActual: any = {};
 
   constructor(
     private router: Router,
@@ -70,7 +44,7 @@ export class EditarUsuarioPage implements OnInit {
 
   ngOnInit() {
     this.inicializarFormulario();
-    this.usuarioActual = JSON.parse(localStorage.getItem('usuario') || '{}');
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
@@ -84,6 +58,7 @@ export class EditarUsuarioPage implements OnInit {
     } else {
       document.documentElement.classList.remove('ion-palette-dark');
     }
+
   }
 
   async volver() {
@@ -109,26 +84,25 @@ export class EditarUsuarioPage implements OnInit {
     await alert.present();
   }
 
+
   inicializarFormulario() {
-    this.usuarioEditForm = this.fb.group({
+    this.usuarioEditAdminForm = this.fb.group({
       nombreCompleto: ['', [Validators.required, Validators.minLength(3)]],
       correoElectronico: ['', [Validators.required, correoGmailValidator]],
-      contrasena: ['', [Validators.required]],
-      contrasenaNueva: ['']
+      rol: ['', [Validators.required]]
     });
   }
 
-
   cargarUsuario(id: number) {
-    this.authenticatorService.obtenerUsuarioPorId(id).subscribe(usuario => {
+    this.authenticatorService.obtenerUsuarioAdministrador(id).subscribe(usuario => {
       this.usuario = usuario;
 
       if (this.formularioCargado) return;
 
-      this.usuarioEditForm.reset({
+      this.usuarioEditAdminForm.reset({
         nombreCompleto: usuario.nombreCompleto,
         correoElectronico: usuario.correoElectronico,
-        contrasena: '',
+        rol: usuario.rol,
       });
 
       this.formularioCargado = true;
@@ -137,8 +111,9 @@ export class EditarUsuarioPage implements OnInit {
       console.error("Error cargando el usuario");
     });
   }
-  async editarUsuario() {
-    if (this.usuarioEditForm.invalid) {
+
+  async editarUsuarioAdmin() {
+    if (this.usuarioEditAdminForm.invalid) {
       const alert = await this.alertController.create({
         header: 'Información inválida',
         message: 'Verifique que todos los campos estén completos y correctamente rellenados',
@@ -150,63 +125,33 @@ export class EditarUsuarioPage implements OnInit {
 
     this.usuarioActualizar = {
       id: this.usuario.id,
-      nombreCompleto: this.usuarioEditForm.value.nombreCompleto,
-      correoElectronico: this.usuarioEditForm.value.correoElectronico,
-      ContrasenaActual: this.usuarioEditForm.value.contrasena,
-      ContrasenaNueva: this.contrasenaNueva ? this.usuarioEditForm.value.contrasenaNueva : ''
+      nombreCompleto: this.usuarioEditAdminForm.value.nombreCompleto,
+      correoElectronico: this.usuarioEditAdminForm.value.correoElectronico,
+      rol: this.usuarioEditAdminForm.value.rol
     };
 
-    this.authenticatorService.actualizarUsuario(this.usuario.id, this.usuarioActualizar)
-      .subscribe(
-        async (res) => {
-
-
-          this.actualizarLocalStorage(this.usuarioActualizar);
-
-          const alert = await this.alertController.create({
-            header: 'Éxito',
-            message: 'Usuario actualizado correctamente.',
-            buttons: ['Ok']
-          });
-          await alert.present();
-          this.router.navigate(['/home']);
-        },
-        async (error) => {
-          const alert = await this.alertController.create({
-            header: 'Error',
-            message: error.error,
-            buttons: ['Ok']
-          });
-          await alert.present();
-          console.error(error);
-
+    this.authenticatorService.actualizarUsuarioAdministrador(this.usuario.id, this.usuarioActualizar).subscribe(
+      async (success) => {
+        const alert = await this.alertController.create({
+          header: 'Éxito',
+          message: 'Usuario actualizado correctamente.',
+          buttons: ['Ok']
         });
+        await alert.present();
+        this.router.navigate(['/panel-usuario']);
+      },
+      async (error) => {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: error.error,
+          buttons: ['Ok']
+        });
+        await alert.present();
+        console.error(error);
+      });
   }
 
 
-  habilitarNuevaContrasena() {
-    this.contrasenaNueva = !this.contrasenaNueva;
-    const nuevaContraControl = this.usuarioEditForm.get('contrasenaNueva');
-
-    if (this.contrasenaNueva) {
-      nuevaContraControl?.setValidators([Validators.required, passwordValidator]);
-    } else {
-      nuevaContraControl?.clearValidators();
-      nuevaContraControl?.setValue('');
-    }
-
-    nuevaContraControl?.updateValueAndValidity();
-  }
-
-  actualizarLocalStorage(usuarioActualizar: UsuarioActualizarDTO) {
-
-    localStorage.setItem('usuario', JSON.stringify({
-      ...this.usuarioActual,
-      nombreCompleto: usuarioActualizar.nombreCompleto,
-      correoElectronico: usuarioActualizar.correoElectronico,
-    }));
-
-  }
 
 
 
@@ -235,6 +180,4 @@ export class EditarUsuarioPage implements OnInit {
     localStorage.setItem('modoOscuro', JSON.stringify(shouldAdd));
     this.modoOscuroActivado = shouldAdd;
   }
-
-
 }

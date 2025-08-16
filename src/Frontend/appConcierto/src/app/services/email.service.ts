@@ -13,7 +13,7 @@ export interface Email {
 })
 export class EmailService {
 
-  private baseUrl = 'http://localhost:5065/api/Email/enviarCorreo';
+  private baseUrl = 'https://localhost:7131/api/Email/enviarCorreo';
 
   constructor(private http: HttpClient) { }
 

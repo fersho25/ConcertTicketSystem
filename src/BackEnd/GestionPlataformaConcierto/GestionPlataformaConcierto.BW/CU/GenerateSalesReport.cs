@@ -25,7 +25,7 @@ public class GenerateSalesReportQueryHandler : IRequestHandler<GenerateSalesRepo
 
     public async Task<ReportDto> Handle(GenerateSalesReportQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<SaleDetailDto> salesData = await _gestionarConciertoDA.ObtenerDetallesVentaPorConciertoAsync(request.ConciertoId);
+        IEnumerable<SaleDetailDto> salesData = await _gestionarConciertoDA.ObtenerDetallesVentaPorConciertoAsync(request.ConcertId);
 
         byte[] reportFile;
 
@@ -41,7 +41,7 @@ public class GenerateSalesReportQueryHandler : IRequestHandler<GenerateSalesRepo
         return new ReportDto
         {
             Content = reportFile,
-            FileName = $"Reporte_Ventas_{request.ConciertoId}.xlsx",
+            FileName = $"Reporte_Ventas_{request.ConcertId}.xlsx",
             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         };
     }

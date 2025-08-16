@@ -27,10 +27,21 @@ export interface UsuarioActualizarDTO {
   id: number;
   nombreCompleto: string;
   correoElectronico: string;
-  rol: string;
   ContrasenaActual: string;
   ContrasenaNueva?: string;
 }
+export interface UsuarioActualizarAdminDTO {
+  id: number;
+  nombreCompleto: string;
+  correoElectronico: string;
+  rol: string;
+}
+export interface CambiarContrasenaDTO {
+  correoElectronico: string;
+  nuevaContrasena: string;
+}
+
+
 
 
 
@@ -39,9 +50,9 @@ export interface UsuarioActualizarDTO {
 })
 export class AuthenticatorService {
 
-  private loginUrl = 'http://localhost:5065/api/Usuario/login';
-  private url = 'http://localhost:5065/api/Usuario';
-  
+  private loginUrl = 'https://localhost:7131/api/Usuario/login';
+  private url = 'https://localhost:7131/api/Usuario';
+
 
   constructor(private http: HttpClient) { }
 
@@ -54,21 +65,33 @@ export class AuthenticatorService {
   }
 
 
-   obtenerUsuarios(): Observable<UsuarioDTO[]> {
+  obtenerUsuarios(): Observable<UsuarioDTO[]> {
     return this.http.get<UsuarioDTO[]>(this.url);
   }
 
-   obtenerUsuarioPorId(id: number): Observable<UsuarioDTO> {
+  obtenerUsuarioPorId(id: number): Observable<UsuarioDTO> {
     return this.http.get<UsuarioDTO>(`${this.url}/${id}`);
   }
 
-   actualizarUsuario(id: number, usuario: UsuarioActualizarDTO): Observable<boolean> {
+  actualizarUsuario(id: number, usuario: UsuarioActualizarDTO): Observable<boolean> {
     return this.http.put<boolean>(`${this.url}/${id}`, usuario);
   }
-  
-  
+
+
   eliminarUsuario(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.url}/${id}`);
+  }
+
+  obtenerUsuarioAdministrador(id: number): Observable<UsuarioActualizarAdminDTO> {
+    return this.http.get<UsuarioActualizarAdminDTO>(`${this.url}/admin/${id}`);
+  }
+
+  actualizarUsuarioAdministrador(id: number, usuario: UsuarioActualizarAdminDTO): Observable<boolean> {
+    return this.http.put<boolean>(`${this.url}/admin/${id}`, usuario);
+  }
+
+  cambiarContrasena(dto: CambiarContrasenaDTO): Observable<string> {
+    return this.http.post<string>(`${this.url}/cambiar-contrasena`, dto);
   }
 
 }

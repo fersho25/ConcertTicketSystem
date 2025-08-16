@@ -3,6 +3,7 @@ import { Email, EmailService } from '../services/email.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, NavController } from '@ionic/angular';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AuthenticatorService, CambiarContrasenaDTO } from '../services/authenticator.service';
 
 
 export function passwordValidator(control: AbstractControl): ValidationErrors | null {
@@ -30,6 +31,19 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
   return Object.keys(errors).length ? errors : null;
 }
 
+export function correoGmailValidator(control: AbstractControl): ValidationErrors | null {
+  const email = control.value;
+  if (!email) return { required: true };
+
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) return { email: true };
+
+
+  if (!email.endsWith('@gmail.com')) return { dominioInvalido: true };
+
+  return null;
+}
 @Component({
   selector: 'app-recuperacion-contrasena',
   standalone: false,
@@ -43,6 +57,8 @@ export class RecuperacionContrasenaPage implements OnInit {
   enviarOTPForm!: FormGroup;
   OTPEnviado = false;
   email!: Email;
+  datos!: CambiarContrasenaDTO;
+
   otpsTemporales: { email: string, codigo: number, creadoEn: Date }[] = [];
   readonly minutosValidez = 5;
   constructor(
@@ -51,6 +67,7 @@ export class RecuperacionContrasenaPage implements OnInit {
     private alertController: AlertController,
     private fb: FormBuilder,
     private route: ActivatedRoute,
+    private authenticatorService: AuthenticatorService,
     private emailService: EmailService
   ) { }
 
@@ -63,13 +80,13 @@ export class RecuperacionContrasenaPage implements OnInit {
       document.documentElement.classList.remove('ion-palette-dark');
     }
     this.recuperarContraForm = this.fb.group({
-      correoElectronico: ['', [Validators.required, Validators.email]],
+      correoElectronico: ['@gmail.com', [Validators.required, correoGmailValidator]],
       contrasena: ['', [passwordValidator]],
       OTP: ['', [Validators.required]],
     });
 
     this.enviarOTPForm = this.fb.group({
-      To: ['', [Validators.required, Validators.email]],
+      To: ['@gmail.com', [Validators.required,correoGmailValidator]],
     });
   }
 
@@ -98,8 +115,9 @@ export class RecuperacionContrasenaPage implements OnInit {
   async enviarOTP() {
 
     const otp = this.generacionDeOTP();
-    const emailInput = this.enviarOTPForm.value.email;
+    const emailInput = this.enviarOTPForm.value.To;
     this.purgarOtpsExpirados();
+    this.otpsTemporales = this.otpsTemporales.filter(o => o.email !== emailInput);
 
     this.otpsTemporales.push({
       email: emailInput,
@@ -144,7 +162,6 @@ export class RecuperacionContrasenaPage implements OnInit {
 
     this.purgarOtpsExpirados();
 
-    // Buscar OTP válido
     const otpIndex = this.otpsTemporales.findIndex(o =>
       o.email === correoElectronico && o.codigo == OTP
     );
@@ -161,27 +178,30 @@ export class RecuperacionContrasenaPage implements OnInit {
 
     this.otpsTemporales.splice(otpIndex, 1);
 
-    // Aquí puedes continuar con el cambio de contraseña
-    // Por ejemplo, llamar a tu servicio que actualiza la contraseña en la base de datos
-    // this.usuarioService.cambiarContrasena(correoElectronico, contrasena).subscribe(
-    //   async () => {
-    //     const alert = await this.alertController.create({
-    //       header: 'Éxito',
-    //       message: 'Tu contraseña ha sido cambiada correctamente.',
-    //       buttons: ['Ok']
-    //     });
-    //     await alert.present();
-    //     this.recuperarContraForm.reset();
-    //   },
-    //   async (error) => {
-    //     const alert = await this.alertController.create({
-    //       header: 'Error',
-    //       message: 'No se pudo cambiar la contraseña. Intenta de nuevo.',
-    //       buttons: ['Ok']
-    //     });
-    //     await alert.present();
-    //   }
-    // );
+    this.datos = {
+      correoElectronico: correoElectronico,
+      nuevaContrasena: contrasena
+    };
+
+    this.authenticatorService.cambiarContrasena(this.datos).subscribe(
+      async (res) => {
+        const alert = await this.alertController.create({
+          header: 'Éxito',
+          message: 'Contraseña cambiada con exito',
+          buttons: ['Ok']
+        });
+        await alert.present();
+        this.recuperarContraForm.reset();
+        this.router.navigate(['/login']);
+      },
+      async (error) => {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Error cambiando la contraseña',
+          buttons: ['Ok']
+        });
+        await alert.present();
+      });
   }
 
 

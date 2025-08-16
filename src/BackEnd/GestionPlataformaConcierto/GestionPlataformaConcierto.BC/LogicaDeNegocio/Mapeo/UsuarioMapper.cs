@@ -46,9 +46,9 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
             return new Usuario
             {
                 Id = dto.id,
-                NombreCompleto = dto.NombreCompleto,
-                CorreoElectronico = dto.CorreoElectronico,
-                Rol = dto.Rol
+                NombreCompleto = dto.nombreCompleto,
+                CorreoElectronico = dto.correoElectronico,
+                Rol = dto.rol
             };
         }
 
@@ -58,9 +58,9 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
             return new UsuarioActualizarAdminDTO
             {
                 id = usuario.Id,
-                NombreCompleto = usuario.NombreCompleto,
-                CorreoElectronico = usuario.CorreoElectronico,
-                Rol = usuario.Rol
+                nombreCompleto = usuario.NombreCompleto,
+                correoElectronico = usuario.CorreoElectronico,
+                rol = usuario.Rol
             };
         }
 

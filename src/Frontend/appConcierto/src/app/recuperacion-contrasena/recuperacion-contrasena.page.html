@@ -40,7 +40,7 @@
               <div class="error-message"
                 *ngIf="enviarOTPForm.controls['To'].invalid && enviarOTPForm.controls['To'].touched">
                 <ion-text color="danger">
-                  <p>El formato del correo es invalido.</p>
+                  <p>El formato del correo es invalido, solo se aceptan correos de GMAIL.</p>
                 </ion-text>
               </div>
 
@@ -77,7 +77,7 @@
           <div class="error-message"
             *ngIf="recuperarContraForm.controls['correoElectronico'].invalid && recuperarContraForm.controls['correoElectronico'].touched">
             <ion-text color="danger">
-              <p>El formato del correo es invalido.</p>
+              <p>El formato del correo es invalido, solo se aceptan correos de GMAIL.</p>
             </ion-text>
           </div>
           

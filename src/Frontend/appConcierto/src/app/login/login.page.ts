@@ -63,7 +63,7 @@ export class LoginPage implements OnInit {
         //console.log('Respuesta del backend:', response); 
 
         localStorage.setItem('usuario', JSON.stringify(response));
-
+        this.loginForm.reset();
         this.router.navigate(['/home']);
       },
       async (error) => {

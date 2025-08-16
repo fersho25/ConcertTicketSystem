@@ -31,6 +31,20 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
   return Object.keys(errors).length ? errors : null;
 }
 
+export function correoGmailValidator(control: AbstractControl): ValidationErrors | null {
+  const email = control.value;
+  if (!email) return { required: true };
+
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) return { email: true };
+
+
+  if (!email.endsWith('@gmail.com')) return { dominioInvalido: true };
+
+  return null;
+}
+
 @Component({
   selector: 'app-crear-usuario',
   standalone: true,
@@ -64,7 +78,7 @@ export class CrearUsuarioPage implements OnInit {
 
     this.registerForm = this.fb.group({
       nombreCompleto: ['', [Validators.required, Validators.minLength(3)]],
-      correoElectronico: ['', [Validators.required, Validators.email]],
+      correoElectronico: ['@gmail.com', [Validators.required, correoGmailValidator]],
       contrasena: ['', [passwordValidator]],
       rol: ['', [Validators.required]]
     });
@@ -94,9 +108,10 @@ export class CrearUsuarioPage implements OnInit {
     const rolUsuario = this.registerForm.get('rol')?.value;
 
 
-    if (rolUsuario === 'administrador' || rolUsuario === 'promotor') {
-      const claveCorrecta = 'clave123'; // la clave
+    const claveAdmin = 'admin123';
+    const clavePromotor = 'promo123';
 
+    if (rolUsuario === 'administrador' || rolUsuario === 'promotor') {
       const alert = await this.alertController.create({
         header: 'Clave requerida',
         message: `Para crear un usuario con rol "${rolUsuario}", ingrese la clave autorizada.`,
@@ -115,6 +130,10 @@ export class CrearUsuarioPage implements OnInit {
           {
             text: 'Aceptar',
             handler: (data) => {
+              let claveCorrecta = '';
+              if (rolUsuario === 'administrador') claveCorrecta = claveAdmin;
+              if (rolUsuario === 'promotor') claveCorrecta = clavePromotor;
+
               if (data.clave === claveCorrecta) {
                 this.procesarRegistro(usuario);
               } else {

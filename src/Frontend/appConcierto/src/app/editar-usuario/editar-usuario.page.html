@@ -47,11 +47,11 @@
                     <div class="error-message"
                         *ngIf="usuarioEditForm.controls['correoElectronico'].invalid && usuarioEditForm.controls['correoElectronico'].touched">
                         <ion-text color="danger">
-                            <p>El formato del correo es invalido.</p>
+                            <p>El formato del correo es invalido, solo se aceptan correos de GMAIL.</p>
                         </ion-text>
                     </div>
 
-                    <ion-item *ngIf="this.usuarioActual.id === usuario.id" class="ion-margin-top">
+                    <ion-item class="ion-margin-top">
                         <ion-icon name="lock-closed" slot="start"></ion-icon>
                         <ion-label position="floating">Contraseña Actual:</ion-label>
                         <ion-input type="password" formControlName="contrasena" required>
@@ -101,26 +101,6 @@
                             </ion-text>
                         </div>
                     </div>
-                    <ion-item class="ion-margin-top">
-                        <ion-icon name="people-circle-outline" slot="start"></ion-icon>
-                        <ion-label position="floating">Rol:</ion-label>
-                        <ion-list>
-                            <ion-item>
-                                <ion-select formControlName="rol" placeholder="Seleccione el rol" required>
-                                    <ion-select-option value="usuario">Usuario</ion-select-option>
-                                    <ion-select-option value="promotor">Promotor</ion-select-option>
-                                    <ion-select-option value="administrador">Administrador</ion-select-option>
-                                </ion-select>
-                            </ion-item>
-                        </ion-list>
-                    </ion-item>
-                    <div class="error-message"
-                        *ngIf="usuarioEditForm.controls['rol'].invalid && usuarioEditForm.controls['rol'].touched">
-                        <ion-text color="danger">
-                            <p>Seleccione el rol.</p>
-                        </ion-text>
-                    </div>
-
                     <ion-button shape="round" expand="full" type="submit"
                         [disabled]="usuarioEditForm.invalid || (contrasenaNueva && !usuarioEditForm.get('contrasenaNueva')?.value)"
                         class="ion-margin-top button-34">

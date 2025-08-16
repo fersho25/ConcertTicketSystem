@@ -145,7 +145,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
             if (!resultado)
                 return BadRequest("No se pudo actualizar el usuario.");
 
-            return Ok("Usuario actualizado correctamente.");
+            return Ok(true);
         }
 
         [HttpGet("admin/{id}", Name = "ObtenerUsuarioAdministrador")]
@@ -164,6 +164,25 @@ namespace GestionPlataformaConcierto.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Error al obtener el usuario: {ex.Message}");
+            }
+        }
+
+
+        [HttpPost("cambiar-contrasena")]
+        public async Task<IActionResult> CambiarContrasena([FromBody] CambiarContrasenaDTO dto)
+        {
+            try
+            {
+                var resultado = await gestionarUsuarioBW.CambiarContrasena(dto.correoElectronico, dto.nuevaContrasena);
+
+                if (!resultado)
+                    return BadRequest("No se pudo cambiar la contraseña. Verifique el correo electrónico.");
+
+                return Ok(true);
+                
+            }catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al cambiar la contraseña: {ex.Message}");
             }
         }
 

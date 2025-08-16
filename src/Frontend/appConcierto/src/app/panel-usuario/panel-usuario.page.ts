@@ -39,7 +39,7 @@ export class PanelUsuarioPage implements OnInit {
   }
 
   editarUsuario(usuario: UsuarioDTO) {
-    this.router.navigate(['/editar-usuario', usuario.id]); 
+    this.router.navigate(['/editar-usuario-administrador', usuario.id]); 
   }
 
 

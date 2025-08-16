@@ -38,7 +38,6 @@ namespace GestionPlataformaConcierto.DA.Acciones
 
             usuarioExistente.NombreCompleto = usuario.NombreCompleto;
             usuarioExistente.CorreoElectronico = usuario.CorreoElectronico;
-            usuarioExistente.Rol = usuario.Rol;
 
 
             if (!string.IsNullOrEmpty(usuario.ContrasenaNueva))

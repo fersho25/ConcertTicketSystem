@@ -46,13 +46,18 @@ const routes: Routes = [
   {
     path: 'editar-usuario/:id',
     loadChildren: () => import('./editar-usuario/editar-usuario.module').then( m => m.EditarUsuarioPageModule)
-  },  {
+  },
+  {
     path: 'recuperacion-contrasena',
     loadChildren: () => import('./recuperacion-contrasena/recuperacion-contrasena.module').then( m => m.RecuperacionContrasenaPageModule)
   },
   {
     path: 'compra',
     loadChildren: () => import('./compra/compra.module').then( m => m.CompraPageModule)
+  },
+  {
+    path: 'editar-usuario-administrador/:id',
+    loadChildren: () => import('./editar-usuario-administrador/editar-usuario-administrador.module').then( m => m.EditarUsuarioAdministradorPageModule)
   },
 
 
