@@ -3,6 +3,7 @@ using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BW.CU;
 using GestionPlataformaConcierto.BW.Interfaces.BW;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
+using GestionPlataformaConcierto.BW.Services;
 using GestionPlataformaConcierto.DA.Acciones;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<GestionDePlataformaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));  
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GenerateSalesReportQueryHandler).Assembly));
 
 builder.Services.AddScoped<IGestionarConciertoDA, GestionarConciertoDA>();
 builder.Services.AddScoped<IGestionarConciertoBW, GestionarConciertoBW>();
@@ -45,6 +48,8 @@ builder.Services.AddScoped<IGestionarCompraDA, GestionarCompraDA>();
 builder.Services.AddScoped<IGestionarCompraBW, GestionarCompraBW>();
 builder.Services.AddScoped<IEmailDA, EmailDA>();
 builder.Services.AddScoped<IEmailBW, EmailBW>();
+builder.Services.AddScoped<IReportGeneratorService, ReportGeneratorService>();
+
 builder.Services.AddScoped<Seguridad>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailDA, EmailDA>();

@@ -15,5 +15,7 @@
         public bool Notificado { get; set; }
         public string? Estado { get; set; }
 
+        public virtual ICollection<AsientoReserva> AsientoReserva { get; set; } = new List<AsientoReserva>();
+
     }
 }

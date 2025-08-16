@@ -176,34 +176,25 @@ namespace GestionPlataformaConcierto.DA.Acciones
             return true;
         }
 
-        // ===== INICIO DEL CÓDIGO NUEVO Y CORREGIDO =====
-        public async Task<IEnumerable<SaleDetailDto>> GetSalesDetailsByConcertAsync(int concertId)
+        public async Task<IEnumerable<SaleDetailDto>> ObtenerDetallesVentaPorConciertoAsync(int concertId)
         {
-            // NOTA: Asumimos que los nombres de las entidades en C# son iguales a los de las tablas en SQL.
-            // Ej: Tabla 'Usuario' -> Entidad 'Usuario'.
-
-            var salesDetails = await gestionDePlataformaContext.AsientoReserva
-                // 1. Incluimos la Reserva a la que pertenece cada asiento
-                .Include(ar => ar.Reserva)
-                    // 2. Desde la Reserva, incluimos el Usuario que la hizo
+            var salesDetails = await gestionDePlataformaContext.Compra
+                .Include(c => c.Reserva)
                     .ThenInclude(r => r.Usuario)
-                // 3. Incluimos también la Categoría de cada asiento
-                .Include(ar => ar.CategoriaAsiento)
-                // 4. Filtramos para obtener solo los asientos del concierto y estado correctos
-                .Where(ar => ar.Reserva.ConciertoId == concertId && ar.Reserva.Estado == "Comprado")
-                // 5. Proyectamos el resultado a nuestro DTO
-                .Select(ar => new SaleDetailDto
+                .Include(c => c.AsientoReserva)
+                    .ThenInclude(ar => ar.CategoriaAsiento)
+                .Where(c => c.Reserva.ConciertoId == concertId && c.Estado == "Comprado")
+                .SelectMany(c => c.AsientoReserva.Select(ar => new SaleDetailDto
                 {
-                    Comprador = ar.Reserva.Usuario.NombreCompleto,
-                    FechaCompra = DateTime.MinValue, // Usamos la fecha de compra de la reserva
+                    Comprador = c.Reserva.Usuario.NombreCompleto,
+                    FechaCompra = c.FechaHoraCompra ?? DateTime.MinValue,
                     CategoriaAsiento = ar.CategoriaAsiento.Nombre,
-                    Precio = ar.Precio // Usamos el precio guardado en el asiento de la reserva
-                })
+                    Precio = ar.Precio
+                }))
                 .ToListAsync();
 
             return salesDetails;
         }
-        // ===== FIN DEL CÓDIGO NUEVO Y CORREGIDO =====
 
         public async Task<Concierto> obtenerConciertoPorId(int id)
         {
