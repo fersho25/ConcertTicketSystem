@@ -17,6 +17,10 @@
       Panel de Usuarios
     </ion-button>
 
+    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/reportes"
+      class="ion-text-center ion-margin-top">
+      Panel de Reportes
+    </ion-button>
 
     <ion-button fill="outline" size="small" color="primary" class="ion-text-center ion-margin-end"
       [routerLink]="['/editar-usuario', usuario.id]" slot="end">

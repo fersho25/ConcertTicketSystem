@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
   },
   {
     path: '',
@@ -13,57 +13,57 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'crear-usuario',
-    loadChildren: () => import('./crear-usuario/crear-usuario.module').then( m => m.CrearUsuarioPageModule)
+    loadChildren: () => import('./crear-usuario/crear-usuario.module').then(m => m.CrearUsuarioPageModule)
   },
   {
     path: 'crear-concierto',
-    loadChildren: () => import('./crear-concierto/crear-concierto.module').then( m => m.CrearConciertoPageModule)
+    loadChildren: () => import('./crear-concierto/crear-concierto.module').then(m => m.CrearConciertoPageModule)
   },
   {
     path: 'mostrar-concierto/:id',
-    loadChildren: () => import('./mostrar-concierto/mostrar-concierto.module').then( m => m.MostrarConciertoPageModule)
+    loadChildren: () => import('./mostrar-concierto/mostrar-concierto.module').then(m => m.MostrarConciertoPageModule)
   },
   {
     path: 'reserva',
-    loadChildren: () => import('./reserva/reserva.module').then( m => m.ReservaPageModule)
+    loadChildren: () => import('./reserva/reserva.module').then(m => m.ReservaPageModule)
   },
   {
     path: 'panel-edicion',
-    loadChildren: () => import('./panel-edicion/panel-edicion.module').then( m => m.PanelEdicionPageModule)
+    loadChildren: () => import('./panel-edicion/panel-edicion.module').then(m => m.PanelEdicionPageModule)
   },
   {
     path: 'edicion-concierto/:id',
-    loadChildren: () => import('./edicion-concierto/edicion-concierto.module').then( m => m.EdicionConciertoPageModule)
+    loadChildren: () => import('./edicion-concierto/edicion-concierto.module').then(m => m.EdicionConciertoPageModule)
   },
   {
     path: 'panel-usuario',
-    loadChildren: () => import('./panel-usuario/panel-usuario.module').then( m => m.PanelUsuarioPageModule)
+    loadChildren: () => import('./panel-usuario/panel-usuario.module').then(m => m.PanelUsuarioPageModule)
   },
   {
     path: 'editar-usuario/:id',
-    loadChildren: () => import('./editar-usuario/editar-usuario.module').then( m => m.EditarUsuarioPageModule)
+    loadChildren: () => import('./editar-usuario/editar-usuario.module').then(m => m.EditarUsuarioPageModule)
   },
   {
     path: 'recuperacion-contrasena',
-    loadChildren: () => import('./recuperacion-contrasena/recuperacion-contrasena.module').then( m => m.RecuperacionContrasenaPageModule)
+    loadChildren: () => import('./recuperacion-contrasena/recuperacion-contrasena.module').then(m => m.RecuperacionContrasenaPageModule)
   },
   {
     path: 'compra',
-    loadChildren: () => import('./compra/compra.module').then( m => m.CompraPageModule)
+    loadChildren: () => import('./compra/compra.module').then(m => m.CompraPageModule)
   },
   {
     path: 'editar-usuario-administrador/:id',
-    loadChildren: () => import('./editar-usuario-administrador/editar-usuario-administrador.module').then( m => m.EditarUsuarioAdministradorPageModule)
+    loadChildren: () => import('./editar-usuario-administrador/editar-usuario-administrador.module').then(m => m.EditarUsuarioAdministradorPageModule)
+  },
+  {
+    path: 'reportes',
+    loadChildren: () => import('./reportes/reportes.module').then(m => m.ReportesPageModule)
   },
 
-
-
-
-  
 
 ];
 
