@@ -3,9 +3,9 @@
 
     <ion-buttons slot="start">
       <ion-button fill="clear" (click)="volverHome()">
-  <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
-  Volver
-</ion-button>
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
     </ion-buttons>
 
     <ion-title class="ion-text-center">
@@ -23,98 +23,85 @@
 
 <ion-content class="ion-padding">
 
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Mapa de Asientos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Mapa de Asientos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="mapa-container" style="display: flex; flex-wrap: wrap; gap: 8px;">
+       <div class="asiento" *ngFor="let asiento of asientosMapa" 
+     [style.backgroundColor]="getColor(asiento)"
+     (click)="agregarAsiento(asiento)">
+  {{ asiento.numeroAsiento }}
+</div>
 
-  <div class="mapa-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
-    <div class="asiento" *ngFor="let asiento of asientosMapa" [style.backgroundColor]="getColor(asiento.estado)"
-      style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; color: white; border-radius: 4px; cursor: pointer; user-select: none;"
-      (click)="agregarAsiento(asiento)">
-      {{ asiento.numeroAsiento }}
-    </div>
-  </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
   <form [formGroup]="reservaForm" (ngSubmit)="registrarReserva()">
 
-    <!-- Usuario -->
-
+    <!-- Usuario y Concierto (ocultos) -->
     <ion-input type="hidden" formControlName="usuarioId"></ion-input>
-
-
-    <!-- Concierto -->
-
-      <ion-input type="hidden" formControlName="conciertoId"></ion-input>
-    
-
-    <!-- Fechas -->
-
+    <ion-input type="hidden" formControlName="conciertoId"></ion-input>
     <ion-input type="hidden" formControlName="fechaHoraReserva"></ion-input>
     <ion-input type="hidden" formControlName="fechaHoraExpiracion"></ion-input>
 
+    <!-- Fechas y tiempo restante -->
     <ion-item>
-      <ion-label>
-        Fecha y hora de reserva (actual):
-      </ion-label>
-      <ion-text>
-        {{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraReserva')?.value) }}
-      </ion-text>
+      <ion-label>Fecha y hora de reserva</ion-label>
+      <ion-text>{{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraReserva')?.value) }}</ion-text>
     </ion-item>
 
     <ion-item>
-      <ion-label>
-        Fecha y hora de expiración:
-      </ion-label>
-      <ion-text>
-        {{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraExpiracion')?.value) }}
-      </ion-text>
+      <ion-label>Fecha y hora de expiración</ion-label>
+      <ion-text>{{ obtenerFechaHoraLegible(reservaForm.get('fechaHoraExpiracion')?.value) }}</ion-text>
     </ion-item>
 
     <ion-item>
       <ion-label>Tiempo restante para expiración</ion-label>
-      <ion-text>{{ tiempoRestanteSegundos() }} segundos</ion-text>
+      <ion-text>{{ tiempoRestanteLegible }}</ion-text>
     </ion-item>
 
     <!-- Estado -->
     <ion-item>
-  <ion-label position="stacked">Estado</ion-label>
-  <ion-input [value]="reservaForm.get('estado')?.value" readonly></ion-input>
-</ion-item>
+      <ion-label position="stacked">Estado</ion-label>
+      <ion-input [value]="reservaForm.get('estado')?.value" readonly></ion-input>
+    </ion-item>
 
+    <!-- Lista de asientos seleccionados -->
+   <ion-list>
+  <ion-item lines="full">
+    <ion-label>
+      <h2>Asientos seleccionados</h2>
+    </ion-label>
+  </ion-item>
 
-    <!-- Lista de asientos -->
-    <ion-list>
-      <ion-item lines="full">
-        <ion-label>
-          <h2>Asientos</h2>
-        </ion-label>
+  <div formArrayName="asientos">
+    <div *ngFor="let asiento of asientos.controls; let i = index" [formGroupName]="i">
+      <ion-item>
+        <ion-label position="stacked">Categoría</ion-label>
+        <ion-input type="text" formControlName="CategoriaNombre" readonly></ion-input>
       </ion-item>
 
-      <div formArrayName="asientos">
-        <div *ngFor="let asiento of asientos.controls; let i = index" [formGroupName]="i">
-          <ion-item>
-            <ion-label position="stacked">Categoría asiento ID</ion-label>
-            <ion-input type="number" formControlName="CategoriaAsientoId" readonly></ion-input>
-          </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Número de asiento</ion-label>
+        <ion-input type="number" formControlName="NumeroAsiento" readonly></ion-input>
+      </ion-item>
 
-          <ion-item>
-            <ion-label position="stacked">Número de asiento</ion-label>
-            <ion-input type="number" formControlName="NumeroAsiento" readonly></ion-input>
-          </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Precio</ion-label>
+        <ion-input type="number" formControlName="Precio" readonly></ion-input>
+      </ion-item>
 
-          <ion-item>
-            <ion-label position="stacked">Precio</ion-label>
-            <ion-input type="number" formControlName="Precio" readonly></ion-input>
-          </ion-item>
+      <ion-button expand="block" color="danger" (click)="eliminarAsiento(i)">
+        Eliminar asiento
+      </ion-button>
+    </div>
+  </div>
+</ion-list>
 
-          <ion-button expand="block" color="danger" (click)="eliminarAsiento(i)">Eliminar asiento</ion-button>
-        </div>
-      </div>
-    </ion-list>
-
-    <!-- Botón enviar -->
+    <!-- Botón de enviar -->
     <ion-button expand="block" type="submit" color="primary">
       Registrar Reserva
     </ion-button>

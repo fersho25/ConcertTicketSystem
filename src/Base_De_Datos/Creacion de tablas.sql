@@ -101,11 +101,11 @@ CREATE TABLE Venta (
 
 
 
-DROP TABLE dbo.Compra;
+DROP TABLE dbo.Reserva;
 
 
 Select *
-From Compra
+From Reserva
 
 
 
@@ -117,5 +117,61 @@ SELECT * FROM CategoriaAsiento;
 Select * 
 From dbo.Usuario
 
+Delete
+From dbo.Reserva
+Where Id = 1
+
 Select * 
 From dbo.Concierto
+
+---------------------------------------
+
+CREATE TABLE Reserva (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UsuarioId INT NOT NULL,
+    ConciertoId INT NOT NULL,
+    FechaHoraReserva DATETIME NOT NULL,
+    FechaHoraExpiracion DATETIME NOT NULL,
+    Estado NVARCHAR(20) NOT NULL,
+    CONSTRAINT FK_Reserva_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id),
+    CONSTRAINT FK_Reserva_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+
+CREATE TABLE Compra (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ReservaId INT NOT NULL,
+    MetodoPago NVARCHAR(50) NOT NULL,
+    PrecioTotal DECIMAL(18,2) NOT NULL,
+    DescuentoAplicado DECIMAL(18,2) NOT NULL,
+    FechaHoraCompra DATETIME NULL,
+    PromocionAplicada NVARCHAR(100) NULL,
+    CodigoQR NVARCHAR(255) NULL,
+    Notificado BIT NOT NULL DEFAULT 0,
+    Estado NVARCHAR(20) NOT NULL,
+    CONSTRAINT FK_Compra_Reserva FOREIGN KEY (ReservaId)
+        REFERENCES Reserva(Id)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE AsientoReserva (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ReservaId INT NOT NULL,
+    CompraId INT NULL,
+    CategoriaAsientoId INT NOT NULL,
+    NumeroAsiento INT NOT NULL,
+    Precio DECIMAL(18,2) NOT NULL,
+	Estado INT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_AsientoReserva_Reserva FOREIGN KEY (ReservaId)
+        REFERENCES Reserva(Id)
+        ON DELETE CASCADE,
+    CONSTRAINT FK_AsientoReserva_Compra FOREIGN KEY (CompraId)
+        REFERENCES Compra(Id)
+        ON DELETE NO ACTION,
+    CONSTRAINT FK_AsientoReserva_CategoriaAsiento FOREIGN KEY (CategoriaAsientoId)
+        REFERENCES CategoriaAsiento(Id)
+);
+
+Delete
+From Compra
+

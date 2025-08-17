@@ -2,9 +2,9 @@
 {
     public enum EstadoAsiento
     {
-        Disponible,
-        Reservado,
-        Vendido
+        DISPONIBLE,
+        RESERVADO,
+        COMPRADA
     }
     public class AsientoReserva
     {
@@ -17,6 +17,8 @@
         public Reserva Reserva { get; set; }
         public int? CompraId { get; set; }        
         public Compra Compra { get; set; }
+
+        public EstadoAsiento Estado { get; set; } = EstadoAsiento.DISPONIBLE;
 
 
 

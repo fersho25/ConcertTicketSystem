@@ -21,8 +21,26 @@ namespace GestionPlataformaConcierto.DA.Acciones
         {
             try
             {
-                await _context.Set<Compra>().AddAsync(compra);
+                await _context.Compra.AddAsync(compra);
                 await _context.SaveChangesAsync();
+
+                var reserva = await _context.Reserva
+                    .Include(r => r.Asientos)
+                    .FirstOrDefaultAsync(r => r.Id == compra.ReservaId);
+
+                if (reserva != null)
+                {
+                    reserva.Estado = "COMPRADA"; // actualizar la reserva
+
+                    foreach (var asiento in reserva.Asientos)
+                    {
+                        asiento.CompraId = compra.Id;
+                        asiento.Estado = EstadoAsiento.COMPRADA; // actualizar los asientos
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
                 return true;
             }
             catch
@@ -64,7 +82,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                         asientoExistente.CategoriaAsientoId = asiento.CategoriaAsientoId;
                         asientoExistente.NumeroAsiento = asiento.NumeroAsiento;
                         asientoExistente.Precio = asiento.Precio;
-                        asientoExistente.CompraId = id; // relaciona asiento con compra
+                        asientoExistente.CompraId = id;
                     }
                     else
                     {

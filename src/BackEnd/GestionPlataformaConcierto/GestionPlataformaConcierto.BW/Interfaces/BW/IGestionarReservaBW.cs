@@ -1,3 +1,4 @@
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
 
 namespace GestionPlataformaConcierto.BW.Interfaces.BW
@@ -19,6 +20,8 @@ namespace GestionPlataformaConcierto.BW.Interfaces.BW
         Task<bool> CancelarReserva(int id);
 
         Task<List<AsientoReserva>> ObtenerAsientosPorConcierto(int conciertoId);
+
+        Task<List<AsientoReservaGetDTO>> ObtenerAsientosDTOPorReserva(int reservaId);
 
     }
 }

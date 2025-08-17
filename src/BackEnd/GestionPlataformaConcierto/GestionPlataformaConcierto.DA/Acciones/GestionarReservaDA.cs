@@ -1,7 +1,9 @@
-﻿using GestionPlataformaConcierto.BC.Modelos;
+﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
+using GestionPlataformaConcierto.BC.Modelos;
+using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
 using Microsoft.EntityFrameworkCore;
-using GestionPlataformaConcierto.BW.Interfaces.DA;
 
 namespace GestionPlataformaConcierto.DA.Acciones
 {
@@ -156,6 +158,23 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Where(ar => ar.Reserva.ConciertoId == conciertoId)
                 .ToListAsync();
         }
+        public async Task<List<AsientoReservaGetDTO>> ObtenerAsientosDTOPorReserva(int reservaId)
+        {
+            var reserva = await _context.Reserva
+                .Include(r => r.Asientos)
+                    .ThenInclude(a => a.CategoriaAsiento)
+                .FirstOrDefaultAsync(r => r.Id == reservaId);
+
+            if (reserva?.Asientos == null)
+                return new List<AsientoReservaGetDTO>();
+
+            var asientosDto = reserva.Asientos
+                .Select(AsientoReservaGetMapper.ToAsientoReservaGetDTO)
+                .ToList();
+
+            return asientosDto;
+        }
+
 
 
     }

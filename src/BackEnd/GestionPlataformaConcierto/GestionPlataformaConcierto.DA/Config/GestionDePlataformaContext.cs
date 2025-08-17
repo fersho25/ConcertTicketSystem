@@ -81,7 +81,16 @@ namespace GestionPlataformaConcierto.DA.Config
                 .HasOne(ar => ar.Compra)
                 .WithMany(c => c.Asientos)
                 .HasForeignKey(ar => ar.CompraId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Compra>()
+    .HasOne(c => c.Reserva)
+    .WithOne(r => r.Compra)
+    .HasForeignKey<Compra>(c => c.ReservaId) 
+    .OnDelete(DeleteBehavior.Cascade);
+
+
+
 
 
         }

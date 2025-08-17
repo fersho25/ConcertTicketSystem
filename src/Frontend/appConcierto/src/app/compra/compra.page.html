@@ -1,8 +1,19 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Completar Compra</ion-title>
+    <ion-title class="ion-text-center">
+      Completar Compra
+    </ion-title>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/reserva"></ion-back-button>
+      <ion-button fill="clear" (click)="volverHome()">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -13,14 +24,40 @@
 
     <!-- Reserva ID (solo lectura) -->
     <ion-item>
-      <ion-label>Reserva ID</ion-label>
+      <ion-label position="stacked">Reserva ID:</ion-label>
       <ion-input [value]="reserva?.id" readonly></ion-input>
+    </ion-item>
+
+    <!-- Fechas -->
+    <ion-item>
+      <ion-label position="stacked">Fecha de Reserva:</ion-label>
+      <ion-text>{{ obtenerFechaHoraLegible(compraForm.get('fechaHoraReserva')?.value) }}</ion-text>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Fecha de Expiración:</ion-label>
+      <ion-text>{{ obtenerFechaHoraLegible(compraForm.get('fechaHoraExpiracion')?.value) }}</ion-text>
+    </ion-item>
+
+    <ion-item *ngIf="compraForm.get('fechaHoraCompra')?.value">
+      <ion-label position="stacked">Fecha de Compra:</ion-label>
+      <ion-text>{{ obtenerFechaHoraLegible(compraForm.get('fechaHoraCompra')?.value) }}</ion-text>
+    </ion-item>
+
+    <!-- Contador regresivo -->
+    <ion-item *ngIf="compraForm.get('estado')?.value !== 'VENCIDA'">
+      <ion-label position="stacked">Tiempo restante:</ion-label>
+      <ion-text>{{ tiempoRestanteLegible }}</ion-text>
+    </ion-item>
+    <ion-item *ngIf="compraForm.get('estado')?.value === 'VENCIDA'">
+      <ion-label position="stacked">Tiempo restante:</ion-label>
+      <ion-text color="danger">La reserva ha expirado</ion-text>
     </ion-item>
 
     <!-- Método de Pago -->
     <ion-item>
-      <ion-label position="floating">Método de Pago</ion-label>
-      <ion-select formControlName="metodoPago" placeholder="Seleccione método">
+      <ion-label position="stacked">Método de Pago:</ion-label>
+      <ion-select formControlName="metodoPago" interface="popover" placeholder="Seleccione método">
         <ion-select-option value="PAYPAL">PAYPAL</ion-select-option>
         <ion-select-option value="STRIPE">STRIPE</ion-select-option>
       </ion-select>
@@ -28,47 +65,49 @@
 
     <!-- Código de Promoción -->
     <ion-item>
-      <ion-label position="floating">Código de Promoción</ion-label>
+      <ion-label position="stacked">Código de Promoción</ion-label>
       <ion-input formControlName="promocionAplicada" placeholder="Opcional"></ion-input>
     </ion-item>
 
-    <!-- Precios -->
+    <!-- Resumen de Precios -->
     <ion-item>
-      <ion-label>Precio Total</ion-label>
-      <ion-input [value]="precioTotal | currency:'USD'" readonly></ion-input>
+      <ion-label position="stacked">Subtotal:</ion-label>
+      <ion-text>{{ precioTotal | currency:'CRC':'symbol':'1.0-0' }}</ion-text>
     </ion-item>
 
     <ion-item>
-      <ion-label>Descuento Aplicado</ion-label>
-      <ion-input [value]="compraForm.get('descuentoAplicado')?.value | currency:'USD'" readonly></ion-input>
+      <ion-label position="stacked">Descuento Aplicado:</ion-label>
+      <ion-text>{{ descuentoAplicado | currency:'CRC':'symbol':'1.0-0' }}</ion-text>
     </ion-item>
 
     <ion-item>
-      <ion-label>Precio Final</ion-label>
-      <ion-input [value]="precioFinal | currency:'USD'" readonly></ion-input>
+      <ion-label position="stacked">Total a Pagar:</ion-label>
+      <ion-text>{{ precioFinal | currency:'CRC':'symbol':'1.0-0' }}</ion-text>
     </ion-item>
 
-    <p>Estado de la compra: {{ compraForm.get('estado')?.value }}</p>
+    <!-- Estado de la compra -->
+    <ion-item>
+      <ion-label position="stacked">Estado de la compra</ion-label>
+      <ion-text>{{ compraForm.get('estado')?.value }}</ion-text>
+    </ion-item>
 
     <!-- Botón de Confirmar Compra -->
-    <ion-button expand="block" type="submit" [disabled]="compraForm.invalid">
+    <ion-button expand="block" type="submit" [disabled]="compraForm.invalid || compraForm.get('estado')?.value === 'VENCIDA'">
       Confirmar Compra
     </ion-button>
   </form>
 
   <!-- Lista de Asientos -->
-  <ion-card *ngIf="reserva?.asientos?.length">
-    <ion-card-header>
-      <ion-card-title>Asientos reservados</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let asiento of reserva.asientos">
-          <ion-label>
-            Categoría: {{asiento.categoriaAsientoId}} - Asiento: {{asiento.numeroAsiento}} - Precio: {{asiento.precio | currency:'USD'}}
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+  <ion-list *ngIf="reserva?.asientos?.length">
+    <ion-list-header>
+      Asientos reservados:
+    </ion-list-header>
+    <ion-item *ngFor="let asiento of reserva.asientos">
+      <ion-label>
+        Categoría: {{ asiento.categoriaAsientoId }} <br>
+        Asiento: {{ asiento.numeroAsiento }} <br>
+        Precio: {{ asiento.precio | currency:'CRC':'symbol':'1.0-0' }}
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

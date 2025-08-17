@@ -55,11 +55,9 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 
         public static decimal CalcularPrecioTotal(Compra compra)
         {
-            decimal sumaAsientos = compra.Asientos?.Sum(a => a.Precio) ?? 0m;
+            decimal sumaAsientos = compra.Asientos.Sum(a => a.Precio);
+            int cantidadAsientos = compra.Asientos.Count;
 
-            int cantidadAsientos = compra.Asientos?.Count ?? 0;
-
-            // Lista de umbrales y descuentos
             var descuentosPorVolumen = new List<(int cantidadMinima, decimal porcentaje)>
     {
         (10, 30m),
@@ -69,7 +67,7 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
 
             decimal descuento = 0m;
 
-            // Buscar el descuento correspondiente al mayor umbral que se cumple
+            
             foreach (var umbral in descuentosPorVolumen.OrderByDescending(d => d.cantidadMinima))
             {
                 if (cantidadAsientos >= umbral.cantidadMinima)
@@ -79,6 +77,7 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
                 }
             }
 
+            
             decimal montoPromocion = 0m;
             if (!string.IsNullOrWhiteSpace(compra.PromocionAplicada))
             {
@@ -101,6 +100,7 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
             decimal total = sumaAsientos - descuento - montoPromocion;
             return total >= 0 ? total : 0;
         }
+
 
         public static bool elEstadoEsValido(Compra compra)
         {

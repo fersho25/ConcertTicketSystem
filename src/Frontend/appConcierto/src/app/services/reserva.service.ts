@@ -27,6 +27,14 @@ export interface AsientoMapaDTO {
   estado: 'DISPONIBLE' | 'RESERVADO' | 'COMPRADA';
 }
 
+export interface AsientoReservaGetDTO {
+  categoriaAsientoId: number;
+  categoriaNombre: string;
+  numeroAsiento: number;
+  precio: number;
+  estado: 'DISPONIBLE' | 'RESERVADO' | 'COMPRADA';
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -63,5 +71,9 @@ export class ReservaService {
     return this.http.put<boolean>(`${this.baseUrl}/${id}/cambiarEstado`, '"CANCELADA"', {
       headers: { 'Content-Type': 'application/json' }
     });
+  }
+
+  obtenerAsientosPorReserva(reservaId: number): Observable<AsientoReservaGetDTO[]> {
+    return this.http.get<AsientoReservaGetDTO[]>(`${this.baseUrl}/asientos-reserva/${reservaId}`);
   }
 }

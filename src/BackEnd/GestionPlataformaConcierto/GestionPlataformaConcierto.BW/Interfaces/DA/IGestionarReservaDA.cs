@@ -1,3 +1,4 @@
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
 
 namespace GestionPlataformaConcierto.BW.Interfaces.DA
@@ -17,5 +18,8 @@ namespace GestionPlataformaConcierto.BW.Interfaces.DA
         Task<bool> cambiarEstadoReserva(int id, string nuevoEstado);
 
         Task<List<AsientoReserva>> ObtenerAsientosPorConcierto(int conciertoId);
+
+        Task<List<AsientoReservaGetDTO>> ObtenerAsientosDTOPorReserva(int reservaId);
+
     }
 }

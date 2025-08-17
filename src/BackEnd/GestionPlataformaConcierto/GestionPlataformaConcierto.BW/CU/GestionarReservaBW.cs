@@ -1,4 +1,6 @@
-﻿using GestionPlataformaConcierto.BC.Modelos;
+﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo;
+using GestionPlataformaConcierto.BC.Modelos;
 using GestionPlataformaConcierto.BC.ReglasDeNegocio;
 using GestionPlataformaConcierto.BW.Interfaces.BW;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
@@ -89,6 +91,20 @@ namespace GestionPlataformaConcierto.BW.CU
         public async Task<bool> CancelarReserva(int id)
         {
             return await cambiarEstadoReserva(id, "CANCELADA");
+        }
+
+        public async Task<List<AsientoReservaGetDTO>> ObtenerAsientosDTOPorReserva(int reservaId)
+        {
+            var asientos = await gestionarReservaDA.obtenerReservaPorId(reservaId);
+
+            if (asientos?.Asientos == null)
+                return new List<AsientoReservaGetDTO>();
+
+            var asientosDto = asientos.Asientos
+                .Select(AsientoReservaGetMapper.ToAsientoReservaGetDTO)
+                .ToList();
+
+            return asientosDto;
         }
     }
 }

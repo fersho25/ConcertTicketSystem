@@ -20,16 +20,27 @@ public static class CompraMapper
             PromocionAplicada = dto.PromocionAplicada,
             Estado = dto.Estado,
             Notificado = dto.Notificado,
-
-            // Copiar los asientos de la reserva
-            Asientos = reserva.Asientos?.Select(a => new AsientoReserva
-            {
-                CategoriaAsientoId = a.CategoriaAsientoId,
-                NumeroAsiento = a.NumeroAsiento,
-                Precio = a.Precio,
-                ReservaId = reserva.Id
-            }).ToList() ?? new List<AsientoReserva>()
+            Asientos = new List<AsientoReserva>() // inicializamos vacío
         };
+
+        compra.Asientos = new List<AsientoReserva>();
+
+        // Ahora agregamos los asientos y asignamos la referencia a la compra
+        if (reserva.Asientos != null)
+        {
+            foreach (var asiento in reserva.Asientos)
+            {
+                compra.Asientos.Add(new AsientoReserva
+                {
+                    CategoriaAsientoId = asiento.CategoriaAsientoId,
+                    NumeroAsiento = asiento.NumeroAsiento,
+                    Precio = asiento.Precio,
+                    ReservaId = reserva.Id,
+                    Compra = compra
+                });
+            }
+        }
+
 
         // Calcular precio total usando las reglas
         compra.PrecioTotal = ReglasDeCompra.CalcularPrecioTotal(compra);

@@ -12,6 +12,7 @@
         public DateTime FechaHoraReserva { get; set; }
         public DateTime FechaHoraExpiracion { get; set; }
         public string Estado { get; set; }
-           
+        public Compra Compra { get; set; }
+
     }
 }

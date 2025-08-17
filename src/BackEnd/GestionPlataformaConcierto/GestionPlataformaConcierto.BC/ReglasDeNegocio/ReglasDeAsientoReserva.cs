@@ -45,13 +45,13 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
         public static EstadoAsiento ObtenerEstadoDelAsiento(AsientoReserva asientoReserva)
         {
             if (asientoReserva.Reserva == null)
-                return EstadoAsiento.Disponible;
+                return EstadoAsiento.DISPONIBLE;
 
             return asientoReserva.Reserva.Estado switch
             {
-                "ACTIVA" => EstadoAsiento.Reservado,
-                "COMPRADA" => EstadoAsiento.Vendido,
-                _ => EstadoAsiento.Disponible
+                "ACTIVA" => EstadoAsiento.RESERVADO,
+                "COMPRADA" => EstadoAsiento.COMPRADA,
+                _ => EstadoAsiento.DISPONIBLE
             };
         }
     }

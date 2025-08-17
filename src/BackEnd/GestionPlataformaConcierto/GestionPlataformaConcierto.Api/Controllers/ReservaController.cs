@@ -156,7 +156,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                         var asientoReservado = reservas.FirstOrDefault(ar =>
                             ar.NumeroAsiento == i && ar.CategoriaAsientoId == categoria.Id);
 
-                        EstadoAsiento estadoEnum = EstadoAsiento.Disponible;
+                        EstadoAsiento estadoEnum = EstadoAsiento.DISPONIBLE;
 
                         if (asientoReservado != null)
                         {
@@ -169,7 +169,7 @@ namespace GestionPlataformaConcierto.Api.Controllers
                             CategoriaNombre = categoria.Nombre,
                             NumeroAsiento = i,
                             Precio = categoria.Precio,
-                            Estado = estadoEnum.ToString().ToUpper() // o como quieras formatear
+                            Estado = estadoEnum.ToString().ToUpper() 
                         });
                     }
                 }
@@ -181,6 +181,24 @@ namespace GestionPlataformaConcierto.Api.Controllers
                 return BadRequest($"Error al obtener el mapa de asientos: {ex.Message}");
             }
         }
+        [HttpGet("asientos-reserva/{reservaId}")]
+        public async Task<ActionResult<List<AsientoReservaGetDTO>>> ObtenerAsientosPorReserva(int reservaId)
+        {
+            try
+            {
+                var asientosDto = await gestionarReservaBW.ObtenerAsientosDTOPorReserva(reservaId);
+
+                if (asientosDto == null || !asientosDto.Any())
+                    return NotFound("No se encontraron asientos para la reserva.");
+
+                return Ok(asientosDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al obtener los asientos de la reserva: {ex.Message}");
+            }
+        }
+
     }
 }
 

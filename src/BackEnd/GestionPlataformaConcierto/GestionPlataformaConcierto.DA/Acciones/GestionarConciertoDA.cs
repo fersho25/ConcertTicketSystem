@@ -181,10 +181,10 @@ namespace GestionPlataformaConcierto.DA.Acciones
             var salesDetails = await gestionDePlataformaContext.Compra
                 .Include(c => c.Reserva)
                     .ThenInclude(r => r.Usuario)
-                .Include(c => c.AsientoReserva)
+                .Include(c => c.Asientos)
                     .ThenInclude(ar => ar.CategoriaAsiento)
                 .Where(c => c.Reserva.ConciertoId == concertId && c.Estado == "Comprado")
-                .SelectMany(c => c.AsientoReserva.Select(ar => new SaleDetailDto
+                .SelectMany(c => c.Asientos.Select(ar => new SaleDetailDto
                 {
                     Comprador = c.Reserva.Usuario.NombreCompleto,
                     FechaCompra = c.FechaHoraCompra ?? DateTime.MinValue,
