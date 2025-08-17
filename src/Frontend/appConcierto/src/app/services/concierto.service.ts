@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 
 export type EstadoVenta = 'Activo' | 'Inactivo' | 'Cancelado' | 'Finalizado';
 
+export interface PromocionDTO {
+  id: number;
+  nombre: string;
+  descuento: number;
+  activa: boolean;
+  conciertoId: number;
+}
+
 export interface VentaDTO {
   id: number;
   conciertoId: number;
@@ -36,8 +44,10 @@ export interface ConciertoDTO {
   usuarioID: number;
   venta?: VentaDTO;
 
+  
   categoriasAsiento: CategoriaAsientoDTO[];
   archivosMultimedia: ArchivoMultimediaDTO[];
+  promociones: PromocionDTO[]; 
 }
 
 @Injectable({

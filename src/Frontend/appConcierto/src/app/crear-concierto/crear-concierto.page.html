@@ -120,6 +120,55 @@
             </ion-item>
           </div>
 
+          <div formArrayName="promociones" class="ion-margin-top">
+            <ion-item lines="none">
+              <ion-icon name="pricetag-outline" slot="start"></ion-icon>
+              <ion-label>Promociones:</ion-label>
+            </ion-item>
+
+            <div *ngFor="let promocion of promociones.controls; let i = index" [formGroupName]="i">
+
+              <ion-item>
+                <ion-icon name="pencil-outline" slot="start"></ion-icon>
+                <ion-label position="floating">Nombre de la promoción</ion-label>
+                <ion-input type="text" formControlName="nombre" required></ion-input>
+              </ion-item>
+              <div class="error-message" *ngIf="promocion.get('nombre')?.invalid && promocion.get('nombre')?.touched">
+                <ion-text color="danger">
+                  <p>El nombre debe tener al menos 5 caracteres.</p>
+                </ion-text>
+              </div>
+
+              <ion-item>
+                <ion-icon name="cash-outline" slot="start"></ion-icon>
+                <ion-label position="floating">Descuento (%)</ion-label>
+                <ion-input type="number" formControlName="descuento" required></ion-input>
+              </ion-item>
+              <div class="error-message"
+                *ngIf="promocion.get('descuento')?.invalid && promocion.get('descuento')?.touched">
+                <ion-text color="danger">
+                  <p>El descuento debe estar entre 1 y 100.</p>
+                </ion-text>
+              </div>
+
+              <ion-item>
+                <ion-label>Estado de la promoción</ion-label>
+                <ion-select formControlName="activa" placeholder="Seleccione">
+                  <ion-select-option [value]="true">Oferta Activada</ion-select-option>
+                  <ion-select-option [value]="false">Oferta Desactivada</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-button shape="round" color="danger" (click)="eliminarPromocion(i)">
+                Eliminar Promoción
+              </ion-button>
+            </div>
+
+            <ion-button shape="round" expand="full" (click)="agregarPromocion()">
+              Agregar Promoción
+            </ion-button>
+          </div>
+
           <ion-list>
             <ion-item lines="none">
               <ion-icon name="podium-outline" slot="start"></ion-icon>
@@ -170,7 +219,7 @@
                   </ion-text>
                 </div>
 
-                <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar</ion-button>
+                <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar Categoria</ion-button>
               </div>
             </div>
             <ion-button shape="round" expand="full" [disabled]="cantidadRestante <= 0 || !categoriasAsiento.valid"
@@ -224,7 +273,7 @@
 
 
           <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="!conciertoForm.valid || cantidadRestante !== 0 || categoriasAsiento.length === 0 || !hayArchivo() || 
-              conciertoForm.hasError('fechaFinMayor') || conciertoForm.hasError('fechaFinPasada')">
+            conciertoForm.hasError('fechaFinMayor') || conciertoForm.hasError('fechaFinPasada') || !promocionesValidas()">
             Crear Concierto
           </ion-button>
 

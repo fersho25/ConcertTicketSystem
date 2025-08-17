@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConciertoDTO, ConciertoService } from '../services/concierto.service';
+import { ConciertoDTO, ConciertoService, PromocionDTO } from '../services/concierto.service';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
@@ -62,11 +62,15 @@ export class CrearConciertoPage implements OnInit {
         fechaFin: ['', Validators.required],
         estado: ['', Validators.required]
       }),
+      promociones: this.fb.array([]),
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
     }, { validators: this.fechaFinValidaValidator });
   }
 
+  get promociones(): FormArray {
+    return this.conciertoForm.get('promociones') as FormArray;
+  }
   get categoriasAsiento(): FormArray {
     return this.conciertoForm.get('categoriasAsiento') as FormArray;
   }
@@ -92,6 +96,15 @@ export class CrearConciertoPage implements OnInit {
     });
   }
 
+  crearPromocion(): FormGroup {
+    return this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      descuento: [0, [Validators.required, Validators.min(1), Validators.max(100)]],
+      activa: [null, Validators.required]
+    });
+  }
+
+
 
 
   async crearConcierto() {
@@ -113,6 +126,15 @@ export class CrearConciertoPage implements OnInit {
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
     const usuarioID = usuario.id;
 
+    const promocionesFormArray = this.conciertoForm.get('promociones') as FormArray;
+    const promociones: PromocionDTO[] = promocionesFormArray?.controls.map(promoGroup => ({
+      id: 0,
+      nombre: promoGroup.get('nombre')?.value,
+      descuento: promoGroup.get('descuento')?.value,
+      activa: promoGroup.get('activa')?.value,
+      conciertoId: 0
+    })) || [];
+
     const concierto: ConciertoDTO = {
       ...this.conciertoForm.value,
       usuarioID: usuarioID,
@@ -121,7 +143,8 @@ export class CrearConciertoPage implements OnInit {
         conciertoId: 0,
         fechaFin: ventaForm.fechaFin,
         estado: ventaForm.estado
-      }
+      },
+      promociones: promociones
     };
     console.log(concierto);
 
@@ -220,6 +243,19 @@ export class CrearConciertoPage implements OnInit {
     }
 
     return null;
+  }
+
+  promocionesValidas(): boolean {
+    return this.promociones.controls.every(p => p.valid);
+  }
+
+
+  agregarPromocion() {
+    this.promociones.push(this.crearPromocion());
+  }
+
+  eliminarPromocion(index: number) {
+    this.promociones.removeAt(index);
   }
 
 

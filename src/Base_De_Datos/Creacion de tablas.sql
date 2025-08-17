@@ -99,6 +99,17 @@ CREATE TABLE Venta (
     CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
 );
 
+CREATE TABLE Promocion
+(
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(100) NOT NULL,
+    Descuento INT NOT NULL,  
+    Activa BIT NOT NULL,
+    ConciertoId INT NOT NULL, 
+    FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id) ON DELETE CASCADE
+);
+
+
 
 
 DROP TABLE dbo.Reserva;

@@ -25,7 +25,8 @@ namespace GestionPlataformaConcierto.DA.Acciones
             var conciertoExistente = await gestionDePlataformaContext.Concierto
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
-                .Include(c => c.Venta) 
+                .Include(c => c.Venta)
+                .Include(c => c.Promociones)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (conciertoExistente == null)
@@ -107,6 +108,37 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 }
             }
 
+            // Eliminar solo las promociones existentes en DB que ya no estén en la lista enviada
+            foreach (var promoExistente in conciertoExistente.Promociones.ToList())
+            {
+                if (promoExistente.Id != 0 && !concierto.Promociones.Any(p => p.Id == promoExistente.Id))
+                    gestionDePlataformaContext.Promocion.Remove(promoExistente);
+            }
+
+            // Actualizar o agregar
+            foreach (var promoNueva in concierto.Promociones)
+            {
+                if (promoNueva.Id != 0)
+                {
+                    // Actualizar existentes
+                    var promoExistente = conciertoExistente.Promociones
+                        .FirstOrDefault(p => p.Id == promoNueva.Id);
+
+                    if (promoExistente != null)
+                    {
+                        promoExistente.Nombre = promoNueva.Nombre;
+                        promoExistente.Descuento = promoNueva.Descuento;
+                        promoExistente.Activa = promoNueva.Activa;
+                    }
+                }
+                else
+                {
+                    // Agregar nuevas
+                    conciertoExistente.Promociones.Add(promoNueva);
+                }
+            }
+
+
             await gestionDePlataformaContext.SaveChangesAsync();
 
             return true;
@@ -162,6 +194,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
             var concierto = await gestionDePlataformaContext.Concierto
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
+                .Include(c => c.Promociones)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (concierto == null)
@@ -202,6 +235,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
                 .Include(c => c.Venta)
+                .Include(c => c.Promociones)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             // Desactivar venta si ya pasó la fecha
@@ -223,6 +257,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
                 .Include(c => c.Venta)
+                .Include(c => c.Promociones)
                 .ToListAsync();
 
             // Update para todos los conciertos
@@ -245,6 +280,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 .Include(c => c.CategoriasAsiento)
                 .Include(c => c.ArchivosMultimedia)
                 .Include(c => c.Venta)
+                .Include(c => c.Promociones)
                 .ToListAsync();
 
             foreach (var c in conciertos)

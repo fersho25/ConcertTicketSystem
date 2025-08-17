@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
 using GestionPlataformaConcierto.BC.Modelos;
 
@@ -21,6 +19,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 Lugar = dto.Lugar,
                 Capacidad = dto.Capacidad,
                 UsuarioID = dto.UsuarioID,
+
                 CategoriasAsiento = dto.CategoriasAsiento?.Select(ca => new CategoriaAsiento
                 {
                     Id = ca.Id,
@@ -30,6 +29,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     ConciertoId = ca.ConciertoId,
                     Concierto = null
                 }).ToList() ?? new List<CategoriaAsiento>(),
+
                 ArchivosMultimedia = dto.ArchivosMultimedia?.Select(am => new ArchivoMultimedia
                 {
                     Id = am.Id,
@@ -44,7 +44,6 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     Concierto = null
                 }).ToList() ?? new List<ArchivoMultimedia>(),
 
-                // Aquí agregar:
                 Venta = dto.Venta != null ? new Venta
                 {
                     Id = dto.Venta.Id,
@@ -52,8 +51,19 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     FechaFin = DateTime.Parse(dto.Venta.FechaFin),
                     Estado = dto.Venta.Estado,
                     Concierto = null
-                } : null
+                } : null,
 
+                Promociones = dto.Promociones != null
+                    ? new List<Promocion>(dto.Promociones.Select(p => new Promocion
+                    {
+                        Id = p.Id,
+                        Nombre = p.Nombre,
+                        Descuento = p.Descuento,
+                        Activa = p.Activa,
+                        ConciertoId = dto.Id,
+                        Concierto = null
+                    }))
+                    : new List<Promocion>()
             };
         }
 
@@ -68,6 +78,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                 Lugar = concierto.Lugar,
                 Capacidad = concierto.Capacidad,
                 UsuarioID = concierto.UsuarioID,
+
                 CategoriasAsiento = concierto.CategoriasAsiento?.Select(ca => new CategoriaAsientoDTO
                 {
                     Id = ca.Id,
@@ -76,6 +87,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     Cantidad = ca.CantidadAsientos,
                     ConciertoId = ca.ConciertoId
                 }).ToList() ?? new List<CategoriaAsientoDTO>(),
+
                 ArchivosMultimedia = concierto.ArchivosMultimedia?.Select(am => new ArchivoMultimediaDTO
                 {
                     Id = am.Id,
@@ -91,12 +103,17 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     ConciertoId = concierto.Venta.ConciertoId,
                     FechaFin = concierto.Venta.FechaFin.ToString("yyyy-MM-ddTHH:mm:ss"),
                     Estado = concierto.Venta.Estado
-                } : null
+                } : null,
 
-
+                Promociones = concierto.Promociones?.Select(p => new PromocionDTO
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    Descuento = p.Descuento,
+                    Activa = p.Activa,
+                    ConciertoId = concierto.Id
+                }).ToList() ?? new List<PromocionDTO>()
             };
         }
-
-
     }
 }

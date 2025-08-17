@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AlertController, IonicModule } from '@ionic/angular';
+import { ReservaDTO } from '../services/reserva.service';
+import { CompraDTO } from '../services/compra.service';
 
 @Component({
   selector: 'app-panel-edicion',
@@ -22,6 +24,8 @@ export class PanelEdicionPage implements OnInit {
 
   usuario: any = {};
   modoOscuroActivado = false;
+  reserva!: ReservaDTO;
+  compra!: CompraDTO;
 
   conciertosUsuarios: ConciertoDTO[] = [];
   conciertos: ConciertoDTO[] = [];
@@ -65,6 +69,41 @@ export class PanelEdicionPage implements OnInit {
     });
 
   }
+
+  async EliminarConcierto(concierto: ConciertoDTO, reserva?: ReservaDTO, compra?: CompraDTO) {
+    console.log("concierto.id", concierto.id);
+    console.log("reserva", reserva);
+    console.log("compra", compra);
+
+
+    const alert = await this.alertController.create({
+      header: `Confirmar eliminación de ${concierto.nombre}`,
+      message: '¿Desea eliminar este concierto?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.conciertoService.eliminarConcierto(concierto.id).subscribe({
+              next: () => this.cargarTodosLosConciertos(),
+              error: async () => {
+                const alertErr = await this.alertController.create({
+                  header: 'Error',
+                  message: 'No se pudo eliminar el concierto ya que tiene alguna compra o reserva activa.',
+                  buttons: ['OK']
+                });
+                await alertErr.present();
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  
 
   cambiarEstadoVenta(concierto: ConciertoDTO) {
     this.conciertoService.toggleEstadoVenta(concierto.id).subscribe({

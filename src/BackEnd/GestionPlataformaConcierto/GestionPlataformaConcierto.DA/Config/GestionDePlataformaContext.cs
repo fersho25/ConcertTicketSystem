@@ -17,6 +17,8 @@ namespace GestionPlataformaConcierto.DA.Config
         public DbSet<Venta> Venta { get; set; }
         public DbSet<Compra> Compra { get; set; }
 
+        public DbSet<Promocion> Promocion { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Relación CategoriaAsiento - Concierto
@@ -90,6 +92,12 @@ namespace GestionPlataformaConcierto.DA.Config
     .OnDelete(DeleteBehavior.Cascade);
 
 
+            
+            modelBuilder.Entity<Promocion>()
+                .HasOne(p => p.Concierto)
+                .WithMany(c => c.Promociones)
+                .HasForeignKey(p => p.ConciertoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
 

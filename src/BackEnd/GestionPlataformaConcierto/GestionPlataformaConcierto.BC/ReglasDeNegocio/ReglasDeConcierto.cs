@@ -13,7 +13,8 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
                    laCapacidadEsValida(concierto) &&
                    laCategoriaAsientoEsValida(concierto) &&
                    laMultimediaEsValida(concierto) &&
-                   ventaEsValida(concierto);
+                   ventaEsValida(concierto) &&
+                    promocionesSonValidas(concierto);
 
         }
 
@@ -60,6 +61,15 @@ namespace GestionPlataformaConcierto.BC.ReglasDeNegocio
         public static bool ventaEsValida(Concierto concierto)
         {
             return ReglasDeVenta.VentaEsValida(concierto.Venta, concierto);
+        }
+
+        public static bool promocionesSonValidas(Concierto concierto)
+        {
+            if (concierto.Promociones == null || !concierto.Promociones.Any())
+                return false;
+
+            return concierto.Promociones.All(promocion => ReglasDePomocion.laPromocionEsValida(promocion));
+
         }
         public static bool elIdEsValido(int id)
         {

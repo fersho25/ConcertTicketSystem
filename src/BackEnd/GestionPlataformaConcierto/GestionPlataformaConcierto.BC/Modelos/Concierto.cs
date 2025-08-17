@@ -1,4 +1,5 @@
-﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
+﻿using GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO;
+using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
 
 namespace GestionPlataformaConcierto.BC.Modelos
 {
@@ -27,6 +28,8 @@ namespace GestionPlataformaConcierto.BC.Modelos
         public Venta Venta { get; set; }
 
         public ICollection<Reserva> Reservas { get; set; }
+
+        public List<Promocion> Promociones { get; set; }
     }
 
 }

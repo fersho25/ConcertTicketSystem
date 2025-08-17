@@ -22,6 +22,13 @@
       Panel de Reportes
     </ion-button>
 
+    <ion-item slot="end" class="barraBusqueda ion-margin-end">
+      <ion-icon name="eye-outline" slot="start"></ion-icon>
+      <ion-label slot="start">Filtro por Nombre: </ion-label>
+      <ion-input slot="end" [(ngModel)]="filtroBusqueda" (ionInput)="aplicarFiltro()"></ion-input>
+    </ion-item>
+
+
     <ion-button fill="outline" size="small" color="primary" class="ion-text-center ion-margin-end"
       [routerLink]="['/editar-usuario', usuario.id]" slot="end">
       Editar Perfil
@@ -45,7 +52,7 @@
 
     <ion-grid>
       <ion-row>
-        <ion-col size="3" *ngFor="let concierto of conciertos">
+        <ion-col size="3" *ngFor="let concierto of conciertosFiltrados">
           <ion-card>
             <ion-card-header>
               <div *ngIf="(concierto.archivosMultimedia?.length ?? 0) > 0">

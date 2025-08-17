@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GestionPlataformaConcierto.BC.LogicaDeNegocio.Enum;
+using GestionPlataformaConcierto.BC.Modelos;
 
 namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 {
@@ -20,5 +21,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
         public List<CategoriaAsientoDTO> CategoriasAsiento { get; set; }
         public List<ArchivoMultimediaDTO> ArchivosMultimedia { get; set; }
         public VentaDTO Venta { get; set; }
+
+        public List<PromocionDTO> Promociones { get; set; }
     }
 }

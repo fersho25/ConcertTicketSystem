@@ -90,9 +90,14 @@ export class EdicionConciertoPage implements OnInit {
         estado: ['', Validators.required]
       }),
 
+      promociones: this.fb.array([]),
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
     }, { validators: this.fechaFinValidaValidator });
+  }
+
+  get promociones(): FormArray {
+    return this.conciertoEditForm.get('promociones') as FormArray;
   }
 
   get categoriasAsiento() {
@@ -143,6 +148,17 @@ export class EdicionConciertoPage implements OnInit {
         }));
       });
 
+      this.promociones.clear();
+      concierto.promociones.forEach(promocion => {
+        this.promociones.push(this.fb.group({
+          nombre: [promocion.nombre, [Validators.required, Validators.minLength(3)]],
+          descuento: [promocion.descuento, [Validators.required, Validators.min(1), Validators.max(100)]],
+          activa: [promocion.activa, Validators.required]
+        }));
+      });
+
+
+
       this.formularioCargado = true;
     }, error => {
       console.error('Error cargando concierto:', error);
@@ -186,6 +202,13 @@ export class EdicionConciertoPage implements OnInit {
         categoria.cantidad > 0
     );
 
+    const promociones = this.conciertoEditForm.value.promociones.filter(
+      (promocion: any) =>
+        promocion.nombre && promocion.nombre.trim() !== '' &&
+        promocion.descuento > 0 && promocion.descuento <= 100 &&
+        promocion.activa !== null
+    );
+
     // Obtener venta como objeto
     const ventaForm: VentaDTO = this.conciertoEditForm.get('venta')?.value;
 
@@ -195,6 +218,7 @@ export class EdicionConciertoPage implements OnInit {
       usuarioID: usuarioID,
       archivosMultimedia,
       categoriasAsiento,
+      promociones,
       venta: {
         id: ventaForm.id || 0,
         conciertoId: this.conciertoId,
@@ -245,6 +269,30 @@ export class EdicionConciertoPage implements OnInit {
       urlTemporal: ['']
     });
   }
+
+
+  crearPromocion(): FormGroup {
+    return this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      descuento: [0, [Validators.required, Validators.min(1), Validators.max(100)]],
+      activa: [null, Validators.required]
+    });
+  }
+
+
+
+  promocionesValidas(): boolean {
+    return this.promociones.controls.every(p => p.valid);
+  }
+
+  agregarPromocion() {
+    this.promociones.push(this.crearPromocion());
+  }
+
+  eliminarPromocion(index: number) {
+    this.promociones.removeAt(index);
+  }
+
 
   agregarCategoriaAsiento() {
     this.categoriasAsiento.push(this.crearCategoriaAsiento());

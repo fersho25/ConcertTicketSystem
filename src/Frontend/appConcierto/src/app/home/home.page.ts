@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
 export class HomePage implements OnInit {
   usuario: any = {};
   modoOscuroActivado = false;
-
+  filtroBusqueda: string = '';
+  conciertosFiltrados: ConciertoDTO[] = [];
   conciertos: ConciertoDTO[] = [];
 
   constructor(private conciertoService: ConciertoService, private router: Router) { }
@@ -23,6 +24,7 @@ export class HomePage implements OnInit {
     }
 
     this.cargarConciertos();
+
   }
 
   cerrarSesion() {
@@ -35,7 +37,7 @@ export class HomePage implements OnInit {
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 
-  
+
 
   cargarConciertos() {
     this.conciertoService.obtenerConciertos().subscribe(
@@ -44,12 +46,29 @@ export class HomePage implements OnInit {
           ...c,
           archivosMultimedia: c.archivosMultimedia ?? []
         }));
+
+        this.conciertosFiltrados = [...this.conciertos];
       },
       (error) => {
         console.error('Error al cargar conciertos', error);
       }
     );
+    
   }
+
+  aplicarFiltro() {
+    const filtro = this.filtroBusqueda.toLowerCase().trim();
+
+    if (!filtro) {
+      this.conciertosFiltrados = [...this.conciertos]; // sin filtro
+      return;
+    }
+
+    this.conciertosFiltrados = this.conciertos.filter(c =>
+      c.nombre.toLowerCase().includes(filtro)
+    );
+  }
+
 
   getSrcArchivo(archivo: any): string {
     return `data:${archivo.tipo};base64,${archivo.contenido}`;
@@ -67,14 +86,14 @@ export class HomePage implements OnInit {
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
     this.modoOscuroActivado = modoOscuro;
 
-     
+
     document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
 
     const data = localStorage.getItem('usuario');
     if (data) {
       this.usuario = JSON.parse(data);
     }
-    
+
     this.cargarConciertos();
   }
 
