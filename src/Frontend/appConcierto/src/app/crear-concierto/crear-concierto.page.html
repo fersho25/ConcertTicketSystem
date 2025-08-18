@@ -139,6 +139,7 @@
                 </ion-text>
               </div>
 
+
               <ion-item>
                 <ion-icon name="cash-outline" slot="start"></ion-icon>
                 <ion-label position="floating">Descuento (%)</ion-label>
@@ -150,6 +151,31 @@
                   <p>El descuento debe estar entre 1 y 100.</p>
                 </ion-text>
               </div>
+
+              <ion-item>
+                <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                <ion-label position="floating fecha-separada">Fecha Limite de la Promocion:</ion-label>
+                <ion-datetime formControlName="fechaFin"></ion-datetime>
+              </ion-item>
+              <div class="error-message" *ngIf="promocion.get('fechaFin')?.errors?.['fechaFinPasada']">
+                <ion-text color="danger">
+                  <p>La fecha límite de la promoción debe ser mayor que hoy.</p>
+                </ion-text>
+              </div>
+
+              <div class="error-message" *ngIf="promocion.get('fechaFin')?.errors?.['fechaFinMayorConcierto']">
+                <ion-text color="danger">
+                  <p>La fecha límite de la promoción no puede ser mayor que la fecha del concierto.</p>
+                </ion-text>
+              </div>
+
+              <div class="error-message" *ngIf="promocion.get('fechaFin')?.errors?.['fechaFinMayorVenta']">
+                <ion-text color="danger">
+                  <p>La fecha límite de la promoción no puede ser mayor que la fecha fin de la venta.</p>
+                </ion-text>
+              </div>
+
+
 
               <ion-item>
                 <ion-label>Estado de la promoción</ion-label>
@@ -219,7 +245,8 @@
                   </ion-text>
                 </div>
 
-                <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar Categoria</ion-button>
+                <ion-button shape="round" color="danger" (click)="removerCategoriaAsiento(i)">Eliminar
+                  Categoria</ion-button>
               </div>
             </div>
             <ion-button shape="round" expand="full" [disabled]="cantidadRestante <= 0 || !categoriasAsiento.valid"
@@ -272,7 +299,8 @@
           </ion-list>
 
 
-          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34" [disabled]="!conciertoForm.valid || cantidadRestante !== 0 || categoriasAsiento.length === 0 || !hayArchivo() || 
+          <ion-button shape="round" expand="full" type="submit" class="ion-margin-top button-34"
+            [disabled]="!conciertoForm.valid || cantidadRestante !== 0 || categoriasAsiento.length === 0 || !hayArchivo() || 
             conciertoForm.hasError('fechaFinMayor') || conciertoForm.hasError('fechaFinPasada') || !promocionesValidas()">
             Crear Concierto
           </ion-button>

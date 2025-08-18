@@ -8,6 +8,7 @@ export interface PromocionDTO {
   id: number;
   nombre: string;
   descuento: number;
+  fechaFin: string; 
   activa: boolean;
   conciertoId: number;
 }

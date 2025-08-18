@@ -90,7 +90,7 @@ export class EdicionConciertoPage implements OnInit {
         estado: ['', Validators.required]
       }),
 
-      promociones: this.fb.array([]),
+      promociones: this.fb.array([], this.fechaPromocionValidaValidator),
       categoriasAsiento: this.fb.array([]),
       archivosMultimedia: this.fb.array([])
     }, { validators: this.fechaFinValidaValidator });
@@ -153,6 +153,7 @@ export class EdicionConciertoPage implements OnInit {
         this.promociones.push(this.fb.group({
           nombre: [promocion.nombre, [Validators.required, Validators.minLength(3)]],
           descuento: [promocion.descuento, [Validators.required, Validators.min(1), Validators.max(100)]],
+          fechaFin: [promocion.fechaFin, Validators.required],
           activa: [promocion.activa, Validators.required]
         }));
       });
@@ -206,6 +207,7 @@ export class EdicionConciertoPage implements OnInit {
       (promocion: any) =>
         promocion.nombre && promocion.nombre.trim() !== '' &&
         promocion.descuento > 0 && promocion.descuento <= 100 &&
+        promocion.fechaFin !== null &&
         promocion.activa !== null
     );
 
@@ -279,6 +281,41 @@ export class EdicionConciertoPage implements OnInit {
     });
   }
 
+  fechaPromocionValidaValidator = (formArray: AbstractControl): ValidationErrors | null => {
+    if (!(formArray instanceof FormArray)) return null;
+
+    const conciertoFechaControl = this.conciertoEditForm?.get('fecha');
+    const ventaFechaFinControl = this.conciertoEditForm?.get('venta.fechaFin');
+    if (!conciertoFechaControl || !ventaFechaFinControl) return null;
+
+    const conciertoFecha = new Date(conciertoFechaControl.value);
+    const ventaFechaFin = new Date(ventaFechaFinControl.value);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    let hayError = false;
+
+    formArray.controls.forEach(promo => {
+      const fechaFinControl = promo.get('fechaFin');
+      if (!fechaFinControl || !fechaFinControl.value) return;
+
+      const fechaFin = new Date(fechaFinControl.value);
+      const errores: any = {};
+
+      if (fechaFin <= hoy) errores.fechaFinPasada = true;
+      if (fechaFin > conciertoFecha) errores.fechaFinMayorConcierto = true;
+      if (fechaFin > ventaFechaFin) errores.fechaFinMayorVenta = true;
+
+      if (Object.keys(errores).length > 0) {
+        fechaFinControl.setErrors(errores);
+        hayError = true;
+      } else {
+        fechaFinControl.setErrors(null);
+      }
+    });
+
+    return hayError ? { promocionInvalida: true } : null;
+  };
 
 
   promocionesValidas(): boolean {

@@ -8,6 +8,8 @@ namespace GestionPlataformaConcierto.BC.Modelos
         public int Descuento { get; set; } 
         public bool Activa { get; set; }
 
+        public DateTime FechaFin { get; set; }
+
         public int ConciertoId { get; set; }
         public Concierto Concierto { get; set; }
     }

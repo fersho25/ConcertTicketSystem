@@ -5,6 +5,7 @@ using GestionPlataformaConcierto.BC.ReglasDeNegocio;
 using GestionPlataformaConcierto.BW.CU;
 using GestionPlataformaConcierto.BW.Interfaces.DA;
 using GestionPlataformaConcierto.DA.Config;
+using GestionPlataformaConcierto.DA.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionPlataformaConcierto.DA.Acciones
@@ -128,6 +129,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                     {
                         promoExistente.Nombre = promoNueva.Nombre;
                         promoExistente.Descuento = promoNueva.Descuento;
+                        promoExistente.FechaFin = promoNueva.FechaFin;
                         promoExistente.Activa = promoNueva.Activa;
                     }
                 }
@@ -154,6 +156,7 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 return false;
 
             concierto.Venta.Estado = concierto.Venta.Estado == EstadoVenta.Activo? EstadoVenta.Inactivo: EstadoVenta.Activo;
+            
 
             await gestionDePlataformaContext.SaveChangesAsync();
             return true;
@@ -248,6 +251,18 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 }
             }
 
+            // Desactivar promocion si ya pasó la fecha
+            if(concierto?.Promociones != null)
+                {
+                foreach (var promocion in concierto.Promociones)
+                {
+                    if (promocion.Activa && promocion.FechaFin <= DateTime.Now)
+                    {
+                        promocion.Activa = false;
+                    }
+                }
+                await gestionDePlataformaContext.SaveChangesAsync();
+            }
             return concierto;
         }
 
@@ -269,7 +284,23 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 }
             }
 
-            await gestionDePlataformaContext.SaveChangesAsync();
+
+            // Desactivar promocion si ya pasó la fecha
+            foreach (var c in conciertos)
+            {
+                if(c.Promociones != null)
+                {
+                    foreach (var promocion in c.Promociones)
+                    {
+                        if (promocion.Activa && promocion.FechaFin <= DateTime.Now)
+                        {
+                            promocion.Activa = false;
+                        }
+                    }
+                }
+            }
+
+                await gestionDePlataformaContext.SaveChangesAsync();
             return conciertos;
         }
 
@@ -288,6 +319,21 @@ namespace GestionPlataformaConcierto.DA.Acciones
                 if (c.Venta != null && c.Venta.Estado == EstadoVenta.Activo && c.Venta.FechaFin <= DateTime.Now)
                 {
                     c.Venta.Estado = EstadoVenta.Finalizado;
+                }
+            }
+
+            // Desactivar promocion si ya pasó la fecha
+            foreach (var c in conciertos)
+            {
+                if (c.Promociones != null)
+                {
+                    foreach (var promocion in c.Promociones)
+                    {
+                        if (promocion.Activa && promocion.FechaFin <= DateTime.Now)
+                        {
+                            promocion.Activa = false;
+                        }
+                    }
                 }
             }
 

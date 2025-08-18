@@ -60,6 +60,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                         Nombre = p.Nombre,
                         Descuento = p.Descuento,
                         Activa = p.Activa,
+                        FechaFin = DateTime.Parse(p.FechaFin),
                         ConciertoId = dto.Id,
                         Concierto = null
                     }))
@@ -110,6 +111,7 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.Mapeo
                     Id = p.Id,
                     Nombre = p.Nombre,
                     Descuento = p.Descuento,
+                    FechaFin = p.FechaFin.ToString("yyyy-MM-ddTHH:mm:ss"),
                     Activa = p.Activa,
                     ConciertoId = concierto.Id
                 }).ToList() ?? new List<PromocionDTO>()
