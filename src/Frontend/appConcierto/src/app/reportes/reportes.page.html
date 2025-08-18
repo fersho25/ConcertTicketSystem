@@ -29,3 +29,13 @@
     </ion-card-content>
   </ion-card>
 </ion-content>
+
+<ion-card *ngIf="barChartData">
+  <ion-card-header>
+    <ion-card-title>Ingresos por Categoría de Asiento</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+    </canvas>
+  </ion-card-content>
+</ion-card>
