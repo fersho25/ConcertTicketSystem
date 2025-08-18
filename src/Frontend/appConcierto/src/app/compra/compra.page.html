@@ -4,7 +4,7 @@
       Completar Compra
     </ion-title>
     <ion-buttons slot="start">
-      <ion-button fill="clear" (click)="volverHome()">
+      <ion-button fill="clear" (click)="volverHomeConAlerta()">
         <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
         Volver
       </ion-button>
@@ -22,11 +22,8 @@
   <!-- Formulario Reactive Forms -->
   <form [formGroup]="compraForm" (ngSubmit)="confirmarCompra()">
 
-    <!-- Reserva ID (solo lectura) -->
-    <ion-item>
-      <ion-label position="stacked">Reserva ID:</ion-label>
-      <ion-input [value]="reserva?.id" readonly></ion-input>
-    </ion-item>
+    <ion-input type="hidden" [value]="reserva?.id" readonly></ion-input>
+
 
     <!-- Fechas -->
     <ion-item>
@@ -64,10 +61,28 @@
     </ion-item>
 
     <!-- Código de Promoción -->
+
     <ion-item>
-      <ion-label position="stacked">Código de Promoción</ion-label>
-      <ion-input formControlName="promocionAplicada" placeholder="Opcional"></ion-input>
+      <ion-label position="stacked">Promociones Aplicables:</ion-label>
     </ion-item>
+
+    <ion-list>
+      <ion-item *ngIf="promociones.length === 0">
+        <ion-label>No hay promociones disponibles para este concierto</ion-label>
+      </ion-item>
+      <ion-item *ngFor="let promo of promociones">
+        <ion-label>
+          {{ promo.nombre }} - {{ promo.descuento }}% de descuento
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-item *ngFor="let descuento of descuentosAplicados">
+      <ion-label>
+        {{ descuento.nombre }}: {{ descuento.porcentaje }}%
+      </ion-label>
+    </ion-item>
+
 
     <!-- Resumen de Precios -->
     <ion-item>
@@ -87,27 +102,28 @@
 
     <!-- Estado de la compra -->
     <ion-item>
-      <ion-label position="stacked">Estado de la compra</ion-label>
+      <ion-label position="stacked">Estado de la compra:</ion-label>
       <ion-text>{{ compraForm.get('estado')?.value }}</ion-text>
     </ion-item>
 
+    <!-- Lista de Asientos -->
+    <ion-list *ngIf="reserva?.asientos?.length">
+      <ion-list-header>
+        Asientos reservados:
+      </ion-list-header>
+      <ion-item *ngFor="let asiento of reserva.asientos">
+        <ion-label>
+          Categoría: {{ obtenerNombreCategoria(asiento.categoriaAsientoId) }} <br>
+          Asiento: {{ asiento.numeroAsiento }} <br>
+          Precio: {{ asiento.precio | currency:'CRC':'symbol':'1.0-0' }}
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
     <!-- Botón de Confirmar Compra -->
-    <ion-button expand="block" type="submit" [disabled]="compraForm.invalid || compraForm.get('estado')?.value === 'VENCIDA'">
+    <ion-button expand="block" type="submit"
+      [disabled]="compraForm.invalid || compraForm.get('estado')?.value === 'VENCIDA'">
       Confirmar Compra
     </ion-button>
   </form>
-
-  <!-- Lista de Asientos -->
-  <ion-list *ngIf="reserva?.asientos?.length">
-    <ion-list-header>
-      Asientos reservados:
-    </ion-list-header>
-    <ion-item *ngFor="let asiento of reserva.asientos">
-      <ion-label>
-        Categoría: {{ asiento.categoriaAsientoId }} <br>
-        Asiento: {{ asiento.numeroAsiento }} <br>
-        Precio: {{ asiento.precio | currency:'CRC':'symbol':'1.0-0' }}
-      </ion-label>
-    </ion-item>
-  </ion-list>
 </ion-content>

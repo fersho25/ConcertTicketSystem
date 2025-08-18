@@ -1,0 +1,20 @@
+.qr-container {
+  text-align: center;
+
+  h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  .qr-image {
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+  }
+}

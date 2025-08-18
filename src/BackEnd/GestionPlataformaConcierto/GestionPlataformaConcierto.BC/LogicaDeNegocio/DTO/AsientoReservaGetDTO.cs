@@ -3,9 +3,9 @@
     public class AsientoReservaGetDTO
     {
         public int CategoriaAsientoId { get; set; }
-        public string CategoriaNombre { get; set; } // Nombre de la categoría
+        public string CategoriaNombre { get; set; } 
         public int NumeroAsiento { get; set; }
         public decimal Precio { get; set; }
-        public string Estado { get; set; } // DISPONIBLE, RESERVADO, COMPRADA
+        public string Estado { get; set; } 
     }
 }

@@ -15,3 +15,15 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+.tooltip {
+  position: fixed;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1000;
+  font-size: 0.9rem;
+}
+

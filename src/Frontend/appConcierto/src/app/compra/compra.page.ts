@@ -1,11 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController, IonicModule } from '@ionic/angular';
 import { CompraService } from '../services/compra.service';
 import { ReservaDTO } from '../services/reserva.service';
 import { CompraDTO } from '../services/compra.service';
 import { lastValueFrom, Subscription, interval } from 'rxjs';
+import { ReservaService } from '../services/reserva.service';
+import { ConciertoService } from '../services/concierto.service';
+import * as QRCode from 'qrcode';
+import { v4 as uuidv4 } from 'uuid';
+import { QrModalComponent } from '../qr-modal/qr-modal.component';
 
 @Component({
   selector: 'app-compra',
@@ -22,11 +27,10 @@ export class CompraPage implements OnInit, OnDestroy {
   precioFinal: number = 0;
   modoOscuroActivado = false;
   private timerSubscription?: Subscription;
-
-  promociones: { [codigo: string]: number } = {
-    'DESCUENTO10': 10,
-    'PROMO5': 5
-  };
+  reservaActualId: number | null = null;
+  promociones: { nombre: string, descuento: number }[] = [];
+  descuentosAplicados: { nombre: string, porcentaje: number }[] = [];
+  categoriasConcierto: { id: number, nombre: string }[] = [];
 
   tiempoRestanteSegundos: number = 0;
 
@@ -34,17 +38,43 @@ export class CompraPage implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private alertController: AlertController,
-    private compraService: CompraService
+    private compraService: CompraService,
+    private reservaService: ReservaService,
+    private conciertoService: ConciertoService,
+    private modalCtrl: ModalController
+
   ) { }
 
   ngOnInit() {
-    // Cargar reserva guardada desde ReservaPage
     const reservaGuardada = localStorage.getItem('reservaActual');
     if (reservaGuardada) {
       this.reserva = JSON.parse(reservaGuardada);
+      this.reservaActualId = this.reserva?.id || null;
     }
 
-    // Leer fechas desde localStorage (misma que ReservaPage)
+    if (this.reserva && this.reserva.conciertoId) {
+      this.conciertoService.obtenerConciertoPorId(this.reserva.conciertoId)
+        .subscribe(concierto => {
+
+          this.categoriasConcierto = concierto.categoriasAsiento.map(cat => ({
+            id: cat.id,
+            nombre: cat.nombre
+          }));
+
+          this.promociones = concierto.promociones
+            .filter(p => p.activa)
+            .map(p => ({ nombre: p.nombre, descuento: p.descuento }));
+
+          if (this.promociones.length > 0) {
+            this.compraForm.patchValue({ promocionAplicada: this.promociones[0].nombre });
+          } else {
+            this.compraForm.patchValue({ promocionAplicada: '' });
+          }
+
+          this.calcularPrecioTotal();
+        });
+    }
+
     const fechaReserva = localStorage.getItem('fechaHoraReserva')!;
     const fechaExpiracion = localStorage.getItem('fechaHoraExpiracion')!;
 
@@ -76,17 +106,30 @@ export class CompraPage implements OnInit, OnDestroy {
     const sumaAsientos = this.reserva.asientos.reduce((sum, a) => sum + a.precio, 0);
     const cantidadAsientos = this.reserva.asientos.length;
 
+    this.descuentosAplicados = [];
+
     let descuentoPorVolumen = 0;
-    if (cantidadAsientos >= 10) descuentoPorVolumen = sumaAsientos * 0.3;
-    else if (cantidadAsientos >= 8) descuentoPorVolumen = sumaAsientos * 0.25;
-    else if (cantidadAsientos >= 4) descuentoPorVolumen = sumaAsientos * 0.1;
+    if (cantidadAsientos >= 10) {
+      descuentoPorVolumen = 30;
+      this.descuentosAplicados.push({ nombre: 'Descuento por volumen', porcentaje: 30 });
+    } else if (cantidadAsientos >= 8) {
+      descuentoPorVolumen = 25;
+      this.descuentosAplicados.push({ nombre: 'Descuento por volumen', porcentaje: 25 });
+    } else if (cantidadAsientos >= 4) {
+      descuentoPorVolumen = 10;
+      this.descuentosAplicados.push({ nombre: 'Descuento por volumen', porcentaje: 10 });
+    }
 
-    const codigo = this.compraForm.get('promocionAplicada')?.value || '';
-    const descuentoPromocion = this.promociones[codigo?.toUpperCase()]
-      ? sumaAsientos * (this.promociones[codigo.toUpperCase()] / 100)
-      : 0;
+    if (this.promociones.length > 0) {
+      const totalPorcentajePromociones = this.promociones.reduce((sum, p) => sum + p.descuento, 0);
+      if (totalPorcentajePromociones > 0) {
+        this.descuentosAplicados.push({ nombre: 'Suma de promociones activas', porcentaje: totalPorcentajePromociones });
+      }
+    }
 
-    this.descuentoAplicado = descuentoPorVolumen + descuentoPromocion;
+    const totalPorcentaje = this.descuentosAplicados.reduce((sum, d) => sum + d.porcentaje, 0);
+    this.descuentoAplicado = sumaAsientos * (totalPorcentaje / 100);
+
     this.compraForm.patchValue({ descuentoAplicado: this.descuentoAplicado }, { emitEvent: false });
     this.precioTotal = sumaAsientos;
     this.precioFinal = sumaAsientos - this.descuentoAplicado;
@@ -130,6 +173,35 @@ export class CompraPage implements OnInit, OnDestroy {
 
     const fechaCompra = new Date().toISOString();
     this.compraForm.patchValue({ fechaHoraCompra: fechaCompra, estado: 'COMPRADA' });
+    this.reserva.estado = 'COMPRADA';
+
+
+    const qrData = `
+  Detalles del Tiquete Electrónico:
+  ----------------------------------------------
+  Reserva: ${this.reserva!.id}
+  Método de pago: ${this.compraForm.value.metodoPago}
+  Fecha y hora de compra: ${this.obtenerFechaHoraLegible(fechaCompra)}
+  Precio total: ₡${this.precioTotal}
+  Descuento aplicado: ${this.descuentoAplicado}%
+  Precio final: ₡${this.precioFinal}
+  Promoción: ${this.compraForm.value.promocionAplicada || 'Ninguna'}
+  ----------------------------------------------
+  ¡Gracias por su compra!
+  `;
+
+  
+
+    const qrImagen = await QRCode.toDataURL(qrData);
+
+
+    const codigoUnico = uuidv4();
+    let codigoQR = '';
+    try {
+      codigoQR = await QRCode.toDataURL(codigoUnico);
+    } catch (err) {
+      console.error('Error generando QR:', err);
+    }
 
     const compraDto: CompraDTO = {
       id: 0,
@@ -139,21 +211,26 @@ export class CompraPage implements OnInit, OnDestroy {
       precioTotal: this.precioTotal,
       descuentoAplicado: this.descuentoAplicado,
       promocionAplicada: this.compraForm.value.promocionAplicada || '',
-      codigoQR: '',
+      codigoQR: qrImagen,
       notificado: false,
       estado: 'COMPRADA'
     };
 
     try {
       await lastValueFrom(this.compraService.registrarCompra(compraDto));
-      const alert = await this.alertController.create({
-        header: 'Compra exitosa',
-        message: `Su compra se ha completado correctamente. Total a pagar: ₡${this.precioFinal.toFixed(2)}`,
-        buttons: ['Ok']
+
+      const modal = await this.modalCtrl.create({
+        component: QrModalComponent,
+        componentProps: {
+          precioFinal: this.precioFinal,
+          codigoQR: qrImagen
+        }
       });
-      await alert.present();
+      await modal.present();
+
       this.limpiarCompra();
       setTimeout(() => this.router.navigate(['/home']), 1500);
+
     } catch (error: any) {
       const alert = await this.alertController.create({
         header: 'Error',
@@ -162,6 +239,7 @@ export class CompraPage implements OnInit, OnDestroy {
       });
       await alert.present();
     }
+
   }
 
   private iniciarTimer() {
@@ -237,6 +315,28 @@ export class CompraPage implements OnInit, OnDestroy {
     }
   }
 
+  private async eliminarReservaSiNoComprada() {
+    if (this.reservaActualId && this.reserva?.estado !== 'COMPRADA') {
+      try {
+        await lastValueFrom(this.reservaService.eliminarReserva(this.reservaActualId));
+      } catch (error) {
+        console.warn('No se pudo eliminar la reserva:', error);
+      }
+    }
+  }
+
+  async limpiarYSalir() {
+    await this.eliminarReservaSiNoComprada();
+    this.limpiarCompra();
+    this.router.navigate(['/home']);
+  }
+
+  obtenerNombreCategoria(id: number): string {
+    const categoria = this.categoriasConcierto.find(c => c.id === id);
+    return categoria ? categoria.nombre : 'Desconocida';
+  }
+
+
   ionViewWillEnter() {
     const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
     this.modoOscuroActivado = modoOscuro;
@@ -256,13 +356,41 @@ export class CompraPage implements OnInit, OnDestroy {
   }
 
   ionViewWillLeave() {
+    this.limpiarYSalir();
     this.detenerTimer();
   }
 
   volverHome() {
-    this.limpiarCompra();
+    this.limpiarYSalir();
     this.router.navigate(['/home']);
   }
+
+  async volverHomeConAlerta() {
+    const alert = await this.alertController.create({
+      header: 'Perderás la reserva',
+      message: 'Si sales de esta página, perderás la reserva y volverás al inicio.',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+
+          }
+        },
+        {
+          text: 'Salir',
+          handler: () => {
+
+            this.limpiarYSalir();
+            this.router.navigate(['/home']);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 
   toggleDarkPalette(shouldAdd: boolean) {
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);

@@ -18,6 +18,13 @@ export class ReservaPage implements OnInit, OnDestroy {
   asientosMapa: AsientoMapaDTO[] = [];
   tiempoRestanteSegundos: number = 0;
   asientosReservaGet: AsientoReservaGetDTO[] = [];
+  tooltipVisible = false;
+  tooltipAsiento: AsientoMapaDTO | null = null;
+  tooltipPosition = { x: 0, y: 0 };
+  categoriaFiltro: string = '';
+  precioMinFiltro: number | null = null;
+  precioMaxFiltro: number | null = null;
+  categoriasDisponibles: string[] = [];
 
 
   private timerSubscription?: Subscription;
@@ -161,45 +168,41 @@ export class ReservaPage implements OnInit, OnDestroy {
   }
 
   cargarAsientosPorReserva(reservaId: number) {
-  this.reservaService.obtenerAsientosPorReserva(reservaId).subscribe({
-    next: (asientos) => {
-      this.asientosReservaGet = asientos;
+    this.reservaService.obtenerAsientosPorReserva(reservaId).subscribe({
+      next: (asientos) => {
+        this.asientosReservaGet = asientos;
 
-      // Limpiar los asientos actuales
-      this.asientos.clear();
+        this.asientos.clear();
 
-      // Agregar al FormArray
-      asientos.forEach(a => {
-        this.asientos.push(this.fb.group({
-          CategoriaAsientoId: [a.categoriaAsientoId],
-          CategoriaNombre: [a.categoriaNombre],
-          NumeroAsiento: [a.numeroAsiento],
-          Precio: [a.precio],
-          Estado: [a.estado]
-        }));
-      });
+        asientos.forEach(a => {
+          this.asientos.push(this.fb.group({
+            CategoriaAsientoId: [a.categoriaAsientoId],
+            CategoriaNombre: [a.categoriaNombre],
+            NumeroAsiento: [a.numeroAsiento],
+            Precio: [a.precio],
+            Estado: [a.estado]
+          }));
+        });
 
-      // Actualizar el mapa de asientos
-      this.asientosMapa.forEach(am => {
-        const asientoEncontrado = asientos.find(ar =>
-          ar.numeroAsiento === am.numeroAsiento && ar.categoriaAsientoId === am.categoriaAsientoId
-        );
-        if (asientoEncontrado) {
-          am.estado = asientoEncontrado.estado;
-        }
-      });
-    },
-    error: async () => {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'No se pudieron cargar los asientos de la reserva.',
-        buttons: ['Ok']
-      });
-      await alert.present();
-    }
-  });
-}
-
+        this.asientosMapa.forEach(am => {
+          const asientoEncontrado = asientos.find(ar =>
+            ar.numeroAsiento === am.numeroAsiento && ar.categoriaAsientoId === am.categoriaAsientoId
+          );
+          if (asientoEncontrado) {
+            am.estado = asientoEncontrado.estado;
+          }
+        });
+      },
+      error: async () => {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'No se pudieron cargar los asientos de la reserva.',
+          buttons: ['Ok']
+        });
+        await alert.present();
+      }
+    });
+  }
 
   private detenerTimer() {
     if (this.timerSubscription) {
@@ -243,7 +246,7 @@ export class ReservaPage implements OnInit, OnDestroy {
   cargarMapaAsientos() {
     const conciertoId = this.reservaForm.get('conciertoId')?.value || 1;
     this.reservaService.obtenerMapaAsientos(conciertoId).subscribe({
-      next: (data) => { this.asientosMapa = data; },
+      next: (data) => { this.asientosMapa = data; this.categoriasDisponibles = [...new Set(this.asientosMapa.map(a => a.categoriaNombre))]; },
       error: async () => {
         const alert = await this.alertController.create({
           header: 'Error',
@@ -255,17 +258,54 @@ export class ReservaPage implements OnInit, OnDestroy {
     });
   }
 
-getColor(asiento: AsientoMapaDTO): string {
-  switch (asiento.estado) {
-    case 'DISPONIBLE': return 'green';
-    case 'RESERVADO': 
-      return this.reservaForm.get('estado')?.value === 'ACTIVA' ? 'yellow' : 'green';
-    case 'COMPRADA': return 'red';
-    default: return 'gray';
+  getColor(asiento: AsientoMapaDTO): string {
+    switch (asiento.estado) {
+      case 'DISPONIBLE': return 'green';
+      case 'RESERVADO':
+        return this.reservaForm.get('estado')?.value === 'ACTIVA' ? 'yellow' : 'green';
+      case 'COMPRADA': return 'red';
+      default: return 'gray';
+    }
   }
-}
+
+  get asientosFiltrados(): AsientoMapaDTO[] {
+    return this.asientosMapa.filter(asiento => {
+
+      let cumpleCategoria = true;
+      if (this.categoriaFiltro && this.categoriaFiltro.trim() !== '') {
+        cumpleCategoria = asiento.categoriaNombre
+          .toLowerCase()
+          .includes(this.categoriaFiltro.toLowerCase());
+      }
+
+      let cumplePrecio = true;
+      if (this.precioMinFiltro != null) {
+        cumplePrecio = asiento.precio >= this.precioMinFiltro;
+      }
+
+      if (this.precioMaxFiltro != null) {
+        cumplePrecio = cumplePrecio && asiento.precio <= this.precioMaxFiltro;
+      }
+
+      return cumpleCategoria && cumplePrecio;
+    });
+  }
 
 
+  mostrarTooltip(event: MouseEvent, asiento: AsientoMapaDTO) {
+    this.tooltipAsiento = asiento;
+    this.tooltipVisible = true;
+
+    this.tooltipPosition = {
+      x: event.clientX + 10,
+      y: event.clientY + 10
+    };
+  }
+
+  ocultarTooltip() {
+    this.tooltipVisible = false;
+    this.tooltipAsiento = null;
+  }
 
 
   async registrarReserva() {
@@ -298,90 +338,82 @@ getColor(asiento: AsientoMapaDTO): string {
     );
   }
 
-
   ionViewWillEnter() {
-  // Configuración del modo oscuro
-  const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
-  this.modoOscuroActivado = modoOscuro;
-  document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
 
-  // Recuperar reserva existente
-  const reservaGuardada = localStorage.getItem('reservaActual');
+    const modoOscuro = JSON.parse(localStorage.getItem('modoOscuro') || 'false');
+    this.modoOscuroActivado = modoOscuro;
+    document.documentElement.classList.toggle('ion-palette-dark', modoOscuro);
 
-  // Cargar mapa de asientos primero
-  const conciertoId = this.reservaForm.get('conciertoId')?.value || 1;
-  this.reservaService.obtenerMapaAsientos(conciertoId).subscribe({
-    next: (data) => {
-      // Aseguramos que los estados vienen del backend correctamente
-      this.asientosMapa = data.map(a => ({
-        ...a,
-        estado: a.estado // DISPONIBLE, RESERVADO, COMPRADA
-      }));
+    const reservaGuardada = localStorage.getItem('reservaActual');
 
-      if (reservaGuardada) {
-        const reservaObj = JSON.parse(reservaGuardada);
+    const conciertoId = this.reservaForm.get('conciertoId')?.value || 1;
+    this.reservaService.obtenerMapaAsientos(conciertoId).subscribe({
+      next: (data) => {
 
-        // Actualizar estado de la reserva
-        this.reservaForm.patchValue({
-          estado: reservaObj.estado || 'ACTIVA',
-          fechaHoraReserva: reservaObj.fechaHoraReserva,
-          fechaHoraExpiracion: reservaObj.fechaHoraExpiracion
+        this.asientosMapa = data.map(a => ({
+          ...a,
+          estado: a.estado
+        }));
+
+
+        if (reservaGuardada) {
+          const reservaObj = JSON.parse(reservaGuardada);
+
+          this.reservaForm.patchValue({
+            estado: reservaObj.estado || 'ACTIVA',
+            fechaHoraReserva: reservaObj.fechaHoraReserva,
+            fechaHoraExpiracion: reservaObj.fechaHoraExpiracion
+          });
+
+          this.asientos.clear();
+          reservaObj.asientos?.forEach((a: any) => {
+            this.asientos.push(this.fb.group({
+              CategoriaAsientoId: [a.CategoriaAsientoId, [Validators.required, Validators.min(1)]],
+              NumeroAsiento: [a.NumeroAsiento, [Validators.required, Validators.min(1)]],
+              Precio: [a.Precio, [Validators.required, Validators.min(0)]]
+            }));
+
+            const indexMapa = this.asientosMapa.findIndex(am =>
+              am.numeroAsiento === a.NumeroAsiento && am.categoriaAsientoId === a.CategoriaAsientoId
+            );
+            if (indexMapa !== -1) {
+              this.asientosMapa[indexMapa].estado = reservaObj.estado === 'COMPRADA' ? 'COMPRADA' : 'RESERVADO';
+            }
+          });
+        }
+
+        const fechaExpiracionGuardada = localStorage.getItem('fechaHoraExpiracion');
+        const fechaReservaGuardada = localStorage.getItem('fechaHoraReserva');
+
+        if (fechaExpiracionGuardada && fechaReservaGuardada) {
+          this.reservaForm.patchValue({
+            fechaHoraExpiracion: fechaExpiracionGuardada,
+            fechaHoraReserva: fechaReservaGuardada
+          });
+        } else if (!reservaGuardada) {
+          const ahora = new Date();
+          const expiracion = new Date();
+          expiracion.setMinutes(ahora.getMinutes() + 3);
+          this.reservaForm.patchValue({
+            fechaHoraReserva: ahora.toISOString(),
+            fechaHoraExpiracion: expiracion.toISOString()
+          });
+          localStorage.setItem('fechaHoraExpiracion', expiracion.toISOString());
+          localStorage.setItem('fechaHoraReserva', ahora.toISOString());
+        }
+
+        this.iniciarTimer();
+      },
+      error: async () => {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'No se pudo cargar el mapa de asientos.',
+          buttons: ['Ok']
         });
-
-        // Cargar los asientos de la reserva en el form
-        this.asientos.clear();
-        reservaObj.asientos?.forEach((a: any) => {
-          this.asientos.push(this.fb.group({
-            CategoriaAsientoId: [a.CategoriaAsientoId, [Validators.required, Validators.min(1)]],
-            NumeroAsiento: [a.NumeroAsiento, [Validators.required, Validators.min(1)]],
-            Precio: [a.Precio, [Validators.required, Validators.min(0)]]
-          }));
-
-          // Actualizar el estado en el mapa
-          const indexMapa = this.asientosMapa.findIndex(am =>
-            am.numeroAsiento === a.NumeroAsiento && am.categoriaAsientoId === a.CategoriaAsientoId
-          );
-          if (indexMapa !== -1) {
-            this.asientosMapa[indexMapa].estado = reservaObj.estado === 'COMPRADA' ? 'COMPRADA' : 'RESERVADO';
-          }
-        });
+        await alert.present();
       }
-
-      // Recuperar fechas guardadas si no hay reserva
-      const fechaExpiracionGuardada = localStorage.getItem('fechaHoraExpiracion');
-      const fechaReservaGuardada = localStorage.getItem('fechaHoraReserva');
-
-      if (fechaExpiracionGuardada && fechaReservaGuardada) {
-        this.reservaForm.patchValue({
-          fechaHoraExpiracion: fechaExpiracionGuardada,
-          fechaHoraReserva: fechaReservaGuardada
-        });
-      } else if (!reservaGuardada) {
-        const ahora = new Date();
-        const expiracion = new Date();
-        expiracion.setMinutes(ahora.getMinutes() + 3);
-        this.reservaForm.patchValue({
-          fechaHoraReserva: ahora.toISOString(),
-          fechaHoraExpiracion: expiracion.toISOString()
-        });
-        localStorage.setItem('fechaHoraExpiracion', expiracion.toISOString());
-        localStorage.setItem('fechaHoraReserva', ahora.toISOString());
-      }
-
-      this.iniciarTimer();
-    },
-    error: async () => {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'No se pudo cargar el mapa de asientos.',
-        buttons: ['Ok']
-      });
-      await alert.present();
-    }
-  });
+    });
   }
-
-
 
   ionViewWillLeave() {
     this.detenerTimer();
@@ -407,7 +439,7 @@ getColor(asiento: AsientoMapaDTO): string {
   get tiempoRestanteLegible(): string {
     const min = Math.floor(this.tiempoRestanteSegundos / 60);
     const seg = this.tiempoRestanteSegundos % 60;
-    return `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+    return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   }
 
 }

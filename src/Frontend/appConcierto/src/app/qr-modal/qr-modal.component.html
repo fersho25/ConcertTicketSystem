@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Tiquete Electrónico</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="qr-container">
+    <h2>Compra realizada con éxito</h2>
+    <p><strong>Total pagado:</strong> ₡{{ precioFinal.toFixed(2) }}</p>
+
+    <img [src]="codigoQR" alt="Código QR" class="qr-image" />
+
+    <ion-button expand="block" color="success" (click)="cerrar()">
+      Aceptar
+    </ion-button>
+  </div>
+</ion-content>

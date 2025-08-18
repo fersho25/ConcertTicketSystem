@@ -23,25 +23,66 @@
 
 <ion-content class="ion-padding">
 
+  <!-- Filtros de Asientos -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Filtros de Asientos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Categoría:</ion-label>
+        <ion-select [(ngModel)]="categoriaFiltro" placeholder="Todas">
+
+          <ion-select-option [value]="null">Todas</ion-select-option>
+
+          <ion-select-option *ngFor="let cat of categoriasDisponibles" [value]="cat">
+            {{ cat }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Precio mínimo:</ion-label>
+        <ion-input type="number" [(ngModel)]="precioMinFiltro" min="0"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Precio máximo:</ion-label>
+        <ion-input type="number" [(ngModel)]="precioMaxFiltro" min="0" max="1000000"></ion-input>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Mapa de Asientos -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Mapa de Asientos</ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <div class="mapa-container" style="display: flex; flex-wrap: wrap; gap: 8px;">
-       <div class="asiento" *ngFor="let asiento of asientosMapa" 
-     [style.backgroundColor]="getColor(asiento)"
-     (click)="agregarAsiento(asiento)">
-  {{ asiento.numeroAsiento }}
-</div>
-
+        <div class="asiento" *ngFor="let asiento of asientosFiltrados" [style.backgroundColor]="getColor(asiento)"
+          (click)="agregarAsiento(asiento)" (mouseenter)="mostrarTooltip($event, asiento)"
+          (mouseleave)="ocultarTooltip()">
+          {{ asiento.numeroAsiento }}
+        </div>
       </div>
     </ion-card-content>
   </ion-card>
 
+  <!-- Tooltip -->
+  <div *ngIf="tooltipVisible && tooltipAsiento" class="tooltip" [style.left.px]="tooltipPosition.x"
+    [style.top.px]="tooltipPosition.y">
+    <h3>Asiento {{ tooltipAsiento.numeroAsiento }}</h3>
+    <p>Categoría: {{ tooltipAsiento.categoriaNombre }}</p>
+    <p>Precio: {{ tooltipAsiento.precio | currency }}</p>
+    <p>Estado: {{ tooltipAsiento.estado }}</p>
+  </div>
+
+  <!-- Formulario de Reserva -->
   <form [formGroup]="reservaForm" (ngSubmit)="registrarReserva()">
 
-    <!-- Usuario y Concierto (ocultos) -->
+    <!-- Campos ocultos -->
     <ion-input type="hidden" formControlName="usuarioId"></ion-input>
     <ion-input type="hidden" formControlName="conciertoId"></ion-input>
     <ion-input type="hidden" formControlName="fechaHoraReserva"></ion-input>
@@ -70,40 +111,40 @@
     </ion-item>
 
     <!-- Lista de asientos seleccionados -->
-   <ion-list>
-  <ion-item lines="full">
-    <ion-label>
-      <h2>Asientos seleccionados</h2>
-    </ion-label>
-  </ion-item>
-
-  <div formArrayName="asientos">
-    <div *ngFor="let asiento of asientos.controls; let i = index" [formGroupName]="i">
-      <ion-item>
-        <ion-label position="stacked">Categoría</ion-label>
-        <ion-input type="text" formControlName="CategoriaNombre" readonly></ion-input>
+    <ion-list>
+      <ion-item lines="full">
+        <ion-label>
+          <h2>Asientos seleccionados</h2>
+        </ion-label>
       </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Número de asiento</ion-label>
-        <ion-input type="number" formControlName="NumeroAsiento" readonly></ion-input>
-      </ion-item>
+      <div formArrayName="asientos">
+        <div *ngFor="let asiento of asientos.controls; let i = index" [formGroupName]="i">
+          <ion-item>
+            <ion-label position="stacked">Categoría</ion-label>
+            <ion-input type="text" formControlName="CategoriaNombre" readonly></ion-input>
+          </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Precio</ion-label>
-        <ion-input type="number" formControlName="Precio" readonly></ion-input>
-      </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Número de asiento</ion-label>
+            <ion-input type="number" formControlName="NumeroAsiento" readonly></ion-input>
+          </ion-item>
 
-      <ion-button expand="block" color="danger" (click)="eliminarAsiento(i)">
-        Eliminar asiento
-      </ion-button>
-    </div>
-  </div>
-</ion-list>
+          <ion-item>
+            <ion-label position="stacked">Precio</ion-label>
+            <ion-input type="number" formControlName="Precio" readonly></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" color="danger" (click)="eliminarAsiento(i)">
+            Eliminar asiento
+          </ion-button>
+        </div>
+      </div>
+    </ion-list>
 
     <!-- Botón de enviar -->
     <ion-button expand="block" type="submit" color="primary">
-      Registrar Reserva
+      Continuar a la compra
     </ion-button>
 
   </form>
