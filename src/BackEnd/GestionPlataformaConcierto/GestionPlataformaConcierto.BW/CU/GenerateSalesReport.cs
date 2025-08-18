@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 public record GenerateSalesReportQuery(int ConcertId, string Format) : IRequest<ReportDto>;
 
-// --- CLASE DEL MANEJADOR (HANDLER) ---
 public class GenerateSalesReportQueryHandler : IRequestHandler<GenerateSalesReportQuery, ReportDto>
 {
     private readonly IGestionarConciertoDA _gestionarConciertoDA;
@@ -42,7 +41,8 @@ public class GenerateSalesReportQueryHandler : IRequestHandler<GenerateSalesRepo
         {
             Content = reportFile,
             FileName = $"Reporte_Ventas_{request.ConcertId}.xlsx",
-            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            RawData = salesData
         };
     }
 }

@@ -311,7 +311,6 @@ namespace GestionPlataformaConcierto.DA.Acciones
             }
             catch (Exception ex)
             {
-                // Considera registrar el error 'ex' para depuración
                 return false;
             }
         }

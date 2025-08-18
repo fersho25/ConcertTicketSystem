@@ -1,6 +1,7 @@
-﻿using GestionPlataformaConcierto.BW.CU; // Para poder usar el Query
+﻿using GestionPlataformaConcierto.BW.CU;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq; // <-- Añade este using
 using System.Threading.Tasks;
 
 namespace GestionPlataformaConcierto.Api.Controllers
@@ -16,23 +17,32 @@ namespace GestionPlataformaConcierto.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("sales/{concertId}")]
-        public async Task<IActionResult> GetSalesReport(int concertId, [FromQuery] string format = "excel")
+        [HttpGet("sales-file/{concertId}")]
+        public async Task<IActionResult> GetSalesReportFile(int concertId, [FromQuery] string format = "excel")
         {
-            // 1. Creamos el objeto de la solicitud con los parámetros recibidos.
             var query = new GenerateSalesReportQuery(concertId, format);
-
-            // 2. Enviamos la solicitud al Handler correspondiente usando MediatR.
             var reportDto = await _mediator.Send(query);
 
-            // 3. Si el contenido del reporte es válido, lo devolvemos como un archivo.
             if (reportDto != null && reportDto.Content.Length > 0)
             {
                 return File(reportDto.Content, reportDto.ContentType, reportDto.FileName);
             }
 
-            // 4. Si no, devolvemos un error o una respuesta vacía.
             return NotFound("No se pudo generar el reporte o no hay datos disponibles.");
+        }
+
+        [HttpGet("sales-chart-data/{concertId}")]
+        public async Task<IActionResult> GetSalesChartData(int concertId)
+        {
+            var query = new GenerateSalesReportQuery(concertId, "excel");
+            var reportDto = await _mediator.Send(query);
+
+            if (reportDto != null && reportDto.RawData.Any())
+            {
+                return Ok(reportDto.RawData);
+            }
+
+            return NotFound("No se encontraron datos de ventas para este concierto.");
         }
     }
 }
