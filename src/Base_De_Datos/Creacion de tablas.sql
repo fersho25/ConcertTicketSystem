@@ -8,6 +8,11 @@
     3. Insertará los datos de prueba necesarios para testear los reportes.
 */
 
+
+-- Crear la base de datos
+CREATE DATABASE PlataformaConciertosDB;
+GO
+
 -- Usar la base de datos correcta
 USE PlataformaConciertosDB;
 GO
@@ -59,6 +64,33 @@ CREATE TABLE CategoriaAsiento (
     CantidadAsientos INT NOT NULL,
     ConciertoId INT NOT NULL,
     FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+
+CREATE TABLE ArchivoMultimedia (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    NombreArchivo NVARCHAR(255) NOT NULL,
+    Contenido VARBINARY(MAX) NOT NULL,
+    Tipo NVARCHAR(50) NOT NULL,
+    ConciertoId INT NOT NULL,
+    FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+CREATE TABLE Venta (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ConciertoId INT NOT NULL,
+    FechaFin DATETIME NOT NULL,
+    Estado INT NOT NULL DEFAULT 0,
+    CONSTRAINT FK_Venta_Concierto FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id)
+);
+
+CREATE TABLE Promocion
+(
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(100) NOT NULL,
+    Descuento INT NOT NULL,  
+    Activa BIT NOT NULL,
+	FechaFin DATETIME NOT NULL,
+    ConciertoId INT NOT NULL, 
+    FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id) ON DELETE CASCADE
 );
 
 -- Tablas de la lógica de compra
@@ -152,3 +184,17 @@ VALUES
 -- Verificación Final
 SELECT '¡Base de datos recreada y poblada con éxito!' AS Estado;
 GO
+
+Select *
+From dbo.Concierto
+Select *
+From dbo.Promocion
+
+Select *
+From dbo.Compra
+
+Select *
+From dbo.Reserva
+
+Select *
+From dbo.AsientoReserva

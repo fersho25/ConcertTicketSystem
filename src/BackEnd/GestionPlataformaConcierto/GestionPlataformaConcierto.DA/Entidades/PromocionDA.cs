@@ -19,6 +19,10 @@ namespace GestionPlataformaConcierto.DA.Entidades
         [Required]
         public int Descuento { get; set; }
 
+
+        [Required]
+        public DateTime FechaFin { get; set; }
+
         [Required]
         public bool Activa { get; set; }
 

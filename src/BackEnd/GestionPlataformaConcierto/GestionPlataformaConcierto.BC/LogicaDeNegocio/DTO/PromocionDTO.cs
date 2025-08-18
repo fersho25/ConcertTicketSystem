@@ -16,6 +16,8 @@ namespace GestionPlataformaConcierto.BC.LogicaDeNegocio.DTO
 
         public bool Activa { get; set; }
 
+        public string FechaFin { get; set; }
+
         public int ConciertoId { get; set; } 
     }
 }

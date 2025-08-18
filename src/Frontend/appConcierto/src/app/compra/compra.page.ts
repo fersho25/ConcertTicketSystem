@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ModalController, IonicModule } from '@ionic/angular';
 import { CompraService } from '../services/compra.service';
 import { ReservaDTO } from '../services/reserva.service';
@@ -11,6 +11,9 @@ import { ConciertoService } from '../services/concierto.service';
 import * as QRCode from 'qrcode';
 import { v4 as uuidv4 } from 'uuid';
 import { QrModalComponent } from '../qr-modal/qr-modal.component';
+import { Email, EmailService } from '../services/email.service';
+import { useAnimation } from '@angular/animations';
+import { AuthenticatorService, UsuarioDTO } from '../services/authenticator.service';
 
 @Component({
   selector: 'app-compra',
@@ -21,6 +24,7 @@ import { QrModalComponent } from '../qr-modal/qr-modal.component';
 export class CompraPage implements OnInit, OnDestroy {
 
   compraForm!: FormGroup;
+  usuario!: UsuarioDTO;
   reserva!: ReservaDTO;
   precioTotal: number = 0;
   descuentoAplicado: number = 0;
@@ -31,6 +35,7 @@ export class CompraPage implements OnInit, OnDestroy {
   promociones: { nombre: string, descuento: number }[] = [];
   descuentosAplicados: { nombre: string, porcentaje: number }[] = [];
   categoriasConcierto: { id: number, nombre: string }[] = [];
+  email!: Email;
 
   tiempoRestanteSegundos: number = 0;
 
@@ -41,7 +46,10 @@ export class CompraPage implements OnInit, OnDestroy {
     private compraService: CompraService,
     private reservaService: ReservaService,
     private conciertoService: ConciertoService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private emailService: EmailService,
+    private authenticatorService: AuthenticatorService,
+    private route: ActivatedRoute,
 
   ) { }
 
@@ -190,9 +198,10 @@ export class CompraPage implements OnInit, OnDestroy {
   ¡Gracias por su compra!
   `;
 
-  
+
 
     const qrImagen = await QRCode.toDataURL(qrData);
+    const qrSvg = await QRCode.toString(qrData, { type: 'svg' });
 
 
     const codigoUnico = uuidv4();
@@ -227,7 +236,7 @@ export class CompraPage implements OnInit, OnDestroy {
         }
       });
       await modal.present();
-
+      this.enviarCompra(qrSvg);
       this.limpiarCompra();
       setTimeout(() => this.router.navigate(['/home']), 1500);
 
@@ -241,6 +250,47 @@ export class CompraPage implements OnInit, OnDestroy {
     }
 
   }
+
+  enviarCompra(image: string) {
+    const usuarioId = this.reserva.usuarioId;
+
+    if (!usuarioId) {
+      console.error('No se encontró el usuario de la reserva');
+      return;
+    }
+
+    this.authenticatorService.obtenerUsuarioPorId(usuarioId).subscribe(
+      async (usuario) => {
+        this.usuario = usuario;
+
+        const email: Email = {
+          To: usuario.correoElectronico,
+          Subject: 'Comprobante de compra',
+          Body: `
+          <h2>Comprobante de compra</h2>
+          <p>Gracias por tu compra. Aquí está tu QR:</p>
+          <div>${image}</div>
+        `
+        };
+
+        this.emailService.EnviarCorreo(email).subscribe(
+          async () => {
+            const alert = await this.alertController.create({
+              header: 'Éxito',
+              message: `Tu comprobante fue enviado al correo: ${usuario.correoElectronico}`,
+              buttons: ['Ok']
+            });
+            await alert.present();
+          },
+          async (error) => {
+            console.error('Error al enviar el comprobante:', error);
+          }
+        );
+      },
+      (error) => console.error('Error al obtener usuario:', error)
+    );
+  }
+
 
   private iniciarTimer() {
     this.detenerTimer();
