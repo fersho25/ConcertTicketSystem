@@ -13,12 +13,6 @@ export interface PromocionDTO {
   conciertoId: number;
 }
 
-export interface ConciertoActualizarVentaDTO {
-  id: number;
-  descripcion: string;
-  archivosMultimedia: ArchivoMultimediaDTO[];
-}
-
 export interface VentaDTO {
   id: number;
   conciertoId: number;
@@ -99,10 +93,6 @@ export class ConciertoService {
 
   toggleEstadoVenta(conciertoId: number): Observable<boolean> {
     return this.http.put<boolean>(`${this.baseUrl}/${conciertoId}/venta/toggle`, {});
-  }
-
-   actualizarConciertoEnVenta(id: number, data: ConciertoActualizarVentaDTO): Observable<boolean> {
-    return this.http.put<boolean>(`${this.baseUrl}/${id}/venta`, data);
   }
 
 }
