@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 
 @Pipe({
   name: 'currencyFormat',
-  pure: false
+  standalone: true
 })
 export class CurrencyFormatPipe implements PipeTransform {
 
