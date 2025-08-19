@@ -1,21 +1,47 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Historial de Compras</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volverHome()">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">Historial de Compras</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-<ion-list>
-  <ion-item *ngFor="let item of historial">
-    <ion-label>
-      <strong>{{ item.nombreConcierto }}</strong><br>
-      Fecha de compra: {{ item.fecha | date:'dd/MM/yyyy, hh:mm:ss a' }}<br>
-      Asientos adquiridos: {{ item.asientos }}<br>
-      Precio total: ₡{{ item.precioTotal }}
-    </ion-label>
-  </ion-item>
-</ion-list>
+  <ion-list *ngIf="historial.length > 0; else sinCompras">
+    <ion-item *ngFor="let item of historial">
+      <ion-label>
+        <strong>{{ item.nombreConcierto }}</strong><br>
+        Fecha de compra: {{ item.fechaCompra | date:'dd/MM/yyyy, hh:mm:ss a' }}<br>
+        Fecha del concierto: {{ item.fechaConcierto | date:'dd/MM/yyyy, hh:mm:ss a' }}<br>
+        Estado de la compra: <strong>{{ item.estadoCompra }}</strong><br>
+        Asientos adquiridos: {{ item.asientos }}<br>
+        Precio total: ₡{{ item.precioTotal }}
+      </ion-label>
+
+      <ion-button
+        slot="end"
+        [color]="item.puedeCancelar && item.estadoCompra === 'Activa' ? 'danger' : 'medium'"
+        [disabled]="!item.puedeCancelar || item.estadoCompra === 'Finalizada'"
+        (click)="item.puedeCancelar && item.estadoCompra === 'Activa' ? confirmarCancelacion(item.idCompra) : null">
+        {{ item.puedeCancelar && item.estadoCompra === 'Activa' ? 'Cancelar' : 'No se puede cancelar' }}
+      </ion-button>
+
+    </ion-item>
+  </ion-list>
 
   <ng-template #sinCompras>
     <ion-card>
