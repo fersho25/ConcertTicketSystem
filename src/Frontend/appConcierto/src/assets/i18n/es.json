@@ -1,0 +1,14 @@
+{
+    "BIENVENIDO": "Bienvenido",
+    "CREAR_CONCIERTO": "Crear Concierto",
+    "PANEL_CONCIERTOS": "Panel de Conciertos",
+    "MIS_CONCIERTOS": "Mis Conciertos",
+    "PANEL_USUARIOS": "Panel de Usuarios",
+    "PANEL_REPORTES": "Panel de Reportes",
+    "FILTRO_NOMBRE": "Filtro por Nombre:",
+    "EDITAR_PERFIL": "Editar Perfil",
+    "CERRAR_SESION": "Cerrar Sesión",
+    "MODO_OSCURO": "Modo Oscuro",
+    "VER_DETALLES": "Ver Detalles",
+    "NO_HAY_CONCIERTOS": "No hay conciertos disponibles"
+}

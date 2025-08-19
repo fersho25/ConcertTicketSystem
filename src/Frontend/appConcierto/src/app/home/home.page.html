@@ -1,54 +1,64 @@
 <ion-header>
   <ion-toolbar>
-    <h2>Bienvenido, {{ usuario.nombreCompleto }}</h2>
+    <h2>{{ 'BIENVENIDO' | translate }}, {{ usuario.nombreCompleto }}</h2>
 
     <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
       routerLink="/crear-concierto" class="ion-text-center ion-margin-top">
-      Crear Concierto
+      {{ 'CREAR_CONCIERTO' | translate }}
     </ion-button>
 
     <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
       routerLink="/panel-edicion" class="ion-text-center ion-margin-top">
-      {{ usuario.rol === 'promotor' ? 'Mis Conciertos' : 'Panel de Conciertos' }}
+      {{ usuario.rol === 'promotor' ? ('MIS_CONCIERTOS' | translate) : ('PANEL_CONCIERTOS' | translate) }}
     </ion-button>
 
     <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/panel-usuario"
       class="ion-text-center ion-margin-top">
-      Panel de Usuarios
+      {{ 'PANEL_USUARIOS' | translate }}
     </ion-button>
 
     <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/reportes"
       class="ion-text-center ion-margin-top">
-      Panel de Reportes
+      {{ 'PANEL_REPORTES' | translate }}
     </ion-button>
 
     <ion-item slot="end" class="barraBusqueda ion-margin-end">
       <ion-icon name="eye-outline" slot="start"></ion-icon>
-      <ion-label slot="start">Filtro por Nombre: </ion-label>
+      <ion-label slot="start">{{ 'FILTRO_NOMBRE' | translate }} </ion-label>
       <ion-input slot="end" [(ngModel)]="filtroBusqueda" (ionInput)="aplicarFiltro()"></ion-input>
     </ion-item>
 
 
     <ion-button fill="outline" size="small" color="primary" class="ion-text-center ion-margin-end"
       [routerLink]="['/editar-usuario', usuario.id]" slot="end">
-      Editar Perfil
+      {{ 'EDITAR_PERFIL' | translate }}
     </ion-button>
 
     <ion-button fill="outline" size="small" color="danger" class="ion-text-center ion-margin-end"
       (click)="cerrarSesion()" slot="end">
-      Cerrar sesión
+      {{ 'CERRAR_SESION' | translate }}
     </ion-button>
 
     <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
-      Modo Oscuro
+      {{ 'MODO_OSCURO' | translate }}
     </ion-toggle>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('es')">ES</ion-button>
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('en')">EN</ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" size="small" (click)="cambiarMoneda('CRC')">CRC</ion-button>
+      <ion-button fill="clear" size="small" (click)="cambiarMoneda('USD')">USD</ion-button>
+    </ion-buttons>
 
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-  <ng-container *ngIf="conciertos.length  > 0; else sinConciertos">
+  <ng-container *ngIf="conciertos.length > 0; else sinConciertos">
 
     <ion-grid>
       <ion-row>
@@ -70,11 +80,8 @@
                 Lugar: {{ concierto.lugar }}
               </ion-card-subtitle>
               <ion-button [routerLink]="['/mostrar-concierto', concierto.id]" shape="round" expand="full">
-                Ver Detalles
+                {{ 'VER_DETALLES' | translate }}
               </ion-button>
-
-
-
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -86,14 +93,11 @@
   <ng-template #sinConciertos>
     <div class="ion-text-center ion-padding">
       <ion-icon name="sad-outline" size="large"></ion-icon>
-      <h2>No hay conciertos disponibles</h2>
+      <h2>{{ 'NO_HAY_CONCIERTOS' | translate }}</h2>
     </div>
   </ng-template>
 
 </ion-content>
-
-
-
 
 <ion-footer>
   <ion-toolbar>

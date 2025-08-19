@@ -1,0 +1,14 @@
+{
+    "BIENVENIDO": "Welcome",
+    "CREAR_CONCIERTO": "Create Concert",
+    "PANEL_CONCIERTOS": "Concerts Panel",
+    "MIS_CONCIERTOS": "My Concerts",
+    "PANEL_USUARIOS": "Users Panel",
+    "PANEL_REPORTES": "Reports Panel",
+    "FILTRO_NOMBRE": "Filter by Name:",
+    "EDITAR_PERFIL": "Edit Profile",
+    "CERRAR_SESION": "Log Out",
+    "MODO_OSCURO": "Dark Mode",
+    "VER_DETALLES": "View Details",
+    "NO_HAY_CONCIERTOS": "No concerts available"
+}

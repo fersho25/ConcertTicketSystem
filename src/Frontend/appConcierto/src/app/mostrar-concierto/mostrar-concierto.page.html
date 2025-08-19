@@ -55,14 +55,14 @@
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Precio (₡)</th>
+                <th>Precio</th>
                 <th>Cantidad</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let cat of concierto.categoriasAsiento">
                 <td>{{ cat.nombre }}</td>
-                <td>{{ cat.precio }}</td>
+                <td>{{ cat.precio | currencyFormat }}</td>
                 <td>{{ cat.cantidad }}</td>
               </tr>
             </tbody>
