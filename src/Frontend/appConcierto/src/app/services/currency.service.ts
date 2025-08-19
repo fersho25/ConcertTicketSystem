@@ -1,41 +1,62 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurrencyService {
-  // Tasa de cambio fija para la demostración (Dólares a Colones)
-  private exchangeRateUSD_CRC = 500;
-
-  // Usamos un BehaviorSubject para que los componentes puedan "escuchar" los cambios de moneda
-  private currentCurrency = new BehaviorSubject<'CRC' | 'USD'>('CRC');
+  private currentCurrency = new BehaviorSubject<'CRC' | 'USD'>('USD');
   public currentCurrency$ = this.currentCurrency.asObservable();
+  private apiUrl = 'https://api.exchangerate.host';
 
-  constructor() { }
-
-  /**
-   * Cambia la moneda activa en toda la aplicación.
-   * @param currency La nueva moneda a establecer ('CRC' o 'USD').
-   */
-  setCurrency(currency: 'CRC' | 'USD') {
-    this.currentCurrency.next(currency);
+  constructor(private http: HttpClient) {
+    this.detectCurrencyByLocation();
   }
 
-  /**
-   * Convierte un precio dado a la moneda actualmente seleccionada.
-   * @param priceInCRC El precio original en Colones Costarricenses.
-   * @returns El precio convertido y formateado como un string (ej: "₡25,000" o "$50.00").
-   */
-  convertAndFormat(priceInCRC: number): string {
+  private async detectCurrencyByLocation() {
+    try {
+      const data = await firstValueFrom(this.http.get<any>('https://ipwho.is/'));
+      console.log('IP who.is response:', data);
+      const currencyCode = data?.currency?.code;
+
+      if (currencyCode === 'CRC') {
+        this.setCurrency('CRC');
+      } else if (currencyCode === 'USD') {
+        this.setCurrency('USD');
+      } else {
+        console.warn('Currency not detected, defaulting to USD');
+        this.setCurrency('USD'); // default
+      }
+    } catch (err) {
+      console.error('Error detecting currency:', err);
+      this.setCurrency('USD');
+    }
+  }
+
+
+  setCurrency(currency: 'CRC' | 'USD', override = false) {
+  if (override) {
+    this.currentCurrency.next(currency);
+  } else {
+    // solo establece automáticamente si no se ha hecho override
+    if (!localStorage.getItem('currencyOverride')) {
+      this.currentCurrency.next(currency);
+    }
+  }
+}
+
+
+  async convertAndFormat(priceInCRC: number): Promise<string> {
     const currency = this.currentCurrency.getValue();
 
     if (currency === 'USD') {
-      const priceInUSD = priceInCRC / this.exchangeRateUSD_CRC;
-      // Formato para dólares
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(priceInUSD);
+      const url = `${this.apiUrl}/convert?from=CRC&to=USD&amount=${priceInCRC}`;
+      const data = await firstValueFrom(this.http.get<any>(url));
+      const result = data?.result ?? priceInCRC;
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(result);
     } else {
-      // Formato para colones
       return new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(priceInCRC);
     }
   }

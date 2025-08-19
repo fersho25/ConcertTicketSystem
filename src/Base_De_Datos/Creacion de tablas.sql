@@ -1,12 +1,5 @@
-/*
-================================================================================
-    SCRIPT DEFINITIVO PARA REINICIAR LA BASE DE DATOS PLATAFORMACONCIERTOSDB
-================================================================================
-    Instrucciones: Ejecutar este script completo.
-    1. Borrará todas las tablas existentes en el orden correcto.
-    2. Creará la estructura de tablas final y correcta.
-    3. Insertará los datos de prueba necesarios para testear los reportes.
-*/
+
+--SCRIPT BASE DE DATOS PLATAFORMACONCIERTOSDB
 
 
 -- Crear la base de datos
@@ -17,11 +10,7 @@ GO
 USE PlataformaConciertosDB;
 GO
 
--- ==================================================
---  PASO 1: BORRADO SEGURO DE TODAS LAS TABLAS
--- ==================================================
--- Se borran en orden inverso a las dependencias para evitar errores.
--- Se usa IF OBJECT_ID para que no falle si una tabla ya fue borrada.
+--  PASO 1: BORRADO DE TODAS LAS TABLAS
 
 IF OBJECT_ID('dbo.AsientoReserva', 'U') IS NOT NULL DROP TABLE dbo.AsientoReserva;
 IF OBJECT_ID('dbo.Compra', 'U') IS NOT NULL DROP TABLE dbo.Compra;
@@ -34,11 +23,8 @@ IF OBJECT_ID('dbo.Concierto', 'U') IS NOT NULL DROP TABLE dbo.Concierto;
 IF OBJECT_ID('dbo.Usuario', 'U') IS NOT NULL DROP TABLE dbo.Usuario;
 GO
 
--- ==================================================
---  PASO 2: CREACIÓN DE LA ESTRUCTURA DE TABLAS FINAL
--- ==================================================
+--  PASO 2: CREAR TABLASA
 
--- Tablas base
 CREATE TABLE Usuario (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     NombreCompleto NVARCHAR(255) NOT NULL,
@@ -93,7 +79,6 @@ CREATE TABLE Promocion
     FOREIGN KEY (ConciertoId) REFERENCES Concierto(Id) ON DELETE CASCADE
 );
 
--- Tablas de la lógica de compra
 CREATE TABLE Reserva (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     UsuarioId INT NOT NULL,
@@ -140,61 +125,3 @@ CREATE TABLE AsientoReserva (
 );
 GO
 
--- ==================================================
---  PASO 3: INSERCIÓN DE DATOS DE PRUEBA
--- ==================================================
-
--- Insertar Usuarios
-INSERT INTO Usuario (NombreCompleto, CorreoElectronico, Contrasena, Rol)
-VALUES
-('Admin Promotor', 'admin@test.com', 'hash_fuerte_123', 'administrador'),
-('Carlos Comprador', 'carlos@test.com', 'hash_fuerte_456', 'usuario');
-
--- Insertar Conciertos
-INSERT INTO Concierto (Nombre, Descripcion, Fecha, Lugar, Capacidad, UsuarioID)
-VALUES
-('Concierto de Rock Sinfónico', 'Una noche épica.', '2025-10-25 20:00:00', 'Estadio Nacional', 10000, 1),
-('Festival de Jazz Acústico', 'Noche de jazz.', '2025-11-15 18:00:00', 'Teatro Melico Salazar', 1000, 1);
-
--- Insertar Categorías de Asiento (Para Concierto 1)
-INSERT INTO CategoriaAsiento (Nombre, Precio, CantidadAsientos, ConciertoId)
-VALUES
-('VIP', 75.50, 100, 1),
-('General', 30.00, 900, 1);
-
--- Crear el flujo de compra completo para el Concierto 1
--- a. Se crea la Reserva
-INSERT INTO Reserva (UsuarioId, ConciertoId, FechaHoraReserva, FechaHoraExpiracion, Estado)
-VALUES
-(2, 1, GETDATE(), DATEADD(minute, 15, GETDATE()), 'Comprado');
-
--- b. Se crea la Compra asociada a esa Reserva
-DECLARE @ReservaId INT = SCOPE_IDENTITY();
-INSERT INTO Compra (ReservaId, MetodoPago, FechaHoraCompra, PrecioTotal, DescuentoAplicado, Estado, Notificado)
-VALUES
-(@ReservaId, 'Tarjeta de Crédito', GETDATE(), 105.50, 0.00, 'Comprado', 1);
-
--- c. Se insertan los Asientos de esa Compra
-DECLARE @CompraId INT = SCOPE_IDENTITY();
-INSERT INTO AsientoReserva (CompraId, ReservaId, CategoriaAsientoId, NumeroAsiento, Precio)
-VALUES
-(@CompraId, @ReservaId, 1, 5, 75.50),
-(@CompraId, @ReservaId, 2, 101, 30.00);
-
--- Verificación Final
-SELECT '¡Base de datos recreada y poblada con éxito!' AS Estado;
-GO
-
-Select *
-From dbo.Concierto
-Select *
-From dbo.Promocion
-
-Select *
-From dbo.Compra
-
-Select *
-From dbo.Reserva
-
-Select *
-From dbo.AsientoReserva

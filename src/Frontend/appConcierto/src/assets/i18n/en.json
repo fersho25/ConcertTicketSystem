@@ -10,5 +10,18 @@
     "CERRAR_SESION": "Log Out",
     "MODO_OSCURO": "Dark Mode",
     "VER_DETALLES": "View Details",
-    "NO_HAY_CONCIERTOS": "No concerts available"
+    "NO_HAY_CONCIERTOS": "No concerts available",
+    "HISTORIAL": "History",
+    "FECHA": "Date",
+    "LUGAR": "Place",
+    "VOLVER": "Back",
+    "DETALLES_CONCIERTO": "Concert Details",
+    "CATEGORIAS_ASIENTO": "Seat Categories",
+    "NOMBRE": "Name",
+    "PRECIO": "Price",
+    "CANTIDAD": "Quantity",
+    "RESERVAR": "Reserve",
+    "PROXIMAMENTE_EN_VENTA": "Coming Soon",
+    "VENTA_FINALIZADA": "Sale Ended",
+    "TODOS_DERECHOS_RESERVADOS": "All Rights Reserved"
 }

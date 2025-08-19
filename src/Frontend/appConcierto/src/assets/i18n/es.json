@@ -10,5 +10,18 @@
     "CERRAR_SESION": "Cerrar Sesión",
     "MODO_OSCURO": "Modo Oscuro",
     "VER_DETALLES": "Ver Detalles",
-    "NO_HAY_CONCIERTOS": "No hay conciertos disponibles"
+    "NO_HAY_CONCIERTOS": "No hay conciertos disponibles",
+    "HISTORIAL": "Historial",
+    "FECHA": "Fecha",
+    "LUGAR": "Lugar",
+    "VOLVER": "Volver",
+    "DETALLES_CONCIERTO": "Detalles Del Concierto",
+    "CATEGORIAS_ASIENTO": "Categorías de Asiento",
+    "NOMBRE": "Nombre",
+    "PRECIO": "Precio",
+    "CANTIDAD": "Cantidad",
+    "RESERVAR": "Reservar",
+    "PROXIMAMENTE_EN_VENTA": "Próximamente en Venta",
+    "VENTA_FINALIZADA": "Venta Terminada",
+    "TODOS_DERECHOS_RESERVADOS": "Todos los derechos reservados"
 }

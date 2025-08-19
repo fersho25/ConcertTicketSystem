@@ -4,7 +4,7 @@
     <ion-buttons slot="start">
       <ion-button fill="clear" routerLink="/home">
         <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
-        Volver
+        {{ 'VOLVER' | translate }}
       </ion-button>
     </ion-buttons>
 
@@ -12,11 +12,18 @@
       {{ concierto?.nombre }}
     </ion-title>
 
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('es')">ES</ion-button>
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('en')">EN</ion-button>
+    </ion-buttons>
+    
     <ion-buttons slot="end">
       <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
-        Modo Oscuro
+        {{ 'MODO_OSCURO' | translate }}
       </ion-toggle>
     </ion-buttons>
+    
 
   </ion-toolbar>
 </ion-header>
@@ -40,44 +47,46 @@
             <button class="next-btn" (click)="nextSlide()">&#10095;</button>
           </div>
 
-
           <div class="ion-padding-top">
-            <h3>Detalles Del Concierto:</h3>
-            <p><strong>Fecha:</strong> {{ concierto.fecha | date:'short' }}</p>
-            <p><strong>Lugar:</strong> {{ concierto.lugar }}</p>
+            <h3>{{ 'DETALLES_CONCIERTO' | translate }}</h3>
+            <p><strong>{{ 'FECHA' | translate }}:</strong> {{ concierto.fecha | date:'short' }}</p>
+            <p><strong>{{ 'LUGAR' | translate }}:</strong> {{ concierto.lugar }}</p>
             <p>{{ concierto.descripcion }}</p>
           </div>
         </ion-col>
 
         <ion-col size="6">
-          <h3 class="ion-text-center">Categorías de Asiento</h3>
+          <h3 class="ion-text-center">{{ 'CATEGORIAS_ASIENTO' | translate }}</h3>
           <table class="tabla-con-bordes ion-text-center" style="width: 100%;">
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
+                <th>{{ 'NOMBRE' | translate }}</th>
+                <th>{{ 'PRECIO' | translate }}</th>
+                <th>{{ 'CANTIDAD' | translate }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let cat of concierto.categoriasAsiento">
                 <td>{{ cat.nombre }}</td>
-                <td>{{ cat.precio | currencyFormat }}</td>
+                <td>{{ cat.precio | currency:'CRC'}}</td>
                 <td>{{ cat.cantidad }}</td>
               </tr>
             </tbody>
           </table>
+
           <ion-button *ngIf="concierto.venta?.estado === 'Activo'" class="ion-margin-top" shape="round" expand="full"
-            (click)="irAReserva(concierto.id)">Reservar
+            (click)="irAReserva(concierto.id)">
+            {{ 'RESERVAR' | translate }}
           </ion-button>
+
           <ion-button *ngIf="concierto.venta?.estado === 'Inactivo'" class="ion-margin-top" shape="round" expand="full"
             (click)="mostrarAlerta('proximamente')">
-            Próximamente en Venta
+            {{ 'PROXIMAMENTE_EN_VENTA' | translate }}
           </ion-button>
 
           <ion-button *ngIf="concierto.venta?.estado === 'Finalizado'" class="ion-margin-top" shape="round"
             expand="full" (click)="mostrarAlerta('finalizado')">
-            Venta Terminada
+            {{ 'VENTA_FINALIZADA' | translate }}
           </ion-button>
 
         </ion-col>
@@ -89,6 +98,6 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+    <ion-title class="ion-text-center">© 2025. {{ 'TODOS_DERECHOS_RESERVADOS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-footer>

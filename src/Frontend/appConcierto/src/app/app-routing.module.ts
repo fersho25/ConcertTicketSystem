@@ -67,6 +67,11 @@ const routes: Routes = [
     path: 'historial',
     loadChildren: () => import('./historial/historial.module').then( m => m.HistorialPageModule)
   },
+  {
+    path: 'estadisticas-concierto/:id',
+    loadChildren: () => import('./estadisticas-concierto/estadisticas-concierto.module').then( m => m.EstadisticasConciertoPageModule)
+  },
+
 
 
 

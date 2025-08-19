@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+       <ion-button fill="clear" (click)="volver()">
+        <ion-icon color="black" name="arrow-back" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center">
+      Estadisticas del Concierto: 
+      {{ concierto?.nombre }}
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)">
+        Modo Oscuro
+      </ion-toggle>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <h2>Reservas</h2>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <table class="tabla-con-bordes ion-text-center" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>ID Reserva</th>
+              <th>Usuario</th>
+              <th>Cantidad de Asientos</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of reservas">
+              <td>{{ r.id }}</td>
+              <td>{{ r.usuarioId }}</td>
+              <td>{{ r.asientos.length }}</td>
+              <td>{{ r.estado }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <h2 class="ion-padding-top">Compras</h2>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <table class="tabla-con-bordes ion-text-center" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>ID Compra</th>
+              <th>Metodo de Pago</th>
+              <th>Total</th>
+              <th>Promoción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of compras">
+              <td>{{ c.id }}</td>
+              <td>{{ c.metodoPago }}</td>
+              <td>{{ c.precioTotal}}</td>
+              <td>{{ c.promocionAplicada || '-' }}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>Total General</strong></td>
+              <td colspan="2"><strong>{{ totalVentas}}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

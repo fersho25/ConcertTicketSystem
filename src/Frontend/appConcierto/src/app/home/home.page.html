@@ -1,40 +1,62 @@
 <ion-header>
   <ion-toolbar>
-    <h2>Bienvenido, {{ usuario.nombreCompleto }}</h2>
+    <h2>{{ 'BIENVENIDO' | translate }}, {{ usuario.nombreCompleto }}</h2>
 
     <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
       routerLink="/crear-concierto" class="ion-text-center ion-margin-top">
-      Crear Concierto
+      {{ 'CREAR_CONCIERTO' | translate }}
     </ion-button>
 
     <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor'" fill="clear" size="small"
       routerLink="/panel-edicion" class="ion-text-center ion-margin-top">
-      Mis Conciertos
+      {{ usuario.rol === 'promotor' ? ('MIS_CONCIERTOS' | translate) : ('PANEL_CONCIERTOS' | translate) }}
     </ion-button>
 
-    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink=""
+    <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/panel-usuario"
       class="ion-text-center ion-margin-top">
-      Panel de Control
+      {{ 'PANEL_USUARIOS' | translate }}
     </ion-button>
 
     <ion-button *ngIf="usuario.rol === 'administrador'" fill="clear" size="small" routerLink="/reportes"
       class="ion-text-center ion-margin-top">
-      Panel de Reportes
+      {{ 'PANEL_REPORTES' | translate }}
     </ion-button>
 
-    <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor' || usuario.rol === 'usuario'" fill="clear" size="small"
-      routerLink="/historial" class="ion-text-center ion-margin-top">
-      Historial
+
+    <ion-button *ngIf="usuario.rol === 'administrador' || usuario.rol === 'promotor' || usuario.rol === 'usuario'"
+      fill="clear" size="small" routerLink="/historial" class="ion-text-center ion-margin-top">
+      {{ 'HISTORIAL' | translate }}
+    </ion-button>
+
+
+
+    <ion-item lines="none" slot="end" class="ion-align-items-center ion-no-padding">
+      <ion-icon name="search-outline" slot="start"></ion-icon>
+      <ion-input placeholder="Buscar..." [(ngModel)]="filtroBusqueda" (ionInput)="aplicarFiltro()"
+        class="ion-text-center">
+      </ion-input>
+    </ion-item>
+
+
+    <ion-button fill="outline" size="small" color="primary" class="ion-text-center "
+      [routerLink]="['/editar-usuario', usuario.id]" slot="end">
+      {{ 'EDITAR_PERFIL' | translate }}
     </ion-button>
 
     <ion-button fill="outline" size="small" color="danger" class="ion-text-center ion-margin-end"
       (click)="cerrarSesion()" slot="end">
-      Cerrar sesión
+      {{ 'CERRAR_SESION' | translate }}
     </ion-button>
 
+    <ion-buttons slot="end">
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('es')">ES</ion-button>
+      <ion-button fill="clear" size="small" (click)="cambiarIdioma('en')">EN</ion-button>
+    </ion-buttons>
     <ion-toggle [checked]="modoOscuroActivado" (ionChange)="darkPaletteToggleChange($event)" slot="end">
-      Modo Oscuro
+      {{ 'MODO_OSCURO' | translate }}
     </ion-toggle>
+
+
 
   </ion-toolbar>
 </ion-header>
@@ -45,7 +67,7 @@
 
     <ion-grid>
       <ion-row>
-        <ion-col size="3" *ngFor="let concierto of conciertos">
+        <ion-col size="3" *ngFor="let concierto of conciertosFiltrados">
           <ion-card>
             <ion-card-header>
               <div *ngIf="(concierto.archivosMultimedia?.length ?? 0) > 0">
@@ -59,11 +81,11 @@
             <ion-card-content>
               <ion-card-title class="ion-text-center">{{ concierto.nombre }}</ion-card-title>
               <ion-card-subtitle class="ion-text-center">
-                Fecha: {{ concierto.fecha | date: 'short' }} <br />
-                Lugar: {{ concierto.lugar }}
+                {{ 'FECHA' | translate | titlecase }}: {{ concierto.fecha | date: 'short' }} <br />
+                {{ 'LUGAR' | translate | titlecase }}: {{ concierto.lugar }}
               </ion-card-subtitle>
               <ion-button [routerLink]="['/mostrar-concierto', concierto.id]" shape="round" expand="full">
-                Ver Detalles
+                {{ 'VER_DETALLES' | translate }}
               </ion-button>
 
 
@@ -79,7 +101,7 @@
   <ng-template #sinConciertos>
     <div class="ion-text-center ion-padding">
       <ion-icon name="sad-outline" size="large"></ion-icon>
-      <h2>No hay conciertos disponibles</h2>
+      <h2>{{ 'NO_HAY_CONCIERTOS' | translate }}</h2>
     </div>
   </ng-template>
 
@@ -90,6 +112,6 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-title class="ion-text-center">© 2025. Todos los derechos reservados</ion-title>
+    <ion-title class="ion-text-center">© 2025. {{ 'TODOS_DERECHOS_RESERVADOS' | translate }}</ion-title>
   </ion-toolbar>
 </ion-footer>

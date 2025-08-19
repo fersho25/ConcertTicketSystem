@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { CurrencyService } from '../services/currency.service';
-import { Observable, map } from 'rxjs';
 
 @Pipe({
   name: 'currencyFormat',
@@ -10,9 +9,9 @@ export class CurrencyFormatPipe implements PipeTransform {
 
   constructor(private currencyService: CurrencyService) { }
 
-  transform(priceInCRC: number | undefined): string {
+  transform(priceInCRC: number | undefined): Promise<string> {
     if (priceInCRC === undefined) {
-      return '';
+      return Promise.resolve('');
     }
     return this.currencyService.convertAndFormat(priceInCRC);
   }

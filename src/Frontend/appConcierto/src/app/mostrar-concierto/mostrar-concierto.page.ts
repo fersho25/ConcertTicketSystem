@@ -3,6 +3,7 @@ import { ConciertoDTO, ConciertoService } from '../services/concierto.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mostrar-concierto',
@@ -19,6 +20,7 @@ export class MostrarConciertoPage implements OnInit {
     private route: ActivatedRoute,
     private conciertoService: ConciertoService,
     private router: Router,
+    private translate: TranslateService,
     private alertController : AlertController
   ) { }
 
@@ -44,7 +46,10 @@ export class MostrarConciertoPage implements OnInit {
       ? archivo.contenido
       : `data:${archivo.tipo};base64,${archivo.contenido}`;
   }
-
+  
+  cambiarIdioma(lang: string) {
+    this.translate.use(lang);
+  }
 
   activeIndex = 0;
 

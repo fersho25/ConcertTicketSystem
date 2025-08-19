@@ -5,12 +5,14 @@ import { IonicModule } from '@ionic/angular';
 import { MostrarConciertoPageRoutingModule } from './mostrar-concierto-routing.module';
 import { MostrarConciertoPage } from './mostrar-concierto.page';
 import { CurrencyFormatPipe } from '../pipes/currency-format.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    TranslateModule,
     MostrarConciertoPageRoutingModule,
     CurrencyFormatPipe
   ],
