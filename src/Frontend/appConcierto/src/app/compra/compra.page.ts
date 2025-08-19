@@ -191,7 +191,7 @@ export class CompraPage implements OnInit, OnDestroy {
   Método de pago: ${this.compraForm.value.metodoPago}
   Fecha y hora de compra: ${this.obtenerFechaHoraLegible(fechaCompra)}
   Precio total: ₡${this.precioTotal}
-  Descuento aplicado: ${this.descuentoAplicado}%
+  Descuento aplicado: ₡${this.descuentoAplicado}
   Precio final: ₡${this.precioFinal}
   Promoción: ${this.compraForm.value.promocionAplicada || 'Ninguna'}
   ----------------------------------------------
@@ -236,7 +236,7 @@ export class CompraPage implements OnInit, OnDestroy {
         }
       });
       await modal.present();
-      this.enviarCompra(qrSvg);
+      await this.enviarCompra();
       this.limpiarCompra();
       setTimeout(() => this.router.navigate(['/home']), 1500);
 
@@ -251,45 +251,47 @@ export class CompraPage implements OnInit, OnDestroy {
 
   }
 
-  enviarCompra(image: string) {
-    const usuarioId = this.reserva.usuarioId;
+  async enviarCompra() {
+    try {
+      const usuario = await lastValueFrom(
+        this.authenticatorService.obtenerUsuarioPorId(this.reserva.usuarioId)
+      );
 
-    if (!usuarioId) {
-      console.error('No se encontró el usuario de la reserva');
-      return;
+      const detallesCompraHtml = `
+      <h2>Comprobante de compra</h2>
+      <p>Gracias por tu compra. Aquí están los detalles de la reserva:</p>
+      <ul>
+        <li><strong>Reserva:</strong> ${this.reserva.id}</li>
+        <li><strong>Método de pago:</strong> ${this.compraForm.value.metodoPago}</li>
+        <li><strong>Fecha y hora de compra:</strong> ${this.obtenerFechaHoraLegible(this.compraForm.value.fechaHoraCompra)}</li>
+        <li><strong>Precio total:</strong> ₡${this.precioTotal}</li>
+        <li><strong>Descuento aplicado:</strong> ₡${this.descuentoAplicado}</li>
+        <li><strong>Precio final:</strong> ₡${this.precioFinal}</li>
+        <li><strong>Promoción:</strong> ${this.compraForm.value.promocionAplicada || 'Ninguna'}</li>
+      </ul>
+      <p>¡Gracias por su compra!</p>
+    `;
+
+      const email: Email = {
+        To: usuario.correoElectronico,
+        Subject: 'Comprobante de compra',
+        Body: detallesCompraHtml
+      };
+
+      await lastValueFrom(this.emailService.EnviarCorreo(email));
+
+      const alert = await this.alertController.create({
+        header: 'Éxito',
+        message: `Tu comprobante fue enviado al correo: ${usuario.correoElectronico}`,
+        buttons: ['Ok']
+      });
+      await alert.present();
+
+    } catch (error) {
+      console.error('Error al enviar el correo:', error);
     }
-
-    this.authenticatorService.obtenerUsuarioPorId(usuarioId).subscribe(
-      async (usuario) => {
-        this.usuario = usuario;
-
-        const email: Email = {
-          To: usuario.correoElectronico,
-          Subject: 'Comprobante de compra',
-          Body: `
-          <h2>Comprobante de compra</h2>
-          <p>Gracias por tu compra. Aquí está tu QR:</p>
-          <div>${image}</div>
-        `
-        };
-
-        this.emailService.EnviarCorreo(email).subscribe(
-          async () => {
-            const alert = await this.alertController.create({
-              header: 'Éxito',
-              message: `Tu comprobante fue enviado al correo: ${usuario.correoElectronico}`,
-              buttons: ['Ok']
-            });
-            await alert.present();
-          },
-          async (error) => {
-            console.error('Error al enviar el comprobante:', error);
-          }
-        );
-      },
-      (error) => console.error('Error al obtener usuario:', error)
-    );
   }
+
 
 
   private iniciarTimer() {
