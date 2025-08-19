@@ -25,7 +25,7 @@
     <ion-card>
       <ion-card-header class="titulo-personalizado-editarConcierto">Editar Concierto</ion-card-header>
       <ion-card-content>
-        <form [formGroup]="conciertoEditForm" (ngSubmit)="editarConcierto()">
+        <form [formGroup]="conciertoEditForm" (ngSubmit)="onSubmit()">
 
           <ion-item *ngIf="concierto?.venta?.estado === 'Inactivo'">
             <ion-icon name="bulb-outline" slot="start"></ion-icon>

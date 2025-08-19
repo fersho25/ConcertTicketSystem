@@ -169,6 +169,51 @@ export class EdicionConciertoPage implements OnInit {
 
 
 
+  onSubmit() {
+    if (this.concierto?.venta?.estado === 'Inactivo') {
+      this.editarConcierto(); // Edita todo el concierto
+    } else {
+      this.editarConciertoEnVenta(); // Solo campos permitidos mientras la venta está activa
+    }
+  }
+
+  async editarConciertoEnVenta() {
+    // Por ejemplo, solo actualizar descripción y archivos multimedia
+    const archivosMultimedia = this.archivosMultimedia.controls.map(a => ({
+      id: a.get('id')?.value || 0,
+      nombreArchivo: a.get('nombreArchivo')?.value,
+      tipo: a.get('tipo')?.value,
+      contenido: a.get('contenido')?.value,
+      conciertoId: this.conciertoId
+    }));
+
+    const data: Partial<ConciertoDTO> = {
+      descripcion: this.conciertoEditForm.get('descripcion')?.value,
+      archivosMultimedia
+    };
+
+    this.conciertoService.actualizarConcierto(this.conciertoId, { ...this.concierto, ...data })
+      .subscribe(async () => {
+        const alert = await this.alertController.create({
+          header: 'Éxito',
+          message: 'Concierto actualizado correctamente.',
+          buttons: ['Ok']
+        });
+        await alert.present();
+        this.router.navigate(['/home']);
+      }, async error => {
+        console.error('Error al actualizar concierto:', error);
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'No se pudo actualizar el concierto.',
+          buttons: ['Ok']
+        });
+        await alert.present();
+      });
+  }
+
+
+
   async editarConcierto() {
     if (
       this.conciertoEditForm.invalid ||
