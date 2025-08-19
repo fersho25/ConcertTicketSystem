@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Historial de Compras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-list *ngIf="historial.length > 0; else sinCompras">
+    <ion-item *ngFor="let compra of historial">
+      <ion-label>
+        <h2>{{ compra.nombreConcierto }}</h2>
+        <p><strong>Fecha de compra:</strong> {{ compra.fecha | date:'medium' }}</p>
+        <p><strong>Asientos adquiridos:</strong> {{ compra.asientos }}</p>
+        <p><strong>Precio total:</strong> ₡{{ compra.precioTotal | number:'1.2-2' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #sinCompras>
+    <ion-card>
+      <ion-card-content>
+        No se encontraron compras en tu historial.
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+
+</ion-content>

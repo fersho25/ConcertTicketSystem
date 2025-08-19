@@ -20,12 +20,12 @@ public static class CompraMapper
             PromocionAplicada = dto.PromocionAplicada,
             Estado = dto.Estado,
             Notificado = dto.Notificado,
-            Asientos = new List<AsientoReserva>() // inicializamos vacío
+            Asientos = new List<AsientoReserva>() 
         };
 
         compra.Asientos = new List<AsientoReserva>();
 
-        // Ahora agregamos los asientos y asignamos la referencia a la compra
+        
         if (reserva.Asientos != null)
         {
             foreach (var asiento in reserva.Asientos)
@@ -42,7 +42,7 @@ public static class CompraMapper
         }
 
 
-        // Calcular precio total usando las reglas
+        
         compra.PrecioTotal = ReglasDeCompra.CalcularPrecioTotal(compra);
 
         return compra;
@@ -56,7 +56,7 @@ public static class CompraMapper
             Id = dto.Id,
             ReservaId = dto.ReservaId,
             MetodoPago = dto.MetodoPago,
-            FechaHoraCompra = dto.FechaHoraCompra, // Asegúrate que en Compra sea DateTime y no nullable
+            FechaHoraCompra = dto.FechaHoraCompra, 
             PrecioTotal = dto.PrecioTotal,
             DescuentoAplicado = dto.DescuentoAplicado,
             PromocionAplicada = dto.PromocionAplicada,
@@ -73,7 +73,7 @@ public static class CompraMapper
             Id = compra.Id,
             ReservaId = compra.ReservaId,
             MetodoPago = compra.MetodoPago ?? string.Empty,
-            FechaHoraCompra = (DateTime)compra.FechaHoraCompra, // Igual, asegúrate que no sea nullable en Compra
+            FechaHoraCompra = (DateTime)compra.FechaHoraCompra, 
             PrecioTotal = compra.PrecioTotal,
             DescuentoAplicado = compra.DescuentoAplicado,
             PromocionAplicada = compra.PromocionAplicada ?? string.Empty,
