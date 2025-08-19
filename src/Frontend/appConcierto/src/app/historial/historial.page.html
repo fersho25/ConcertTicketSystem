@@ -6,16 +6,16 @@
 
 <ion-content class="ion-padding">
 
-  <ion-list *ngIf="historial.length > 0; else sinCompras">
-    <ion-item *ngFor="let compra of historial">
-      <ion-label>
-        <h2>{{ compra.nombreConcierto }}</h2>
-        <p><strong>Fecha de compra:</strong> {{ compra.fecha | date:'medium' }}</p>
-        <p><strong>Asientos adquiridos:</strong> {{ compra.asientos }}</p>
-        <p><strong>Precio total:</strong> ₡{{ compra.precioTotal | number:'1.2-2' }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+<ion-list>
+  <ion-item *ngFor="let item of historial">
+    <ion-label>
+      <strong>{{ item.nombreConcierto }}</strong><br>
+      Fecha de compra: {{ item.fecha | date:'dd/MM/yyyy, hh:mm:ss a' }}<br>
+      Asientos adquiridos: {{ item.asientos }}<br>
+      Precio total: ₡{{ item.precioTotal }}
+    </ion-label>
+  </ion-item>
+</ion-list>
 
   <ng-template #sinCompras>
     <ion-card>
