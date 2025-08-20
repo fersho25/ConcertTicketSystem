@@ -217,7 +217,7 @@ export class ReservaPage implements OnInit, OnDestroy {
 
   private obtenerFechaHoraExpiracion(): string {
     const expiracion = new Date();
-    expiracion.setMinutes(expiracion.getMinutes() + 3);
+    expiracion.setMinutes(expiracion.getMinutes() + 15);
     return expiracion.toISOString();
   }
 
@@ -393,7 +393,7 @@ export class ReservaPage implements OnInit, OnDestroy {
         } else if (!reservaGuardada) {
           const ahora = new Date();
           const expiracion = new Date();
-          expiracion.setMinutes(ahora.getMinutes() + 3);
+          expiracion.setMinutes(ahora.getMinutes() + 15);
           this.reservaForm.patchValue({
             fechaHoraReserva: ahora.toISOString(),
             fechaHoraExpiracion: expiracion.toISOString()
